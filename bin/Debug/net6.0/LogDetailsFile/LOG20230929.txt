@@ -1,0 +1,16 @@
+2023-09-29 08:50:59.078 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-09-29 08:51:01.488 +07:00 [INF] File Not Found
+2023-09-29 08:59:24.170 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-09-29 08:59:35.335 +07:00 [INF] Tổng File :149
+2023-09-29 09:24:47.861 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-09-29 09:24:47.928 +07:00 [INF] Tổng File :0
+2023-09-29 09:24:47.928 +07:00 [INF] Không Có Data
+2023-09-29 09:25:19.641 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-09-29 09:25:19.692 +07:00 [INF] Tổng File :0
+2023-09-29 09:25:19.692 +07:00 [INF] Không Có Data
+2023-09-29 09:25:44.729 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-09-29 09:25:49.228 +07:00 [INF] Tổng File :0
+2023-09-29 09:25:53.651 +07:00 [INF] Không Có Data
+2023-09-29 09:26:28.215 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-09-29 09:26:28.268 +07:00 [INF] Tổng File :1
+2023-09-29 09:29:00.249 +07:00 [INF] (Job CARStockBalance)- Số File : 1 Insert thành công
