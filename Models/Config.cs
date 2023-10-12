@@ -16,6 +16,7 @@ namespace BluePosVoucher.Models
         public string? pathRemoteDirectory { get; set; }
         public string? pathLocalDirectory { get; set; }
         public string? MoveFolderPath { get; set; }
+        public string? LocalFoderPath { get; set; }
         public bool? Status { get; set; }
         public DateTime? LastTimeRun { get; set; }
         public bool? IsDownload { get; set; }

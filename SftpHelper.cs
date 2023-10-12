@@ -139,17 +139,17 @@ namespace BluePosVoucher
                         }
                         if (isMove)
                         {
-                            //FileHelper.MoveFileToDestination(source + file.Name, archive);
+                            File.Move(source + file.Name, archive);
                         }
-                        //FileHelper.WriteLogs("Uploaded file: " + file.Name);
+                        _logger.Information("Uploaded file: " + file.Name);
                     }
                     client.Disconnect();
                 }
-                //FileHelper.WriteLogs("Uploaded " + count.ToString() + " file");
+               _logger.Information("Uploaded " + count.ToString() + " file");
             }
             catch (Exception ex)
             {
-                //FileHelper.WriteLogs(ex.ToString());
+                _logger.Information(ex.ToString());
             }
         }
         //public void UploadSftpWindow(string source, string destination, string archive, string extention, short setPermissions = 744, bool isMoveFile = true, int pageSize = 100)
@@ -223,59 +223,60 @@ namespace BluePosVoucher
         //        FileHelper.WriteLogs("===> UploadSftpWindow Exception: " + ex.ToString());
         //    }
         //}
-        //public void UploadSftpLinux2(string source, string destination, string archive, string fileType, short setPermissions = 744, bool isMoveFile = true)
-        //{
-        //    var count = 0;
-        //    try
-        //    {
-        //        KeyboardInteractiveAuthenticationMethod keybAuth = new KeyboardInteractiveAuthenticationMethod(Username);
-        //        keybAuth.AuthenticationPrompt += new EventHandler<AuthenticationPromptEventArgs>(HandleKeyEvent);
-        //        ConnectionInfo conInfo = new ConnectionInfo(Host, Port, Username, keybAuth);
-        //        using (SftpClient client = new SftpClient(conInfo))
-        //        {
-        //            client.Connect();
-        //            client.ChangeDirectory(destination);
+        public void UploadSftpLinux2(string source, string destination, string archive, string fileType, short setPermissions = 744, bool isMoveFile = true)
+        {
+            var count = 0;
+            try
+            {
+                KeyboardInteractiveAuthenticationMethod keybAuth = new KeyboardInteractiveAuthenticationMethod(Username);
+                keybAuth.AuthenticationPrompt += new EventHandler<AuthenticationPromptEventArgs>(HandleKeyEvent);
+                ConnectionInfo conInfo = new ConnectionInfo(Host, Port, Username, keybAuth);
+                using (SftpClient client = new SftpClient(conInfo))
+                {
+                    client.Connect();
+                    client.ChangeDirectory(destination);
 
-        //            System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(source);
-        //            IEnumerable<System.IO.FileInfo> fileList = dir.GetFiles(fileType, System.IO.SearchOption.AllDirectories);
+                    System.IO.DirectoryInfo dir = new System.IO.DirectoryInfo(source);
+                    IEnumerable<System.IO.FileInfo> fileList = dir.GetFiles(fileType, System.IO.SearchOption.AllDirectories);
 
-        //            foreach (System.IO.FileInfo file in fileList)
-        //            {
-        //                using (var fileStream = new FileStream(source + file.Name, FileMode.Open))
-        //                {
-        //                    client.UploadFile(fileStream, Path.GetFileName(file.Name));
-        //                    if (setPermissions > 0)
-        //                    {
-        //                        client.BufferSize = 4 * 1024; // bypass Payload error large files
-        //                        SftpFileAttributes myFileAttributes = client.GetAttributes(Path.GetFileName(file.Name));
+                    foreach (System.IO.FileInfo file in fileList)
+                    {
+                        using (var fileStream = new FileStream(source + file.Name, FileMode.Open))
+                        {
+                            client.UploadFile(fileStream, Path.GetFileName(file.Name));
+                            if (setPermissions > 0)
+                            {
+                                client.BufferSize = 4 * 1024; // bypass Payload error large files
+                                SftpFileAttributes myFileAttributes = client.GetAttributes(Path.GetFileName(file.Name));
 
-        //                        Then you can see any attributes here..Console.WriteLine(myFileAttributes.OwnerCanRead);
+                                //Then you can see any attributes here..
+                                   Console.WriteLine(myFileAttributes.OwnerCanRead);
 
-        //                        Set to read only for others rwxr--r--
+                                //Set to read only for others rwxr--r--
 
-        //                       myFileAttributes.SetPermissions(setPermissions);
+                               myFileAttributes.SetPermissions(setPermissions);
 
-        //                        client.SetAttributes(Path.GetFileName(file.Name), myFileAttributes);
-        //                    }
-        //                    count++;
-        //                }
+                                client.SetAttributes(Path.GetFileName(file.Name), myFileAttributes);
+                            }
+                            count++;
+                        }
 
-        //                if (isMoveFile)
-        //                {
-        //                    FileHelper.MoveFileToDestination(source + file.Name, archive);
-        //                }
+                        if (isMoveFile)
+                        {
+                          File.Delete(source + file.Name);
+                        }
 
-        //                FileHelper.WriteLogs("Uploaded file: " + file.Name);
-        //            }
-        //            client.Disconnect();
-        //        }
-        //        FileHelper.WriteLogs("Uploaded " + count.ToString() + " file");
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        FileHelper.WriteLogs(ex.ToString());
-        //    }
-        //}
+                        _logger.Information("Uploaded file: " + file.Name);
+                    }
+                    client.Disconnect();
+                }
+                _logger.Information("Uploaded " + count.ToString() + " file");
+            }
+            catch (Exception ex)
+            {
+                _logger.Information(ex.ToString());
+            }
+        }
         private void HandleKeyEvent(object sender, AuthenticationPromptEventArgs e)
         {
             foreach (AuthenticationPrompt prompt in e.Prompts)

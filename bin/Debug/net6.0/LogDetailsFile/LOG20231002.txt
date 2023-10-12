@@ -1,0 +1,57 @@
+2023-10-02 10:11:50.983 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:11:53.098 +07:00 [INF] Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (publickey,keyboard-interactive).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.UploadSftpLinux(String source, String destination, String archive, String extention, Int16 setPermissions, Boolean isMove) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 113
+2023-10-02 10:12:23.398 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-10-02 10:12:23.404 +07:00 [INF] Tổng File :1
+2023-10-02 10:13:03.345 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:17:01.683 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:18:27.284 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:19:20.672 +07:00 [INF] Uploaded file: PRD_VINID_1511_20230929081006.csv
+2023-10-02 10:19:24.816 +07:00 [INF] Uploaded 1 file
+2023-10-02 10:25:53.337 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:26:30.061 +07:00 [INF] System.IO.IOException: Cannot create 'D:\Read_SAP_\Read_xml\bin\Debug\net6.0\MoveFileDashBoad' because a file or directory with the same name already exists.
+   at System.IO.FileSystem.CreateDirectory(String fullPath, Byte[] securityDescriptor)
+   at System.IO.Directory.CreateDirectory(String path)
+   at BluePosVoucher.SftpHelper.UploadSftpLinux2(String source, String destination, String archive, String fileType, Int16 setPermissions, Boolean isMoveFile) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 273
+2023-10-02 10:27:23.145 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:28:24.031 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:29:30.916 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:33:32.241 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:36:48.599 +07:00 [INF] System.IO.IOException: Cannot create a file when that file already exists.
+   at System.IO.FileSystem.MoveFile(String sourceFullPath, String destFullPath, Boolean overwrite)
+   at System.IO.File.Move(String sourceFileName, String destFileName, Boolean overwrite)
+   at System.IO.File.Move(String sourceFileName, String destFileName)
+   at BluePosVoucher.SftpHelper.UploadSftpLinux2(String source, String destination, String archive, String fileType, Int16 setPermissions, Boolean isMoveFile)
+2023-10-02 10:37:16.509 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:37:37.999 +07:00 [INF] Uploaded file: PRD_VINID_1511_20230929081006.csv
+2023-10-02 10:37:48.173 +07:00 [INF] Uploaded 1 file
+2023-10-02 10:39:53.958 +07:00 [INF] Bắt đầu tải CARStockBalance : Call sftpHelper.DownloadAuthen 
+2023-10-02 10:39:55.294 +07:00 [INF] Download from sftp: 1 file
+2023-10-02 10:40:55.920 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:41:13.356 +07:00 [INF] Uploaded file: PRD_VINID_1511_20231002051008.csv
+2023-10-02 10:41:14.839 +07:00 [INF] Uploaded 1 file
+2023-10-02 10:41:16.006 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-10-02 10:41:18.673 +07:00 [INF] Tổng File :1
+2023-10-02 10:42:54.918 +07:00 [ERR] Lỗi ProcessCSV_CARStockBalance
+System.IO.IOException: Cannot create 'D:\Read_SAP_\Read_xml\bin\Debug\net6.0\MoveFileDashBoad' because a file or directory with the same name already exists.
+   at System.IO.FileSystem.CreateDirectory(String fullPath, Byte[] securityDescriptor)
+   at System.IO.Directory.CreateDirectory(String path)
+   at Read_xml.ReadFile.ProcessCSV_CARStockBalance(String csvFile, String processedFolderPathter) in D:\Read_SAP_\Read_xml\ReadFile.cs:line 99
+2023-10-02 10:43:01.956 +07:00 [INF] (Job CARStockBalance)- Số File : 1 Insert thành công
+2023-10-02 10:43:13.601 +07:00 [INF] (Job CARStockBalance) Có : 1 file Lỗi Vui Lòng Kiểm tra ở Folder FileTerminal/
+2023-10-02 10:43:16.831 +07:00 [INF] Còn 1 Chưa đọc hết chưa run được procedure
+2023-10-02 10:45:50.327 +07:00 [INF] Bắt đầu tải CARStockBalance : Call sftpHelper.DownloadAuthen 
+2023-10-02 10:45:51.125 +07:00 [INF] Download from sftp: 0 file
+2023-10-02 10:45:51.940 +07:00 [INF] Upload File Stock VinID
+2023-10-02 10:45:54.421 +07:00 [INF] Uploaded file: PRD_VINID_1511_20231002051008.csv
+2023-10-02 10:45:54.423 +07:00 [INF] Uploaded 1 file
+2023-10-02 10:45:54.423 +07:00 [INF] Bắt đầu đọc CARStockBalance: FileTerminal/
+2023-10-02 10:45:54.423 +07:00 [INF] Tổng File :1
+2023-10-02 10:47:33.686 +07:00 [INF] (Job CARStockBalance)- Số File : 1 Insert thành công
+2023-10-02 10:47:42.125 +07:00 [INF] Run: SP_INSERT_CARSTOCKBALANCE_TK
+2023-10-02 10:47:46.751 +07:00 [INF] Run: SP_INSERT_CARSTOCKBALANCE_TK Data: OK

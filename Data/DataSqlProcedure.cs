@@ -33,7 +33,7 @@ namespace BluePosVoucher.Data
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-                        var timeout = 300;
+                        var timeout = 600;
                         // Thực hiện truy vấn sử dụng Dapper
                         var results = connection.Query("SP_INSERT_CARSTOCKBALANCE_TK", commandType: CommandType.StoredProcedure, commandTimeout: timeout);
 
@@ -59,7 +59,7 @@ namespace BluePosVoucher.Data
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    var timeout = 300;
+                    var timeout = 600;
                     // Thực hiện truy vấn sử dụng Dapper
                     var results = connection.Query("SP_Config_Mail", commandType: CommandType.StoredProcedure, commandTimeout: timeout);
 
@@ -86,7 +86,7 @@ namespace BluePosVoucher.Data
                 using (SqlConnection connection = new SqlConnection(connectionString))
                 {
                     connection.Open();
-                    var timeout = 300;
+                    var timeout = 600;
                     string query = "SELECT Site  FROM [Inventory].[dbo].[CARStockBalances] where Status='0' group by Site";
                     List<string> siteList = connection.Query<string>(query).AsList();
                     return siteList;
