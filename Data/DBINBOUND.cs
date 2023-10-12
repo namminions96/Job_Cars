@@ -15,6 +15,7 @@ namespace BluePosVoucher.Data
         public DbSet<ConfigConnections> ConfigConnections { get; set; }
         public DbSet<Config> Configs { get; set; }
         public DbSet<OrderExpToGCP> OrderExpToGCPs { get; set; }
+        public DbSet<TempSalesGCP> Temp_SalesGCP { get; set; }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var configuration = new ConfigurationBuilder()
@@ -28,6 +29,7 @@ namespace BluePosVoucher.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderExpToGCP>().HasNoKey();
+            modelBuilder.Entity<TempSalesGCP>().HasNoKey();
         }
 
     }

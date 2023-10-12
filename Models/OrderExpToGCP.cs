@@ -105,4 +105,12 @@ namespace Job_By_SAP.Models
         public string Barcode { get; set; }
         public decimal LoyaltyPointsEarn { get; set; }
     }
+    public class TempSalesGCP
+    {
+        public string SalesType { get; set; }
+        public string OrderNo { get; set; }
+        public DateTime OrderDate { get; set; }
+        public DateTime CrtDate { get; set; }
+        public string Batch { get; set; }
+    }
 }

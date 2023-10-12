@@ -28,8 +28,7 @@ namespace Job_By_SAP
         .SetBasePath(AppContext.BaseDirectory)
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build();
-        PLH_Data PLH_Data = new PLH_Data();
-        public async Task<OrderExpToGCP> OrderExpToGCPAsync()
+        public async void OrderExpToGCPAsync()
         {
             using (var db = new DBINBOUND())
             {
@@ -71,18 +70,38 @@ namespace Job_By_SAP
                     {
                         try
                         {
-
-
                             string json = JsonConvert.SerializeObject(listOrder);
                             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                             HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
                             if (response.IsSuccessStatusCode)
-                            {
+                            { 
+                                TempSalesGCP  tempSalesGCP = new TempSalesGCP();
+                                foreach (var order in results)
+                                {
+                                    tempSalesGCP.OrderNo = order.OrderNo;
+                                    tempSalesGCP.OrderDate = order.OrderDate;
+                                    tempSalesGCP.CrtDate = DateTime.Now;
+                                    tempSalesGCP.SalesType = "PLH";
+                                    tempSalesGCP.Batch = DateTime.Now.ToString();
+                                    db.Add(tempSalesGCP);
+                                    db.SaveChanges();
+                                }
                                 Console.WriteLine("Dữ liệu đã được gửi thành công đến API.");
                             }
                             else
                             {
-                                string filePath = "data.text";
+                                TempSalesGCP tempSalesGCP = new TempSalesGCP();
+                                foreach (var order in results)
+                                {
+                                    tempSalesGCP.OrderNo = order.OrderNo;
+                                    tempSalesGCP.OrderDate = order.OrderDate;
+                                    tempSalesGCP.CrtDate = DateTime.Now;
+                                    tempSalesGCP.SalesType = "PLH";
+                                    tempSalesGCP.Batch = DateTime.Now.ToString();
+                                    db.Add(tempSalesGCP);
+                                    db.SaveChanges();
+                                }
+                                string filePath = "Error\\data.text";
                                 File.WriteAllText(filePath, json);
                                 _logger.Information("Gửi không thành công or chưa được phản hồi.");
                             }
@@ -91,8 +110,6 @@ namespace Job_By_SAP
                         {
                             _logger.Information("Lỗi: " + ex.Message);
                         }
-                        _logger.Information("sss");
-                        return new OrderExpToGCP();
                     }
                 }
             }
