@@ -21,6 +21,7 @@ namespace Job_By_SAP.Models
         public string SalesType { get; set; }
         public DateTime OrderTime { get; set; }
         public string ReturnedOrderNo { get; set; }
+        public bool IsRetry { get; set; }
         public List<TransLine_PLH_BLUEPOS> Items { get; set; }
         public List<TransPaymentEntry_PLH_BLUEPOS> Payments { get; set; }
         public List<TransPointLine_PLH_BLUEPOS> Loyalty { get; set; }
@@ -102,11 +103,11 @@ namespace Job_By_SAP.Models
         public int ParentLineId { get; set; }
         public int LineId { get; set; }
         public string OfferNo { get; set; }
+        public string OfferType { get; set; }
         public string Barcode { get; set; }
-        public decimal LoyaltyPointsEarn { get; set; }
     }
     public class TempSalesGCP
-    {
+    {   public int ID { get; set; }
         public string SalesType { get; set; }
         public string OrderNo { get; set; }
         public DateTime OrderDate { get; set; }

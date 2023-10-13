@@ -1,0 +1,11 @@
+2023-10-13 08:24:29.670 +07:00 [INF] Please provide a function name as an argument.
+2023-10-13 08:26:16.459 +07:00 [INF] Send Data To API
+2023-10-13 08:28:28.760 +07:00 [INF] Send Data To API
+2023-10-13 08:30:25.696 +07:00 [INF] Send Data To API
+2023-10-13 08:32:48.843 +07:00 [INF] Send Data To API
+2023-10-13 08:44:21.032 +07:00 [INF] Send Data To API: 100 Row
+2023-10-13 08:45:08.828 +07:00 [INF] Lỗi: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (10.235.19.71:50001)
+2023-10-13 08:59:31.262 +07:00 [INF] Run GCP
+2023-10-13 08:59:36.924 +07:00 [INF] Send Data To API: 100 Row
+2023-10-13 09:00:48.580 +07:00 [INF] Run GCP
+2023-10-13 09:22:47.084 +07:00 [INF] Run GCP

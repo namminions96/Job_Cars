@@ -29,7 +29,8 @@ namespace BluePosVoucher.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<OrderExpToGCP>().HasNoKey();
-            modelBuilder.Entity<TempSalesGCP>().HasNoKey();
+            modelBuilder.Entity<TempSalesGCP>()
+            .HasKey(e => e.OrderNo);
         }
 
     }

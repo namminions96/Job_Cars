@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Job_By_SAP
+namespace Job_By_SAP.PLH
 {
     public class PLH_Data
     {
@@ -41,8 +41,8 @@ namespace Job_By_SAP
         }
         public static string TransDiscountCouponEntryQuery()
         {
-            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ItemNo OfferNo,Barcode
-                     FROM CentralSales.dbo.[TransDiscountCouponEntry] NOLOCK WHERE OrderNo IN @orderNo";
+            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ItemNo OfferNo,OfferType,Barcode
+                     FROM CentralSales.dbo.[TransDiscountCouponEntry] NOLOCK  WHERE OrderNo IN @orderNo";
         }
     }
 }
