@@ -44,5 +44,11 @@ namespace Job_By_SAP.PLH
             return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ItemNo OfferNo,OfferType,Barcode
                      FROM CentralSales.dbo.[TransDiscountCouponEntry] NOLOCK  WHERE OrderNo IN @orderNo";
         }
+        public static string InsertTemp_SalesGCP()
+        {
+            return @"INSERT INTO Temp_SalesGCP ([SalesType], [OrderNo], [OrderDate], [CrtDate], [Batch])
+                                        VALUES
+                                        (@SalesType, @OrderNo, @OrderDate, @CrtDate, @Batch)";
+        }
     }
 }

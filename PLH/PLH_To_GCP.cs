@@ -30,21 +30,19 @@ namespace Job_By_SAP.PLH
         .SetBasePath(AppContext.BaseDirectory)
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build();
-        public List<OrderExpToGCP> OrderExpToGCPAsync()
+        public List<OrderExpToGCP> OrderExpToGCPAsync(string configPLH)
         {
-            string INBOUND = configuration["INBOUND"];
             string Procedure = configuration["Procedure"];
-            _logger.Information(INBOUND);
-            using (SqlConnection DBINBOUND = new SqlConnection(INBOUND))
+            using (SqlConnection DBINBOUND = new SqlConnection(configPLH))
             {
                 DBINBOUND.Open();
                 _logger.Information(Procedure);
                 var results = DBINBOUND.Query<OrderExpToGCP>(Procedure, commandType: CommandType.StoredProcedure).ToList();
                 DBINBOUND.Close();
+                _logger.Information($"Total Data results: {results.Count}");
                 if (results.Count > 0)
                 {
                     string connectionStringPLH = configuration["PLH_To_GCP"];
-                    _logger.Information(connectionStringPLH);
                     using (SqlConnection connection = new SqlConnection(connectionStringPLH))
                     {
                         List<string> results_order = results.Select(p => p.OrderNo).ToList();
@@ -77,69 +75,7 @@ namespace Job_By_SAP.PLH
                             listOrder.Add(orderExp);
                         }
                         return listOrder;
-                        //_logger.Information("Send Data To API");
-                        //string apiUrl = "http://10.235.19.71:50001/pos-plg/sale-out";
-                        //using (HttpClient httpClient = new HttpClient())
-                        //{
-                        //    try
-                        //    {
-                        //        using (var db = new DBINBOUND())
-                        //        {
-                        //            string json = JsonConvert.SerializeObject(listOrder);
-                        //            var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
-                        //            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                        //            //request.Content = content;
-                        //            //HttpResponseMessage response = await httpClient.SendAsync(request);
-                        //            HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
-                        //            if (response.IsSuccessStatusCode)
-                        //            {
-                        //                TempSalesGCP tempSalesGCP = new TempSalesGCP();
-                        //                foreach (var order in results)
-                        //                {
-                        //                    tempSalesGCP.OrderNo = order.OrderNo;
-                        //                    tempSalesGCP.OrderDate = order.OrderDate;
-                        //                    tempSalesGCP.CrtDate = DateTime.Now;
-                        //                    tempSalesGCP.SalesType = "PLH";
-                        //                    tempSalesGCP.Batch = DateTime.Now.ToString();
-                        //                    db.Add(tempSalesGCP);
-                        //                    db.SaveChanges();
-                        //                }
-                        //                _logger.Information("Dữ liệu đã được gửi thành công đến API.");
-                        //            }
-                        //            else
-                        //            {
-                        //                TempSalesGCP tempSalesGCP = new TempSalesGCP();
-                        //                foreach (var order in results)
-                        //                {
-                        //                    tempSalesGCP.OrderNo = order.OrderNo;
-                        //                    tempSalesGCP.OrderDate = order.OrderDate;
-                        //                    tempSalesGCP.CrtDate = DateTime.Now;
-                        //                    tempSalesGCP.SalesType = "PLH";
-                        //                    tempSalesGCP.Batch = DateTime.Now.ToString();
-                        //                    db.Add(tempSalesGCP);
-                        //                    db.SaveChanges();
-                        //                }
-                        //                string filePath = "Error\\data.text";
-                        //                if (Directory.Exists(filePath))
-                        //                {
-                        //                    File.WriteAllText(filePath, json);
-                        //                }
-                        //                else
-                        //                {
-                        //                    Directory.CreateDirectory(filePath);
-                        //                    File.WriteAllText(filePath, json);
-                        //                }
-                        //                _logger.Information("Gửi không thành công or chưa được phản hồi.");
-                        //            }
-                        //        }
-                        //    }
-                        //    catch (Exception ex)
-                        //    {
-                        //        _logger.Information("Lỗi: " + ex.Message);
-                        //    }
-                        //}
                     }
-
                 }
                 else
                 {

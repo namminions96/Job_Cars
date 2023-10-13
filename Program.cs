@@ -34,12 +34,13 @@ internal class Program
         using (var db = new DbConfigAll())
         {
             string functionName = args[0];
-           //string functionName = "GCP";
-            if (args.Length> 0)
+            //string functionName = "GCP";
+            if (args.Length > 0)
             {
                 switch (functionName)
                 {
                     case "VoucherSAP":
+                        _logger.Information("------------------------------------------------------");
                         _logger.Information("Run VoucherSAP");
                         try
                         {
@@ -214,6 +215,7 @@ internal class Program
                         }
                         break;
                     case "PRD_CARStockBalance":
+                        _logger.Information("------------------------------------------------------");
                         _logger.Information("Run PRD_CARStockBalance");
                         ReadFile readfilSAP = new ReadFile(_logger);
                         var configcar = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalance" && p.Status == true);
@@ -339,83 +341,92 @@ internal class Program
                         }
                         break;
                     case "GCP":
+                        _logger.Information("------------------------------------------------------");
                         _logger.Information("Run GCP");
-                        PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger);
-                        var listOrder =  PLH_To_GCPs.OrderExpToGCPAsync();
-                        _logger.Information($"Send Data To API: {listOrder.Count} Row");
-                        string apiUrl = "http://10.235.19.71:50001/pos-plg/sale-out";
-                        using (HttpClient httpClient = new HttpClient())
+                        var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUND" && p.Status == true);
+                        //var configPLH = db.ConfigConnections.SingleOrDefault(p => p.Type == "PLH_INBOUND" && p.Status == true);
+                        if (configPLH != null)
                         {
-                            try
+                            PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger);
+                            foreach (var cfig in configPLH)
                             {
-                                string INBOUND = configuration["INBOUND"];
-                                _logger.Information(INBOUND);
-                                using (SqlConnection DBINBOUND = new SqlConnection(INBOUND))
+                                _logger.Information($"Connect DB: {cfig.Name}");
+                                var listOrder = PLH_To_GCPs.OrderExpToGCPAsync(cfig.ConnectString);
+                                _logger.Information($"Send Data To API: {listOrder.Count} Row");
+                                string apiUrl = "http://10.235.19.71:50001/pos-plg/sale-out";
+                                using (HttpClient httpClient = new HttpClient())
                                 {
-                                    DBINBOUND.Open();
-                                    string json = JsonConvert.SerializeObject(listOrder);
-                                    var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
-                                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                                    request.Content = content;
-                                    HttpResponseMessage response = await httpClient.SendAsync(request);
-                                    // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
-                                    _logger.Information(response.IsSuccessStatusCode.ToString());
-                                    string filePath = "data.text";
-                                    File.WriteAllText(filePath, json);
-                                    if (response.IsSuccessStatusCode)
+                                    try
                                     {
-                                        TempSalesGCP tempSalesGCP = new TempSalesGCP();
-                                        foreach (var order in listOrder)
+                                        using (SqlConnection DBINBOUND = new SqlConnection(cfig.ConnectString))
                                         {
-                                            tempSalesGCP.SalesType = "PLH";
-                                            tempSalesGCP.OrderNo = order.OrderNo;
-                                            tempSalesGCP.OrderDate = order.OrderDate;
-                                            tempSalesGCP.CrtDate = DateTime.Now;
+                                            DBINBOUND.Open();
+                                            string json = JsonConvert.SerializeObject(listOrder);
+                                            var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                            request.Content = content;
+                                            HttpResponseMessage response = await httpClient.SendAsync(request);
+                                            // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
                                             string currentDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-                                            tempSalesGCP.Batch = currentDateTime;
+                                            _logger.Information($"Response API: {response.StatusCode}");
+                                      
+                                            if (response.IsSuccessStatusCode)
+                                            {
+                                                List<TempSalesGCP> tempSalesGCP = new List<TempSalesGCP>();
+                                                foreach (var order in listOrder)
+                                                {
+                                                    var tempSalesGCP_1 = new TempSalesGCP();
+                                                    tempSalesGCP_1.SalesType = "PLH";
+                                                    tempSalesGCP_1.OrderNo = order.OrderNo;
+                                                    tempSalesGCP_1.OrderDate = order.OrderDate;
+                                                    tempSalesGCP_1.CrtDate = DateTime.Now;
+                                                    tempSalesGCP_1.Batch = currentDateTime;
+                                                    tempSalesGCP.Add(tempSalesGCP_1);
+                                                }
+                                                int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP(), tempSalesGCP);
+                                                _logger.Information($"Insert {rowsAffected} row Thành công ");
+                                                _logger.Information("Dữ liệu đã được gửi thành công đến API.");
+                                            }
+                                            else
+                                            {
+                                                List<TempSalesGCP> tempSalesGCP = new List<TempSalesGCP>();
+                                                foreach (var order in listOrder)
+                                                {
+                                                    var tempSalesGCP_1 = new TempSalesGCP();
+                                                    tempSalesGCP_1.SalesType = "PLH";
+                                                    tempSalesGCP_1.OrderNo = order.OrderNo;
+                                                    tempSalesGCP_1.OrderDate = order.OrderDate;
+                                                    tempSalesGCP_1.CrtDate = DateTime.Now;
+                                                    tempSalesGCP_1.Batch = currentDateTime;
+                                                    tempSalesGCP.Add(tempSalesGCP_1);
+                                                }
+                                                int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP(), tempSalesGCP);
+                                                _logger.Information($"Insert {rowsAffected} row Thành công ");
+                                                string filePathError = $"error_{currentDateTime}.text";
+                                                if (Directory.Exists(filePathError))
+                                                {
+                                                    File.WriteAllText(filePathError, json);
+                                                }
+                                                else
+                                                {
+                                                    Directory.CreateDirectory(filePathError);
+                                                    File.WriteAllText(filePathError, json);
+                                                }
+                                                _logger.Information("Gửi không thành công or chưa được phản hồi.");
+                                            }
+                                            DBINBOUND.Close();
                                         }
-                                        string insertSql = @"INSERT INTO Temp_SalesGCP 
-                                        ([SalesType], [OrderNo], [OrderDate], [CrtDate], [Batch])
-                                        VALUES
-                                        (@SalesType, @OrderNo, @OrderDate, @CrtDate, @Batch)";
-                                        int rowsAffected = DBINBOUND.Execute(insertSql, tempSalesGCP);
-                                        _logger.Information("Dữ liệu đã được gửi thành công đến API.");
                                     }
-                                    else
+                                    catch (Exception ex)
                                     {
-                                        TempSalesGCP tempSalesGCP = new TempSalesGCP();
-                                        foreach (var order in listOrder)
-                                        {
-                                            tempSalesGCP.SalesType = "PLH";
-                                            tempSalesGCP.OrderNo = order.OrderNo;
-                                            tempSalesGCP.OrderDate = order.OrderDate;
-                                            tempSalesGCP.CrtDate = DateTime.Now;
-                                            string currentDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
-                                            tempSalesGCP.Batch = currentDateTime;
-                                        }
-                                        string insertSql = @"INSERT INTO Temp_SalesGCP 
-                                        ([SalesType], [OrderNo], [OrderDate], [CrtDate], [Batch])
-                                        VALUES
-                                        (@SalesType, @OrderNo, @OrderDate, @CrtDate, @Batch)";
-                                        int rowsAffected = DBINBOUND.Execute(insertSql, tempSalesGCP);
-                                        if (Directory.Exists(filePath))
-                                        {
-                                            File.WriteAllText(filePath, json);
-                                        }
-                                        else
-                                        {
-                                            Directory.CreateDirectory(filePath);
-                                            File.WriteAllText(filePath, json);
-                                        }
-                                        _logger.Information("Gửi không thành công or chưa được phản hồi.");
-                                        DBINBOUND.Close();
+                                        _logger.Error("Lỗi: " + ex.Message);
                                     }
                                 }
                             }
-                            catch (Exception ex)
-                            {
-                                _logger.Error("Lỗi: " + ex.Message);
-                            }
+                        }
+                        else
+                        {
+                            _logger.Information("Trạng thái Status đang off or chưa khai báo");
                         }
                         break;
                     default:
