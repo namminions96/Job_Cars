@@ -20,10 +20,10 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 namespace Job_By_SAP.PLH
 {
 
-    public class PLH_To_GCP
+    public class PLH_To_GCP_Retry
     {
         private readonly ILogger _logger;
-        public PLH_To_GCP(ILogger logger)
+        public PLH_To_GCP_Retry(ILogger logger)
         {
             _logger = logger;
         }
@@ -31,28 +31,28 @@ namespace Job_By_SAP.PLH
         .SetBasePath(AppContext.BaseDirectory)
         .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
         .Build();
-        public List<OrderExpToGCP> OrderExpToGCPAsync(string configPLH)
+        public List<OrderExpToGCP> OrderExpToGCPAsyncArchive(string configPLH)
         {
-            string Procedure = configuration["Procedure"];
+            string Procedure = configuration["ProcedureArchive"];
             using (SqlConnection DBINBOUND = new SqlConnection(configPLH))
             {
-                DBINBOUND.Open();
+                DBINBOUND.Open(); 
+                var timeout = 600;
                 _logger.Information(Procedure);
-                var results = DBINBOUND.Query<OrderExpToGCP>(Procedure, commandType: CommandType.StoredProcedure).ToList();
+                var results = DBINBOUND.Query<OrderExpToGCP>(Procedure, commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
                 DBINBOUND.Close();
                 _logger.Information($"Total Data results: {results.Count}");
                 if (results.Count > 0)
                 {
-                    string connectionStringPLH = configuration["PLH_To_GCP"];
+                    string connectionStringPLH = configuration["PLH_To_GCP_Archive"];
                     using (SqlConnection connection = new SqlConnection(connectionStringPLH))
                     {
                         List<string> results_order = results.Select(p => p.OrderNo).ToList();
                         connection.Open();
-                        var timeout = 600;
-                        var resultTransLine = connection.Query<TransLine_PLH_BLUEPOS>(PLH_Data.TransLineQuery(), new { documentNo = results_order }).ToList();
-                        var resultTransDiscountCoupon = connection.Query<TransDiscountCouponEntry_PLH_BLUEPOS>(PLH_Data.TransDiscountCouponEntryQuery(), new { orderNo = results_order }).ToList();
-                        var resultTransPayment = connection.Query<TransPaymentEntry_PLH_BLUEPOS>(PLH_Data.TransPaymentEntryQuery(), new { orderNo = results_order }).ToList();
-                        var resultTransDiscount = connection.Query<TransDiscountEntry_PLH_BLUEPOS>(PLH_Data.TransDiscountEntryQuery(), new { orderNo = results_order }).ToList();
+                        var resultTransLine = connection.Query<TransLine_PLH_BLUEPOS>(PLH_Data.TransLineQueryArchive(), new { documentNo = results_order }).ToList();
+                        var resultTransDiscountCoupon = connection.Query<TransDiscountCouponEntry_PLH_BLUEPOS>(PLH_Data.TransDiscountCouponEntryQueryArchive(), new { orderNo = results_order }).ToList();
+                        var resultTransPayment = connection.Query<TransPaymentEntry_PLH_BLUEPOS>(PLH_Data.TransPaymentEntryQueryArchive(), new { orderNo = results_order }).ToList();
+                        var resultTransDiscount = connection.Query<TransDiscountEntry_PLH_BLUEPOS>(PLH_Data.TransDiscountEntryQueryArchive(), new { orderNo = results_order }).ToList();
                         connection.Close();
                         List<OrderExpToGCP> listOrder = new List<OrderExpToGCP>();
                         foreach (var order in results)

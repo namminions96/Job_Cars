@@ -107,7 +107,8 @@ namespace Job_By_SAP.Models
         public string Barcode { get; set; }
     }
     public class TempSalesGCP
-    {   public int ID { get; set; }
+    {  
+        public int ID { get; set; }
         public string SalesType { get; set; }
         public string OrderNo { get; set; }
         public DateTime OrderDate { get; set; }

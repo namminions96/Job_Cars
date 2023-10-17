@@ -343,92 +343,110 @@ internal class Program
                     case "GCP":
                         _logger.Information("------------------------------------------------------");
                         _logger.Information("Run GCP");
-                        var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUND" && p.Status == true);
-                        //var configPLH = db.ConfigConnections.SingleOrDefault(p => p.Type == "PLH_INBOUND" && p.Status == true);
-                        if (configPLH != null)
+                        var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUND" && p.Status == true);//config DB
+                        if (configPLH.Count() > 0)
                         {
                             PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger);
                             foreach (var cfig in configPLH)
                             {
                                 _logger.Information($"Connect DB: {cfig.Name}");
-                                var listOrder = PLH_To_GCPs.OrderExpToGCPAsync(cfig.ConnectString);
-                                _logger.Information($"Send Data To API: {listOrder.Count} Row");
-                                string apiUrl = "http://10.235.19.71:50001/pos-plg/sale-out";
-                                using (HttpClient httpClient = new HttpClient())
+                                var listOrder = PLH_To_GCPs.OrderExpToGCPAsync(cfig.ConnectString);//listOrder
+                                if (listOrder.Count > 0)
                                 {
-                                    try
+                                    _logger.Information($"Send Data To API: {listOrder.Count} Row");
+                                    string apiUrl = configuration["API_GCP"];
+                                    using (HttpClient httpClient = new HttpClient())
                                     {
-                                        using (SqlConnection DBINBOUND = new SqlConnection(cfig.ConnectString))
+                                        try
                                         {
-                                            DBINBOUND.Open();
                                             string json = JsonConvert.SerializeObject(listOrder);
                                             var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
                                             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                                             request.Content = content;
                                             HttpResponseMessage response = await httpClient.SendAsync(request);
                                             // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
-                                            string currentDateTime = DateTime.Now.ToString("yyyyMMddHHmmss");
                                             _logger.Information($"Response API: {response.StatusCode}");
-                                      
                                             if (response.IsSuccessStatusCode)
                                             {
-                                                List<TempSalesGCP> tempSalesGCP = new List<TempSalesGCP>();
-                                                foreach (var order in listOrder)
-                                                {
-                                                    var tempSalesGCP_1 = new TempSalesGCP();
-                                                    tempSalesGCP_1.SalesType = "PLH";
-                                                    tempSalesGCP_1.OrderNo = order.OrderNo;
-                                                    tempSalesGCP_1.OrderDate = order.OrderDate;
-                                                    tempSalesGCP_1.CrtDate = DateTime.Now;
-                                                    tempSalesGCP_1.Batch = currentDateTime;
-                                                    tempSalesGCP.Add(tempSalesGCP_1);
-                                                }
-                                                int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP(), tempSalesGCP);
-                                                _logger.Information($"Insert {rowsAffected} row Thành công ");
-                                                _logger.Information("Dữ liệu đã được gửi thành công đến API.");
+                                                PLH_To_GCPs.InsertTempGCP(listOrder, "True", cfig.ConnectString);
                                             }
                                             else
                                             {
-                                                List<TempSalesGCP> tempSalesGCP = new List<TempSalesGCP>();
-                                                foreach (var order in listOrder)
-                                                {
-                                                    var tempSalesGCP_1 = new TempSalesGCP();
-                                                    tempSalesGCP_1.SalesType = "PLH";
-                                                    tempSalesGCP_1.OrderNo = order.OrderNo;
-                                                    tempSalesGCP_1.OrderDate = order.OrderDate;
-                                                    tempSalesGCP_1.CrtDate = DateTime.Now;
-                                                    tempSalesGCP_1.Batch = currentDateTime;
-                                                    tempSalesGCP.Add(tempSalesGCP_1);
-                                                }
-                                                int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP(), tempSalesGCP);
-                                                _logger.Information($"Insert {rowsAffected} row Thành công ");
-                                                string filePathError = $"error_{currentDateTime}.text";
-                                                if (Directory.Exists(filePathError))
-                                                {
-                                                    File.WriteAllText(filePathError, json);
-                                                }
-                                                else
-                                                {
-                                                    Directory.CreateDirectory(filePathError);
-                                                    File.WriteAllText(filePathError, json);
-                                                }
-                                                _logger.Information("Gửi không thành công or chưa được phản hồi.");
+                                                PLH_To_GCPs.InsertTempGCP(listOrder, "False", cfig.ConnectString);
                                             }
-                                            DBINBOUND.Close();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _logger.Error("Lỗi: " + ex.Message);
                                         }
                                     }
-                                    catch (Exception ex)
-                                    {
-                                        _logger.Error("Lỗi: " + ex.Message);
-                                    }
+                                }
+                                else
+                                {
+                                    _logger.Information($"Không có data GCP");
                                 }
                             }
                         }
                         else
                         {
-                            _logger.Information("Trạng thái Status đang off or chưa khai báo");
+                            _logger.Information("Staus đang Off or chưa khai báo Connections type = PLH_INBOUND");
                         }
                         break;
+
+                    case "GCP_ARCHIVE":
+                        _logger.Information("Run GCP_ARCHIVE");
+                        var configPLH_Ar = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUNDArchive" && p.Status == true);//config DB
+                        if (configPLH_Ar.Count() > 0)
+                        {
+                            PLH_To_GCP_Retry pLH_To_GCP_Retry = new PLH_To_GCP_Retry(_logger);
+                            foreach (var cfig in configPLH_Ar)
+                            {
+                                _logger.Information($"Connect DB : {cfig.Name}");
+                                var listOrder = pLH_To_GCP_Retry.OrderExpToGCPAsyncArchive(cfig.ConnectString);//listOrder
+                                if (listOrder.Count > 0)
+                                {
+                                    _logger.Information($"Send Data To API: {listOrder.Count} Row");
+                                    string apiUrl = configuration["API_GCP"];
+                                    using (HttpClient httpClient = new HttpClient())
+                                    {
+                                        try
+                                        {
+                                            string json = JsonConvert.SerializeObject(listOrder);
+                                            var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                            request.Content = content;
+                                            HttpResponseMessage response = await httpClient.SendAsync(request);
+                                            // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
+                                            _logger.Information($"Response API: {response.StatusCode}");
+                                            PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger);
+                                            if (response.IsSuccessStatusCode)
+                                            {
+                                                PLH_To_GCPs.InsertTempGCP(listOrder, "True", cfig.ConnectString);
+                                            }
+                                            else
+                                            {
+                                                PLH_To_GCPs.InsertTempGCP(listOrder, "False", cfig.ConnectString);
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _logger.Error("Lỗi: " + ex.Message);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    _logger.Information($"Không có data GCP");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger.Information("Staus đang Off or chưa khai báo Connections type = GCP_ARCHIVE");
+                        }
+
+                        break;
+
                     default:
                         _logger.Information("Invalid function name.");
                         break;
