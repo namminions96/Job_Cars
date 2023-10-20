@@ -1,0 +1,64 @@
+2023-10-18 10:24:48.307 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 10:26:58.089 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 10:34:45.292 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 10:39:33.573 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 10:42:40.220 +07:00 [ERR] Lỗi ProcessCSV_CARStockBalance
+Microsoft.Data.SqlClient.SqlException (0x80131904): Must declare the scalar variable "@OrderNo".
+   at Microsoft.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)
+   at Microsoft.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)
+   at Microsoft.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean& dataReady)
+   at Microsoft.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption, Boolean shouldCacheForAlwaysEncrypted)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean isAsync, Int32 timeout, Task& task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)
+   at Microsoft.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, TaskCompletionSource`1 completion, Int32 timeout, Task& task, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String method)
+   at Microsoft.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, Boolean sendToPipe, Int32 timeout, Boolean& usedCache, Boolean asyncWrite, Boolean inRetry, String methodName)
+   at Microsoft.Data.SqlClient.SqlCommand.ExecuteNonQuery()
+   at Dapper.SqlMapper.ExecuteImpl(IDbConnection cnn, CommandDefinition& command) in /_/Dapper/SqlMapper.cs:line 630
+   at Dapper.SqlMapper.Execute(IDbConnection cnn, String sql, Object param, IDbTransaction transaction, Nullable`1 commandTimeout, Nullable`1 commandType) in /_/Dapper/SqlMapper.cs:line 519
+   at Read_xml.ReadFile.ProcessCSV_GCP_Sale_Retry(String csvFile, String processedFolderPathter, String configdb) in D:\Read_SAP_\Read_xml\ReadFile.cs:line 142
+ClientConnectionId:4fadd333-4269-4975-b7bb-d91d88b157a3
+Error Number:137,State:2,Class:15
+2023-10-18 10:42:40.462 +07:00 [INF] Đã đọc file : FileTerminal/PLH_SALEOUT_RECONCILE_20231015.csv
+2023-10-18 10:45:07.437 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 10:47:22.364 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 10:56:21.408 +07:00 [INF] Đã đọc file : FileTerminal/PLH_SALEOUT_RECONCILE_20231015.csv
+2023-10-18 11:28:32.662 +07:00 [INF] Run GCP_Sale_Retry
+2023-10-18 11:29:16.107 +07:00 [INF] Insert thành công: 1 Row
+2023-10-18 16:04:37.307 +07:00 [INF] Run GCP_ARCHIVE
+2023-10-18 16:04:47.747 +07:00 [INF] Connect DB : PLH_INBOUNDArchive
+2023-10-18 16:04:49.130 +07:00 [INF] SP_GET_SALES_TO_GCP_ARCHIVED
+2023-10-18 16:04:49.315 +07:00 [INF] Total Data results: 1
+2023-10-18 16:04:49.364 +07:00 [ERR] Lỗi :
+2023-10-18 16:08:57.267 +07:00 [INF] Run GCP_ARCHIVE
+2023-10-18 16:09:03.233 +07:00 [INF] Connect DB : PLH_INBOUNDArchive
+2023-10-18 16:09:03.954 +07:00 [INF] SP_GET_SALES_TO_GCP_ARCHIVED
+2023-10-18 16:09:04.485 +07:00 [INF] Total Data results: 8825
+2023-10-18 16:09:20.937 +07:00 [ERR] Lỗi :
+2023-10-18 16:09:20.938 +07:00 [INF] Không có data GCP
+2023-10-18 16:09:47.171 +07:00 [INF] Run GCP_ARCHIVE
+2023-10-18 16:09:51.809 +07:00 [INF] Connect DB : PLH_INBOUNDArchive
+2023-10-18 16:09:52.394 +07:00 [INF] SP_GET_SALES_TO_GCP_ARCHIVED
+2023-10-18 16:09:52.737 +07:00 [INF] Total Data results: 8825
+2023-10-18 16:11:16.937 +07:00 [INF] Run GCP_ARCHIVE
+2023-10-18 16:11:23.864 +07:00 [INF] Connect DB : PLH_INBOUNDArchive
+2023-10-18 16:11:24.371 +07:00 [INF] SP_GET_SALES_TO_GCP_ARCHIVED
+2023-10-18 16:11:24.671 +07:00 [INF] Total Data results: 8825
+2023-10-18 16:14:50.893 +07:00 [INF] Run GCP_ARCHIVE
+2023-10-18 16:14:58.822 +07:00 [INF] Connect DB : PLH_INBOUNDArchive
+2023-10-18 16:14:59.578 +07:00 [INF] SP_GET_SALES_TO_GCP_ARCHIVED
+2023-10-18 16:14:59.835 +07:00 [INF] Total Data results: 8825
+2023-10-18 16:16:09.046 +07:00 [INF] Send Data To API: 8825 Row
+2023-10-18 16:18:28.028 +07:00 [INF] Run GCP_ARCHIVE
+2023-10-18 16:18:34.601 +07:00 [INF] Connect DB : PLH_INBOUNDArchive
+2023-10-18 16:18:35.221 +07:00 [INF] SP_GET_SALES_TO_GCP_ARCHIVED
+2023-10-18 16:18:35.700 +07:00 [INF] Total Data results: 8825
+2023-10-18 16:19:22.836 +07:00 [INF] Send Data To API: 8825 Row
+2023-10-18 16:19:52.400 +07:00 [INF] Insert 1900 row Thành công 
+2023-10-18 16:19:52.400 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.
+2023-10-18 16:20:09.750 +07:00 [INF] Insert 1900 row Thành công 
+2023-10-18 16:20:09.750 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.
+2023-10-18 16:20:24.327 +07:00 [INF] Insert 1900 row Thành công 
+2023-10-18 16:20:24.327 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.
+2023-10-18 16:20:37.951 +07:00 [INF] Insert 1900 row Thành công 
+2023-10-18 16:20:37.951 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.
+2023-10-18 16:20:46.076 +07:00 [INF] Insert 1225 row Thành công 
+2023-10-18 16:20:46.076 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.

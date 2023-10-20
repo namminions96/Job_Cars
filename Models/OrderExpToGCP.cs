@@ -115,4 +115,10 @@ namespace Job_By_SAP.Models
         public DateTime CrtDate { get; set; }
         public string Batch { get; set; }
     }
+    public class Receipt_Retry
+    {
+        public string RECEIPT_NO { get; set; }
+        public string UpdateFlg { get; set; }
+        public DateTime CrtDate { get; set; }
+    }
 }

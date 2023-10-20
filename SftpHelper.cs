@@ -59,6 +59,48 @@ namespace BluePosVoucher
                 _logger.Error(ex, "DownloadAuthen" + source);
             }
         }
+        public void DownloadAuthen_FileName(string source, string destination,string FileName)
+        {
+            var count = 0;
+            try
+            {
+                PrepareDownloadFolder(destination);
+                KeyboardInteractiveAuthenticationMethod keybAuth = new KeyboardInteractiveAuthenticationMethod(Username);
+                keybAuth.AuthenticationPrompt += new EventHandler<AuthenticationPromptEventArgs>(HandleKeyEvent);
+
+                ConnectionInfo conInfo = new ConnectionInfo(Host, Port, Username, keybAuth);
+
+                using (SftpClient client = new SftpClient(conInfo))
+                {
+                    client.Connect();
+                    client.ChangeDirectory(source);
+
+                    var files = client.ListDirectory(source);
+                    files = files.OrderBy(e => e.Name);
+
+                    foreach (SftpFile file in files)
+                    {
+                        if (!file.IsDirectory && !file.IsSymbolicLink)
+                        {
+                            // Check if the file name starts with "PLH"
+                            if (file.Name.StartsWith(FileName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                DownloadFile(client, file, destination);
+                                count++;
+                                file.Delete();
+                            }
+                        }
+                    }
+                    client.Disconnect();
+                }
+                _logger.Information("Download from SFTP: " + count.ToString() + " file");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex, "DownloadAuthen" + source);
+            }
+        }
+
         public void DownloadNoAuthen(string source, string destination, bool isMove)
         {
             var count = 0;
@@ -97,6 +139,45 @@ namespace BluePosVoucher
             catch (Exception ex)
             {
                 _logger.Error("Lỗi",ex);
+            }
+        }
+        public void DownloadNoAuthen_FileName(string source, string destination, bool isMove,string FileName)
+        {
+            var count = 0;
+            try
+            {
+                PrepareDownloadFolder(destination);
+                //KeyboardInteractiveAuthenticationMethod keybAuth = new KeyboardInteractiveAuthenticationMethod(Username);
+                //keybAuth.AuthenticationPrompt += new EventHandler<AuthenticationPromptEventArgs>(HandleKeyEvent);
+
+                using (SftpClient client = new SftpClient(Host, Port, Username, Password))
+                {
+                    client.Connect();
+                    client.ChangeDirectory(source);
+                    // List the files and folders of the directory
+                    var files = client.ListDirectory(source);
+                    files = files.OrderBy(e => e.Name);
+
+                    foreach (SftpFile file in files)
+                    {
+                        if (!file.IsDirectory && !file.IsSymbolicLink)
+                        {
+                            // Check if the file name starts with "PLH"
+                            if (file.Name.StartsWith(FileName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                DownloadFile(client, file, destination);
+                                count++;
+                                file.Delete();
+                            }
+                        }
+                    }
+                    client.Disconnect();
+                }
+                _logger.Information("Download from sftp: " + count.ToString() + " file");
+            }
+            catch (Exception ex)
+            {
+                _logger.Error("Lỗi", ex);
             }
         }
         public void UploadSftpLinux(string source, string destination, string archive, string extention, short setPermissions = 744, bool isMove = true)

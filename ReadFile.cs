@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 using System.Xml;
 using Job_By_SAP.Data;
 using Microsoft.Data.SqlClient;
+using Job_By_SAP.Models;
+using CsvHelper.Configuration;
+using Job_By_SAP.PLH;
+using Dapper;
 
 namespace Read_xml
 {
@@ -22,7 +26,7 @@ namespace Read_xml
         {
             _logger = logger;
         }
-        
+
         public void ProcessCSV_CARStockBalance(string csvFile, string processedFolderPathter)
         {
             try
@@ -33,13 +37,13 @@ namespace Read_xml
                     using (var reader = new StreamReader(csvFile))
                     using (var csv = new CsvReader(reader, new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
                     {
-                        Delimiter = "|", 
-                        HasHeaderRecord = true, 
+                        Delimiter = "|",
+                        HasHeaderRecord = true,
                     }))
 
                     {
                         string[] lines = File.ReadAllLines(csvFile);
-                        CARStockBalance cARStock    = new CARStockBalance();
+                        CARStockBalance cARStock = new CARStockBalance();
                         int count = 0;
                         for (int i = 1; i < lines.Length; i++)
                         {
@@ -53,7 +57,7 @@ namespace Read_xml
                             cARStock.MCH5 = data[3];
                             cARStock.BaseUoM = data[4];
                             cARStock.UnreUseQty = data[5];
-                            cARStock.UnreConsQty =data[6];
+                            cARStock.UnreConsQty = data[6];
                             cARStock.TransitQty = data[7];
                             cARStock.UnprSaleQty = RemoveCommas(data[8]);
                             cARStock.FileName = fileName;
@@ -110,6 +114,65 @@ namespace Read_xml
                 _logger.Error(e, "Lỗi ProcessCSV_CARStockBalance");
             }
         }
+        public void ProcessCSV_GCP_Sale_Retry(string csvFile, string processedFolderPathter, string configdb)
+        {
+            try
+            {
+                List<Receipt_Retry> receiptData = new List<Receipt_Retry>();
+
+
+                using (SqlConnection DBINBOUND = new SqlConnection(configdb))
+                {
+                    DBINBOUND.Open();
+                    using (var reader = new StreamReader(csvFile))
+                    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+                    {
+                        var records = csv.GetRecords<dynamic>().ToList();
+                        foreach (var record in records)
+                        {
+                            var receipt = new Receipt_Retry
+                            {
+                                RECEIPT_NO = record.RECEIPT_NO,
+                                UpdateFlg = "N",
+                                CrtDate = DateTime.Now, 
+                            };
+                            receiptData.Add(receipt);
+                        }
+                    }
+                    string deleteCommand = $"DELETE FROM Temp_SalesGCP_Retry WHERE OrderNo = @RECEIPT_NO";
+                    int rowsDelete= DBINBOUND.Execute(deleteCommand, receiptData);
+
+                    int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP_Retry(), receiptData);
+                    _logger.Information($"Insert thành công: {rowsAffected} Row");
+
+                    if (Directory.Exists(processedFolderPathter))
+                    {
+                        string destinationPath = Path.Combine(processedFolderPathter, Path.GetFileName(csvFile));
+                        if (File.Exists(destinationPath))
+                        {
+                            File.Delete(destinationPath);
+                        }
+                        File.Move(csvFile, destinationPath);
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(processedFolderPathter);
+                        string destinationPath = Path.Combine(processedFolderPathter, Path.GetFileName(csvFile));
+                        if (File.Exists(destinationPath))
+                        {
+                            File.Delete(destinationPath);
+                        }
+                        File.Move(csvFile, destinationPath);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Lỗi ProcessCSV_GCP_Sale_Retry");
+            }
+        }
+
+
         public string RemoveCommas(string input)
         {
             while (input.EndsWith(",,") || input.EndsWith(","))
