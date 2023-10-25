@@ -3,14 +3,17 @@ using BluePosVoucher;
 using BluePosVoucher.Data;
 using BluePosVoucher.Models;
 using Dapper;
+using Job_By_SAP;
 using Job_By_SAP.Data;
 using Job_By_SAP.Models;
 using Job_By_SAP.PLH;
+using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Read_xml;
+using Read_xml.Data;
 using Serilog;
 using System;
 using System.Data;
@@ -25,9 +28,18 @@ internal class Program
 {
     private static IConfiguration _configuration;
     private static ILogger _logger;
+    private static ILogger _logger_WCM;
+    private static ILogger _logger_VINID;
+    private static ILogger _logger_PLH;
+    private static ILogger _logger_HR;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
+        _logger_WCM = SerilogLogger.GetLogger_WCM();
+        _logger_VINID = SerilogLogger.GetLogger_VinID();
+        _logger_PLH = SerilogLogger.GetLogger_PLH();
+        _logger_HR = SerilogLogger.GetLogger_HR();
+
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger);
         ReadFile readfilSAP = new ReadFile(_logger);
         IConfiguration configuration = new ConfigurationBuilder()
@@ -37,7 +49,7 @@ internal class Program
         using (var db = new DbConfigAll())
         {
             string functionName = args[0];
-            //string functionName = "GCP_ARCHIVE";
+            //string functionName = "GCP_Sale_Retry";
             if (args.Length > 0)
             {
                 switch (functionName)
@@ -218,8 +230,8 @@ internal class Program
                         }
                         break;
                     case "PRD_CARStockBalance":
-                        _logger.Information("------------------------------------------------------");
-                        _logger.Information("Run PRD_CARStockBalance");
+                        _logger_VINID.Information("------------------------------------------------------");
+                        _logger_VINID.Information("Run PRD_CARStockBalance");
                         var configcar = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalance" && p.Status == true);
                         if (configcar != null)
                         {
@@ -232,8 +244,8 @@ internal class Program
                             string processedFoldercar = configcar.MoveFolderPath;
                             if (configcar.IsDownload == true)
                             {
-                                SftpHelper sftpHelper = new SftpHelper(IpSftp, Host, username, password, _logger);
-                                _logger.Information("Bắt đầu tải CARStockBalance : Call sftpHelper.DownloadAuthen ");
+                                SftpHelper sftpHelper = new SftpHelper(IpSftp, Host, username, password, _logger_VINID);
+                                _logger_VINID.Information("Bắt đầu tải CARStockBalance : Call sftpHelper.DownloadAuthen ");
                                 sftpHelper.DownloadAuthen(pathRemoteCar, pathLocalCar);
                             }
                             var configupfile = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalanceVinID" && p.Status == true);
@@ -247,7 +259,7 @@ internal class Program
                             string processedFoldervinid = configupfile.MoveFolderPath;
                             string[] filteredStrings = Directory.GetFiles(pathlocaldirectory, "*.CSV");
                             int countslvinid = filteredStrings.Length;
-                            _logger.Information("Copy file Process");
+                            _logger_VINID.Information("Copy file Process");
                             if (filteredStrings.Length > 0)
                             {
                                 if (Directory.Exists(pathLocalfile))
@@ -258,7 +270,7 @@ internal class Program
                                         string fName = f.Substring(pathlocaldirectory.Length);
                                         File.Copy(Path.Combine(pathlocaldirectory, fName), Path.Combine(pathLocalfile, fName), true);
                                     }
-                                    _logger.Information($"Copy file : {filteredStrings.Length}");
+                                    _logger_VINID.Information($"Copy file : {filteredStrings.Length}");
                                 }
                                 else
                                 {
@@ -273,19 +285,19 @@ internal class Program
                             }
                             else
                             {
-                                _logger.Information("Không có file Copy");
+                                _logger_VINID.Information("Không có file Copy");
                             }
-                            _logger.Information("Upload File Stock VinID");
-                            SftpHelper sftpHelperup = new SftpHelper(IpSftpvinid, Hostvinid, usernamevinid, passwordvinid, _logger);
+                            _logger_VINID.Information("Upload File Stock VinID");
+                            SftpHelper sftpHelperup = new SftpHelper(IpSftpvinid, Hostvinid, usernamevinid, passwordvinid, _logger_VINID);
                             sftpHelperup.UploadSftpLinux2(pathLocalfile, pathuploadfile, processedFoldervinid, "*.CSV");
 
-                            _logger.Information("Bắt đầu đọc CARStockBalance: " + pathLocalCar);
+                            _logger_VINID.Information("Bắt đầu đọc CARStockBalance: " + pathLocalCar);
                             if (Directory.Exists(pathLocalCar))
                             {
                                 string[] xmlFilester = filteredStrings.Where(str => str.Contains("PRD_VINID")).ToArray();
                                 var count = 0;
                                 int countsl = xmlFilester.Length;
-                                _logger.Information("Tổng File :" + countsl);
+                                _logger_VINID.Information("Tổng File :" + countsl);
                                 var taskster = new Task[countsl];
                                 if (countsl > 0)
                                 {
@@ -299,7 +311,7 @@ internal class Program
 
                                         }
                                         await Task.WhenAll(taskster);
-                                        _logger.Information("(Job CARStockBalance)- Số File : " + count.ToString() + " Insert thành công");
+                                        _logger_VINID.Information("(Job CARStockBalance)- Số File : " + count.ToString() + " Insert thành công");
                                     }
                                     else
                                     {
@@ -308,54 +320,54 @@ internal class Program
                                             readfilSAP.ProcessCSV_CARStockBalance(xmlFile1, processedFoldercar);
                                             count++;
                                         }
-                                        _logger.Information("(Job CARStockBalance)- Số File : " + count.ToString() + " Insert thành công");
+                                        _logger_VINID.Information("(Job CARStockBalance)- Số File : " + count.ToString() + " Insert thành công");
                                     }
                                     string[] getfile = Directory.GetFiles(pathLocalCar, "*.CSV");
                                     int fileLoi = getfile.Length;
                                     if (fileLoi > 0)
                                     {
-                                        _logger.Information("(Job CARStockBalance) Có : " + fileLoi + " file Lỗi Vui Lòng Kiểm tra ở Folder " + pathLocalCar);
+                                        _logger_VINID.Information("(Job CARStockBalance) Có : " + fileLoi + " file Lỗi Vui Lòng Kiểm tra ở Folder " + pathLocalCar);
                                     }
-                                    DataSqlProcedure dataSql = new DataSqlProcedure(_logger);
+                                    DataSqlProcedure dataSql = new DataSqlProcedure(_logger_VINID);
                                     if (fileLoi == 0)
                                     {
                                         dataSql.Insert_TK_CarStockBalance();
                                     }
                                     else
                                     {
-                                        _logger.Information("Còn " + fileLoi + " Chưa đọc hết chưa run được procedure");
+                                        _logger_VINID.Information("Còn " + fileLoi + " Chưa đọc hết chưa run được procedure");
                                     }
                                 }
                                 else
                                 {
-                                    _logger.Information("Không Có Data");
+                                    _logger_VINID.Information("Không Có Data");
                                 }
                             }
                             else
                             {
-                                _logger.Information("File Not Found");
+                                _logger_VINID.Information("File Not Found");
                                 Directory.CreateDirectory(pathLocalCar);
                             }
                         }
                         else
                         {
-                            _logger.Information("Chưa khai báo Host");
+                            _logger_VINID.Information("Chưa khai báo Host");
                         }
                         break;
                     case "GCP":
-                        _logger.Information("------------------------------------------------------");
-                        _logger.Information("Run GCP");
+                        _logger_PLH.Information("------------------------------------------------------");
+                        _logger_PLH.Information("Run GCP");
                         var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUND" && p.Status == true);//config DB
                         if (configPLH.Count() > 0)
                         {
-                            PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger);
+                            PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger_PLH);
                             foreach (var cfig in configPLH)
                             {
-                                _logger.Information($"Connect DB: {cfig.Name}");
+                                _logger_PLH.Information($"Connect DB: {cfig.Name}");
                                 var listOrder = PLH_To_GCPs.OrderExpToGCPAsync(cfig.ConnectString);//listOrder
                                 if (listOrder.Count > 0)
                                 {
-                                    _logger.Information($"Send Data To API: {listOrder.Count} Row");
+                                    _logger_PLH.Information($"Send Data To API: {listOrder.Count} Row");
                                     string apiUrl = configuration["API_GCP"];
                                     using (HttpClient httpClient = new HttpClient())
                                     {
@@ -367,7 +379,7 @@ internal class Program
                                             request.Content = content;
                                             HttpResponseMessage response = await httpClient.SendAsync(request);
                                             // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
-                                            _logger.Information($"Response API: {response.StatusCode}");
+                                            _logger_PLH.Information($"Response API: {response.StatusCode}");
                                             if (response.IsSuccessStatusCode)
                                             {
                                                 PLH_To_GCPs.InsertTempGCP(listOrder, "True", cfig.ConnectString);
@@ -379,19 +391,88 @@ internal class Program
                                         }
                                         catch (Exception ex)
                                         {
-                                            _logger.Error("Lỗi: " + ex.Message);
+                                            _logger_PLH.Error("Lỗi: " + ex.Message);
                                         }
                                     }
                                 }
                                 else
                                 {
-                                    _logger.Information($"Không có data GCP");
+                                    _logger_PLH.Information($"Không có data GCP");
                                 }
                             }
                         }
                         else
                         {
-                            _logger.Information("Staus đang Off or chưa khai báo Connections type = PLH_INBOUND");
+                            _logger_PLH.Information("Staus đang Off or chưa khai báo Connections type = PLH_INBOUND");
+                        }
+                        break;
+                    case "GCP_WCM":
+                        _logger_WCM.Information("------------------------------------------------------");
+                        _logger_WCM.Information("Run GCP_WCM");
+                        var configWCM = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP" && p.Status == true);//config DB
+                        if (configWCM.Count() > 0)
+                        {
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
+                            foreach (var cfig in configWCM)
+                            {
+                                _logger_WCM.Information($"Connect DB: {cfig.Name}");
+                                var listOrder = WCM_To_GCPs.OrderWcmToGCPAsync(cfig.ConnectString);//listOrder
+                                if (listOrder.Count > 0)
+                                {
+                                    //string json = JsonConvert.SerializeObject(listOrder);
+                                    //string filePathError = "data.text";
+                                    //File.WriteAllText(filePathError, json);
+                                    _logger_WCM.Information($"Send Data To API: {listOrder.Count} Row");
+                                    string apiUrl = configuration["API_GCP_WCM"];
+                                    using (HttpClient httpClient = new HttpClient())
+                                    {
+                                        try
+                                        {
+                                            List<List<WcmGCPModels>> orderBatches = listOrder
+                                          .Select((order, index) => new { order, index })
+                                          .GroupBy(x => x.index / 1000)
+                                          .Select(group => group.Select(x => x.order).ToList())
+                                          .ToList();
+                                            foreach (var batch in orderBatches)
+                                            {
+                                                string json = JsonConvert.SerializeObject(batch);
+                                                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                request.Content = content;
+                                                HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
+
+                                                if (response.IsSuccessStatusCode)
+                                                {
+                                                    _logger_WCM.Information($"Response API: {response.StatusCode}, {batch.Count} Row Thành Công!!");
+                                                }
+                                                else
+                                                {
+                                                    DateTime currentDateTime = DateTime.Now;
+                                                    string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
+                                                    _logger_WCM.Information($"Response API: {response.StatusCode}");
+                                                    string filePathError = $"data{dateTimeString}.text";
+                                                    File.WriteAllText(filePathError, json);
+                                                    _logger_WCM.Information($"Send API Data Fail");
+                                                }
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            _logger_WCM.Error("Lỗi: " + ex.Message);
+
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    _logger_WCM.Information($"Không có Send data GCP");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                         }
                         break;
                     case "GCP_ARCHIVE":
@@ -533,7 +614,6 @@ internal class Program
                             if (configPLH_RetrySftp.IsDownload == true)
                             {
                                 SftpHelper sftpHelper = new SftpHelper(configPLH_RetrySftp.IpSftp, 22, configPLH_RetrySftp.username, configPLH_RetrySftp.password, _logger);
-                                _logger.Information("Bắt đầu tải GCP_Sale_Retry");
                                 sftpHelper.DownloadNoAuthen(configPLH_RetrySftp.pathRemoteDirectory, configPLH_RetrySftp.LocalFoderPath, true);
                             }
                         }
@@ -541,7 +621,6 @@ internal class Program
                         var configPLH_inbound = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_GCP_Retry" && p.Status == true);//config DB
                         foreach (var connection in configPLH_inbound)
                         {
-                            _logger.Information("RUN PLH_GCP_Retry");
                             if (Directory.Exists(configPLH_RetrySftp.LocalFoderPath))
                             {
                                 string[] filteredStrings = Directory.GetFiles(configPLH_RetrySftp.LocalFoderPath, "*.CSV");
@@ -550,6 +629,7 @@ internal class Program
                                 {
                                     readfilSAP.ProcessCSV_GCP_Sale_Retry(xmlFilesterString, configPLH_RetrySftp.MoveFolderPath, connection.ConnectString);
                                 }
+                                _logger.Information($"Run {xmlFilester.Length} Thành Công");
                             }
                             else
                             {
@@ -558,8 +638,8 @@ internal class Program
                             }
                         }
                         _logger.Information("RUN WCM_GCP_Retry");
-                        var configPLHSet1Wcm = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP_Retry" && p.Status == true);//config DB
-                        foreach (var connection in configPLHSet1Wcm)
+                        var configSet1Wcm = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP_Retry" && p.Status == true);//config DB
+                        foreach (var connection in configSet1Wcm)
                         {
                             if (Directory.Exists(configPLH_RetrySftp.LocalFoderPath))
                             {
@@ -569,6 +649,7 @@ internal class Program
                                 {
                                     readfilSAP.ProcessCSV_GCP_Sale_Retry(xmlFileWcm, configPLH_RetrySftp.MoveFolderPath, connection.ConnectString);
                                 }
+                                _logger.Information($"Run {xmlFilewcm.Length} Thành Công");
                             }
                             else
                             {
@@ -576,6 +657,193 @@ internal class Program
                                 _logger.Information("Không có file or thư mục");
                             }
                         }
+                        break;
+                    case "HR_All":
+                        _logger_HR.Information("Run HR_All");
+                        Insert_HR_ALL insertDBPRD = new Insert_HR_ALL(_logger_HR);
+                        using (var dbhr = new Dbhrcontext())
+                        {
+
+                            var Host = db.Configs.FirstOrDefault(p => p.Type == "HOST");
+                            if (Host != null)
+                            {
+                                if (Host.IpSftp == null && Host.IpSftp == "")
+                                {
+                                    _logger_HR.Information("Not found IpSftp ");
+                                }
+                                if (Host.username == null && Host.username == "")
+                                {
+                                    _logger_HR.Information("Not found IpSftp ");
+                                }
+                                if (Host.password == null && Host.password == "")
+                                {
+                                    _logger_HR.Information("Not found IpSftp ");
+                                }
+                                SftpHelper sftpHelper = new SftpHelper(Host.IpSftp, 22, Host.username, Host.password, _logger_HR);
+
+                                ReadFileHR readfilexml = new ReadFileHR(_logger_HR);
+
+                                try
+                                {
+                                    //------------config  HR_Terninate--------
+                                    var configHR_Terninate = db.Configs.FirstOrDefault(p => p.Type == "HR_Terninate" && p.Status == true);
+
+                                    if (configHR_Terninate != null)
+                                    {
+                                        string pathRemoteDirectoryter = configHR_Terninate.pathRemoteDirectory;
+                                        string pathLocalDirectoryter = configHR_Terninate.pathLocalDirectory;
+                                        string processedFolderPathter = configHR_Terninate.MoveFolderPath;
+                                        if (pathRemoteDirectoryter == null)
+                                        {
+                                            _logger_HR.Information("Path not found pathRemoteDirectory ");
+
+                                        }
+                                        if (pathLocalDirectoryter == null)
+                                        {
+                                            _logger_HR.Information("Path not found pathLocalDirectory ");
+
+                                        }
+                                        if (processedFolderPathter == null)
+                                        {
+                                            _logger_HR.Information("Path not found pathMoveDirectory ");
+
+                                        }
+                                        if (configHR_Terninate.LastTimeRun == null)
+                                        {
+                                            configHR_Terninate.LastTimeRun = default(DateTime);
+                                        }
+                                        _logger_HR.Information("Bắt đầu tải HR_Terninate : Call sftpHelper.DownloadNoAuthen");
+                                        sftpHelper.DownloadAuthen(pathRemoteDirectoryter, pathLocalDirectoryter);
+                                        //------------Dowload  Getfile HR_Terninate------------
+                                        _logger_HR.Information("Bắt đầu đọc file HR_Terninate" + pathLocalDirectoryter);
+                                        if (Directory.Exists(pathLocalDirectoryter))
+                                        {
+                                            string[] filteredStrings = Directory.GetFiles(pathLocalDirectoryter, "*.xml");
+                                            string[] xmlFilester = filteredStrings.Where(str => str.Contains("PRD_HR_Dashboard_Terminate")).ToArray();
+                                            var counter = 0;
+                                            var taskster = new Task[xmlFilester.Length];
+                                            if (xmlFilester.Length > 100)
+                                            {
+                                                for (int i = 0; i < xmlFilester.Length; i++)
+                                                {
+                                                    string xmlFile = xmlFilester[i];
+                                                    taskster[i] = Task.Run(() => readfilexml.ProcessXmlFileHR_Terninate(xmlFile, processedFolderPathter));
+                                                    counter++;
+                                                }
+                                                await Task.WhenAll(taskster);
+                                                _logger_HR.Information("Process : " + counter.ToString() + " file HR_Terninate");
+                                            }
+                                            else
+                                            {
+                                                foreach (string xmlFile1 in xmlFilester)
+                                                {
+                                                    readfilexml.ProcessXmlFileHR_Terninate(xmlFile1, processedFolderPathter);
+                                                    counter++;
+                                                }
+                                                _logger_HR.Information("Process: " + counter.ToString() + " file HR_Terninate");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger_HR.Information("File Not Found");
+                                            Directory.CreateDirectory(pathLocalDirectoryter);
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _logger_HR.Information("Chưa khai báo config cho type:'HR_Terninate''");
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    _logger_HR.Error(e, "HR_Terninate");
+                                }
+
+                                try
+                                {
+                                    // ------------Dowload  HR_Dashboard--------
+                                    var configHR_Dashboard = db.Configs.FirstOrDefault(p => p.Type == "HR_Dashboard" && p.Status == true);
+
+                                    if (configHR_Dashboard != null)
+                                    {
+                                        string pathRemoteDirectory = configHR_Dashboard.pathRemoteDirectory;
+                                        string pathLocalDirectory = configHR_Dashboard.pathLocalDirectory;
+                                        string processedFolderPath = configHR_Dashboard.MoveFolderPath;
+
+                                        if (pathRemoteDirectory == null)
+                                        {
+                                            _logger_HR.Information("Path not found pathRemoteDirectory ");
+
+                                        }
+                                        if (pathLocalDirectory == null)
+                                        {
+                                            _logger_HR.Information("Path not found pathLocalDirectory ");
+
+                                        }
+                                        if (processedFolderPath == null)
+                                        {
+                                            _logger_HR.Information("Path not found pathMoveDirectory ");
+
+                                        }
+                                        if (configHR_Dashboard.LastTimeRun == null)
+                                        {
+                                            configHR_Dashboard.LastTimeRun = default(DateTime);
+                                        }
+                                        _logger_HR.Information("Bắt đầu tải HR_Dashboard: Call sftpHelper.DownloadNoAuthen ");
+                                        sftpHelper.DownloadAuthen(pathRemoteDirectory, pathLocalDirectory);
+
+                                        _logger_HR.Information("Bắt đầu đọc HR_Dashboard" + pathLocalDirectory);
+                                        if (Directory.Exists(pathLocalDirectory))
+                                        {
+                                            string[] filteredStrings = Directory.GetFiles(pathLocalDirectory, "*.xml");
+                                            string[] xmlFiles = filteredStrings.Where(str => str.Contains("PRD_HR_Dashboard")).ToArray();
+                                            var count = 0;
+                                            var tasks = new Task[xmlFiles.Length];
+                                            if (xmlFiles.Length > 100)
+                                            {
+                                                for (int i = 0; i < xmlFiles.Length; i++)
+                                                {
+                                                    string xmlFile = xmlFiles[i];
+                                                    tasks[i] = Task.Run(() => readfilexml.ProcessXmlFileDbdashboard(xmlFile, processedFolderPath));
+                                                    count++;
+                                                }
+                                                await Task.WhenAll(tasks);
+                                                _logger_HR.Information("Process : " + count.ToString() + " file HR_Dashboard");
+                                            }
+                                            else
+                                            {
+                                                foreach (string xmlFile1 in xmlFiles)
+                                                {
+                                                    readfilexml.ProcessXmlFileDbdashboard(xmlFile1, processedFolderPath);
+                                                    count++;
+                                                }
+                                                _logger_HR.Information("Process : " + count.ToString() + " file HR_Dashboard");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger_HR.Information("File Not Found");
+                                            Directory.CreateDirectory(pathLocalDirectory);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _logger_HR.Information("Chưa khai báo config cho type:'HR_Dashboard''");
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    _logger_HR.Error(e, "HR_Dashboard");
+                                }
+                            }
+                            else
+                            {
+                                _logger_HR.Information("Chưa khai báo Type: 'HOST'");
+                            }
+                        }
+                        insertDBPRD.Insert_HR_All();
+                        insertDBPRD.Insert_HR_All_PRD();
                         break;
                     default:
                         _logger.Information("Invalid function name.");

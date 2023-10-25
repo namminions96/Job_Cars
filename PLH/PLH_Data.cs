@@ -73,7 +73,7 @@ namespace Job_By_SAP.PLH
         }
         public static string InsertTemp_SalesGCP_Retry()
         {
-            return @"INSERT INTO Temp_SalesGCP_Retry ([OrderNo],[UpdateFlg], [CrtDate])
+            return @"INSERT INTO Temp_SalesGCP_Retry ([RECEIPT_NO],[UpdateFlg], [CrtDate])
                                         VALUES
                                         (@RECEIPT_NO, @UpdateFlg, @CrtDate)";
         }

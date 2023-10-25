@@ -16,6 +16,8 @@ using Job_By_SAP.Models;
 using CsvHelper.Configuration;
 using Job_By_SAP.PLH;
 using Dapper;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace Read_xml
 {
@@ -118,9 +120,9 @@ namespace Read_xml
         {
             try
             {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(configdb);
+                string databaseName = builder.InitialCatalog;
                 List<Receipt_Retry> receiptData = new List<Receipt_Retry>();
-
-
                 using (SqlConnection DBINBOUND = new SqlConnection(configdb))
                 {
                     DBINBOUND.Open();
@@ -134,17 +136,35 @@ namespace Read_xml
                             {
                                 RECEIPT_NO = record.RECEIPT_NO,
                                 UpdateFlg = "N",
-                                CrtDate = DateTime.Now, 
+                                CrtDate = DateTime.Now,
                             };
                             receiptData.Add(receipt);
                         }
                     }
-                    string deleteCommand = $"DELETE FROM Temp_SalesGCP_Retry WHERE OrderNo = @RECEIPT_NO";
-                    int rowsDelete= DBINBOUND.Execute(deleteCommand, receiptData);
+                    string querry = $"SELECT RECEIPT_NO  ,[UpdateFlg] ,[CrtDate] FROM [{databaseName}].[dbo].[Temp_SalesGCP_Retry]";
 
-                    int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP_Retry(), receiptData);
-                    _logger.Information($"Insert thành công: {rowsAffected} Row");
+                    List<Receipt_Retry> datadb = DBINBOUND.Query<Receipt_Retry>(querry).AsList();
 
+                    var joinedData = receiptData
+                     .Join(datadb, receiptData => receiptData.RECEIPT_NO,
+                                         data => data.RECEIPT_NO,
+                            (receiptData, data) => new
+                            {
+                                RECEIPT_NO = receiptData.RECEIPT_NO,
+                                UpdateFlg = receiptData.UpdateFlg,
+                                CrtDate = receiptData.CrtDate,
+                            }
+                            ).ToList();
+                    if (joinedData.Count > 0)
+                    {
+                        string DeleteCommand = $"Delete Temp_SalesGCP_Retry WHERE RECEIPT_NO = @RECEIPT_NO";
+                        int rowsupdate = DBINBOUND.Execute(DeleteCommand, joinedData);
+                    }
+
+                  if(receiptData.Count > 0)
+                    {
+                        int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP_Retry(), receiptData);
+                    }
                     if (Directory.Exists(processedFolderPathter))
                     {
                         string destinationPath = Path.Combine(processedFolderPathter, Path.GetFileName(csvFile));
