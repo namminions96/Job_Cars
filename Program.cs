@@ -20,6 +20,7 @@ using System.Data;
 using System.Diagnostics.Metrics;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Xml.Linq;
 using static Azure.Core.HttpHeader;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -32,6 +33,7 @@ internal class Program
     private static ILogger _logger_VINID;
     private static ILogger _logger_PLH;
     private static ILogger _logger_HR;
+    private static ILogger _logger_Job;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
@@ -39,6 +41,7 @@ internal class Program
         _logger_VINID = SerilogLogger.GetLogger_VinID();
         _logger_PLH = SerilogLogger.GetLogger_PLH();
         _logger_HR = SerilogLogger.GetLogger_HR();
+        _logger_Job = SerilogLogger.GetLogger_Job();
 
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger);
         ReadFile readfilSAP = new ReadFile(_logger);
@@ -49,7 +52,7 @@ internal class Program
         using (var db = new DbConfigAll())
         {
             string functionName = args[0];
-            //string functionName = "GCP_Sale_Retry";
+            //string functionName = "GCP";
             if (args.Length > 0)
             {
                 switch (functionName)
@@ -407,8 +410,7 @@ internal class Program
                         }
                         break;
                     case "GCP_WCM":
-                        _logger_WCM.Information("------------------------------------------------------");
-                        _logger_WCM.Information("Run GCP_WCM");
+                        _logger_WCM.Information("--------------------------Run GCP_WCM----------------------------");
                         var configWCM = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP" && p.Status == true);//config DB
                         if (configWCM.Count() > 0)
                         {
@@ -416,6 +418,14 @@ internal class Program
                             foreach (var cfig in configWCM)
                             {
                                 _logger_WCM.Information($"Connect DB: {cfig.Name}");
+                                //using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                //{
+                                //    sqlConnection.Open();
+                                //    var timeout = 300;
+                                //    _logger_WCM.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
+                                //    var ExcPblueSet = sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout);
+                                //    sqlConnection.Close();
+                                //}
                                 var listOrder = WCM_To_GCPs.OrderWcmToGCPAsync(cfig.ConnectString);//listOrder
                                 if (listOrder.Count > 0)
                                 {
@@ -459,7 +469,7 @@ internal class Program
                                         }
                                         catch (Exception ex)
                                         {
-                                            _logger_WCM.Error("Lỗi: " + ex.Message);
+                                            _logger_WCM.Error("Lỗi: " + ex.InnerException);
 
                                         }
                                     }
@@ -475,9 +485,40 @@ internal class Program
                             _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                         }
                         break;
+                    case "JOB_GCP_WCM":
+                        _logger_Job.Information("--------RUN_JOB_GCP_WCM----------");
+                        var configWCM_JOB = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP" && p.Status == true);//config DB
+                        if (configWCM_JOB.Count() > 0)
+                        {
+                            foreach (var cfig in configWCM_JOB)
+                            {
+                                try
+                                {
+                                    _logger_Job.Information($"Connect DB: {cfig.Name}");
+                                    using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 300;
+                                        _logger_Job.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
+                                        var ExcPblueSet = sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout);
+                                        sqlConnection.Close();
+                                        _logger_Job.Information($"Run Job Done");
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    _logger_Job.Error($"xLôi", e.Message);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger_Job.Information("Staus đang Off or chưa khai báo Connections type = JOB_GCP_WCM");
+                        }
+                        break;
                     case "GCP_ARCHIVE":
                         _logger.Information("Run GCP_ARCHIVE");
-                        var configPLH_Ar = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUNDArchive" && p.Status == true);//config DB
+                        var configPLH_Ar = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_GCP_Retry" && p.Status == true);//config DB
                         if (configPLH_Ar.Count() > 0)
                         {
                             PLH_To_GCP_Retry pLH_To_GCP_Retry = new PLH_To_GCP_Retry(_logger);
@@ -844,6 +885,44 @@ internal class Program
                         }
                         insertDBPRD.Insert_HR_All();
                         insertDBPRD.Insert_HR_All_PRD();
+                        break;
+                    case "JobDeleteFile":
+                        _logger_VINID.Information("JobDeleteFile_VINID");
+                        var configJobDeleteFile = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalance" && p.Status == true);
+                        if (configJobDeleteFile.MoveFolderPath != null)
+                        {
+                            string folderPath = configJobDeleteFile.MoveFolderPath;
+                            string[] files = Directory.GetFiles(folderPath);
+                            if (files.Length > 0)
+                            {
+                                DateTime currentDate = DateTime.Now;
+                                int daysToKeep = 5;
+                                foreach (string filePath in files)
+                                {
+                                    FileInfo fileInfo = new FileInfo(filePath);
+                                    TimeSpan timeSinceCreation = currentDate - fileInfo.CreationTime;
+                                    if (timeSinceCreation.Days >= daysToKeep)
+                                    {
+                                        try
+                                        {
+                                            File.Delete(filePath);
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            _logger.Error($"Lỗi khi xóa tệp {filePath}: {e.Message}");
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                _logger.Information("Không có file để xóa");
+                            }
+                        }
+                        else
+                        {
+                            _logger.Information("Chưa khai báo thư mục cần xóa !");
+                        }
                         break;
                     default:
                         _logger.Information("Invalid function name.");

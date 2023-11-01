@@ -27,10 +27,10 @@ namespace Job_By_SAP.PLH
         }
         public static string TransDiscountEntryQueryArchive()
         {
-            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo] PromotionNo,[OfferType] PromotionType,[Quantity] Qty, DiscountAmount,[LineGroup] Note
+            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
                      FROM CentralSales.dbo.[TransDiscountEntry] NOLOCK WHERE OrderNo IN @orderNo
                      UNION
-                     SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo] PromotionNo,[OfferType] PromotionType,[Quantity] Qty, DiscountAmount,[LineGroup] Note
+                     SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
                      FROM CentralSalesArchive.dbo.TransDiscountCouponEntry NOLOCK 
                      WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')";
         }
@@ -48,10 +48,10 @@ namespace Job_By_SAP.PLH
      
         public static string TransDiscountEntryQuery()
         {
-            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo] PromotionNo,[OfferType] PromotionType,[Quantity] Qty, DiscountAmount,[LineGroup] Note
+            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
                      FROM CentralSales.dbo.[TransDiscountEntry] NOLOCK WHERE OrderNo IN @orderNo
                      UNION
-                     SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo] PromotionNo,[OfferType] PromotionType,[Quantity] Qty, DiscountAmount,[LineGroup] Note
+                     SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
                      FROM CentralSales.dbo.TransDiscountCouponEntry NOLOCK 
                      WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')";
         }

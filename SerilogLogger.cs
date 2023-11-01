@@ -42,5 +42,12 @@ namespace BluePosVoucher
                 .WriteTo.File("LogDetailsFile_HR/LOG.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7)
                 .CreateLogger();
         }
+        public static ILogger GetLogger_Job()
+        {
+            return new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File("LogDetailsFile_Job/LOG.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7)
+                .CreateLogger();
+        }
     }
 }
