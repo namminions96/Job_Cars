@@ -34,6 +34,7 @@ internal class Program
     private static ILogger _logger_PLH;
     private static ILogger _logger_HR;
     private static ILogger _logger_Job;
+    private static ILogger _logger_VC;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
@@ -42,8 +43,10 @@ internal class Program
         _logger_PLH = SerilogLogger.GetLogger_PLH();
         _logger_HR = SerilogLogger.GetLogger_HR();
         _logger_Job = SerilogLogger.GetLogger_Job();
+        _logger_VC = SerilogLogger.GetLogger_VC();
 
-        InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger);
+        SendEmailExample sendEmailExample = new SendEmailExample(_logger);
+        InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger_VC);
         ReadFile readfilSAP = new ReadFile(_logger);
         IConfiguration configuration = new ConfigurationBuilder()
        .SetBasePath(AppContext.BaseDirectory)
@@ -52,14 +55,13 @@ internal class Program
         using (var db = new DbConfigAll())
         {
             string functionName = args[0];
-            //string functionName = "GCP";
+            //string functionName = "VoucherSAP";
             if (args.Length > 0)
             {
                 switch (functionName)
                 {
                     case "VoucherSAP":
-                        _logger.Information("------------------------------------------------------");
-                        _logger.Information("Run VoucherSAP");
+                        _logger_VC.Information("--------------------------VoucherSAP----------------------------");
                         try
                         {
                             //var connections = db.ConfigConnections.ToList().Where(p => p.Type == "VC" && p.Status == true);
@@ -67,7 +69,7 @@ internal class Program
                             // --------------------------------Voucher SAP---------------------------------------------------------- 
                             foreach (var connectionString in connectionsVC)
                             {
-                                _logger.Information("Connect DB : " + connectionString.Name);
+                                _logger_VC.Information("Connect DB : " + connectionString.Name);
                                 try
                                 {
                                     string connect = connectionString.ConnectString;
@@ -84,137 +86,134 @@ internal class Program
                                         var results = connection.Query("INB_Voucher ", parameters, commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
                                         if (results.Count == 0)
                                         {
-                                            _logger.Information($"{connectionString.Name} : Không có Data ");
+                                            _logger_VC.Information($"{connectionString.Name} : Không có Data ");
                                         }
-                                        Inb_Voucher inb_Voucher = new Inb_Voucher();
-                                        foreach (var result in results)
+                                        else
                                         {
-                                            inb_Voucher.Voucher_Type = result.Voucher_Type;
-                                            inb_Voucher.SerialNo = result.SerialNo;
-                                            inb_Voucher.Voucher_Value = result.Voucher_Value;
-                                            inb_Voucher.Voucher_Currency = result.Voucher_Currency;
-                                            inb_Voucher.Validity_From_Date = result.Validity_From_Date;
-                                            inb_Voucher.Expiry_Date = result.Expiry_Date;
-                                            inb_Voucher.Processing_Type = result.Processing_Type;
-                                            inb_Voucher.Status = result.Status;
-                                            inb_Voucher.Site = result.Site;
-                                            inb_Voucher.Article_No = result.Article_No;
-                                            inb_Voucher.Bonus_Buy = result.Bonus_Buy;
-                                            inb_Voucher.POSNo = result.POSNo;
-                                            inb_Voucher.ReceiptNo = result.ReceiptNo;
-                                            inb_Voucher.TranDate = result.TranDate;
-                                            inb_Voucher.TranTime = result.TranTime;
-                                            string POSTerminal = inb_Voucher.ReceiptNo.Substring(0, 6);
-                                            if (inb_Voucher.Status == "EXP")
+                                            Inb_Voucher inb_Voucher = new Inb_Voucher();
+                                            foreach (var result in results)
                                             {
-                                                var calResult = await inbVoucherSap1.CallApiSAPUpdate("VCM", inb_Voucher.SerialNo, inb_Voucher.Article_No, "ZVCN", inb_Voucher.Status, inb_Voucher.Site, POSTerminal);
-                                                if (calResult != null)
+                                                inb_Voucher.Voucher_Type = result.Voucher_Type;
+                                                inb_Voucher.SerialNo = result.SerialNo;
+                                                inb_Voucher.Voucher_Value = result.Voucher_Value;
+                                                inb_Voucher.Voucher_Currency = result.Voucher_Currency;
+                                                inb_Voucher.Validity_From_Date = result.Validity_From_Date;
+                                                inb_Voucher.Expiry_Date = result.Expiry_Date;
+                                                inb_Voucher.Processing_Type = result.Processing_Type;
+                                                inb_Voucher.Status = result.Status;
+                                                inb_Voucher.Site = result.Site;
+                                                inb_Voucher.Article_No = result.Article_No;
+                                                inb_Voucher.Bonus_Buy = result.Bonus_Buy;
+                                                inb_Voucher.POSNo = result.POSNo;
+                                                inb_Voucher.ReceiptNo = result.ReceiptNo;
+                                                inb_Voucher.TranDate = result.TranDate;
+                                                inb_Voucher.TranTime = result.TranTime;
+                                                string POSTerminal = inb_Voucher.ReceiptNo.Substring(0, 6);
+                                                if (inb_Voucher.Status == "EXP")
                                                 {
-                                                    if (calResult == "200")
+                                                    var calResult = await inbVoucherSap1.CallApiSAPUpdate("VCM", inb_Voucher.SerialNo, inb_Voucher.Article_No, "ZVCN", inb_Voucher.Status, inb_Voucher.Site, POSTerminal);
+                                                    if (calResult != null)
                                                     {
-                                                        INB_VoucherToSAP inbVoucherSap = new INB_VoucherToSAP()
+                                                        if (calResult == "200")
                                                         {
-                                                            Voucher_Type = inb_Voucher.Voucher_Type,
-                                                            SerialNo = inb_Voucher.SerialNo,
-                                                            Voucher_Value = inb_Voucher.Voucher_Value,
-                                                            Voucher_Currency = inb_Voucher.Voucher_Currency,
-                                                            Validity_From_Date = inb_Voucher.Validity_From_Date,
-                                                            Expiry_Date = inb_Voucher.Expiry_Date,
-                                                            Processing_Type = inb_Voucher.Processing_Type,
-                                                            Status = inb_Voucher.Status,
-                                                            Site = inb_Voucher.Site,
-                                                            Article_No = inb_Voucher.Article_No,
-                                                            Bonus_Buy = inb_Voucher.Bonus_Buy,
-                                                            POSNo = inb_Voucher.POSNo,
-                                                            ReceiptNo = inb_Voucher.ReceiptNo,
-                                                            TranDate = inb_Voucher.TranDate,
-                                                            TranTime = inb_Voucher.TranTime,
-                                                            FileName = inb_Voucher.SerialNo
-                                                        };
-                                                        string insertSql = @"INSERT INTO INB_VoucherToSAP 
+                                                            List<INB_VoucherToSAP> inbVoucherSap = new List<INB_VoucherToSAP>();
+                                                            {
+                                                                INB_VoucherToSAP iNB_VoucherToSAP = new INB_VoucherToSAP();
+                                                                iNB_VoucherToSAP.Voucher_Type = inb_Voucher.Voucher_Type;
+                                                                iNB_VoucherToSAP.SerialNo = inb_Voucher.SerialNo;
+                                                                iNB_VoucherToSAP.Voucher_Value = inb_Voucher.Voucher_Value;
+                                                                iNB_VoucherToSAP.Voucher_Currency = inb_Voucher.Voucher_Currency;
+                                                                iNB_VoucherToSAP.Validity_From_Date = inb_Voucher.Validity_From_Date;
+                                                                iNB_VoucherToSAP.Expiry_Date = inb_Voucher.Expiry_Date;
+                                                                iNB_VoucherToSAP.Processing_Type = inb_Voucher.Processing_Type;
+                                                                iNB_VoucherToSAP.Status = inb_Voucher.Status;
+                                                                iNB_VoucherToSAP.Site = inb_Voucher.Site;
+                                                                iNB_VoucherToSAP.Article_No = inb_Voucher.Article_No;
+                                                                iNB_VoucherToSAP.Bonus_Buy = inb_Voucher.Bonus_Buy;
+                                                                iNB_VoucherToSAP.POSNo = inb_Voucher.POSNo;
+                                                                iNB_VoucherToSAP.ReceiptNo = inb_Voucher.ReceiptNo;
+                                                                iNB_VoucherToSAP.TranDate = inb_Voucher.TranDate;
+                                                                iNB_VoucherToSAP.TranTime = inb_Voucher.TranTime;
+                                                                iNB_VoucherToSAP.FileName = inb_Voucher.SerialNo;
+                                                                inbVoucherSap.Add(iNB_VoucherToSAP);
+                                                            };
+                                                            string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                            int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                            _logger_VC.Information($"Update Status {inb_Voucher.SerialNo},{rowsAffectedupdate} Rows ");
+                                                            string insertSql = @"INSERT INTO INB_VoucherToSAP 
                                         (Voucher_Type, SerialNo, Voucher_Value, Voucher_Currency, Validity_From_Date, Expiry_Date, 
                                         Processing_Type, Status, Site, Article_No, Bonus_Buy, POSNo, ReceiptNo, TranDate, TranTime, FileName)
                                         VALUES
                                         (@Voucher_Type, @SerialNo, @Voucher_Value, @Voucher_Currency, @Validity_From_Date, @Expiry_Date,
                                         @Processing_Type, @Status, @Site, @Article_No, @Bonus_Buy, @POSNo, @ReceiptNo, @TranDate, @TranTime, @FileName)";
-                                                        int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
-                                                        if (rowsAffected > 0)
-                                                        {
-                                                            _logger.Information("Data inserted successfully!" + rowsAffected + " Row");
+                                                            int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
+                                                            _logger_VC.Information($"Insert Status {inb_Voucher.SerialNo},{rowsAffected} Rows  ");
                                                         }
-                                                        string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
-                                                        int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inbVoucherSap.SerialNo });
-
-                                                        if (rowsAffectedupdate > 0)
+                                                        else
                                                         {
-                                                            _logger.Information("Data Updated successfully!" + rowsAffectedupdate + " Row");
+                                                            string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                            int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                            _logger_VC.Information("Send  API : " + calResult + $"Update Status Vc: {inb_Voucher.SerialNo} ");
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        _logger.Information("Result API : " + calResult);
+                                                        _logger_VC.Information("Không có Data ");
                                                     }
                                                 }
-                                                else
+                                                if (inb_Voucher.Status == "SOLD")
                                                 {
-                                                    _logger.Information("Không có Data ");
-                                                }
-                                            }
-                                            if (inb_Voucher.Status == "SOLD")
-                                            {
-                                                var calResult = await inbVoucherSap1.CallApiSAPCreate(inb_Voucher.SerialNo, inb_Voucher.Voucher_Value,
-                                                                 inb_Voucher.Validity_From_Date, inb_Voucher.Expiry_Date, inb_Voucher.Site,
-                                                                 inb_Voucher.Bonus_Buy, inb_Voucher.Article_No, POSTerminal);
-                                                if (calResult != null)
-                                                {
-                                                    if (calResult == "200")
+                                                    var calResult = await inbVoucherSap1.CallApiSAPCreate(inb_Voucher.SerialNo, inb_Voucher.Voucher_Value,
+                                                                     inb_Voucher.Validity_From_Date, inb_Voucher.Expiry_Date, inb_Voucher.Site,
+                                                                     inb_Voucher.Bonus_Buy, inb_Voucher.Article_No, POSTerminal);
+                                                    if (calResult != null)
                                                     {
-                                                        INB_VoucherToSAP inbVoucherSap = new INB_VoucherToSAP()
+                                                        if (calResult == "200")
                                                         {
-                                                            Voucher_Type = inb_Voucher.Voucher_Type,
-                                                            SerialNo = inb_Voucher.SerialNo,
-                                                            Voucher_Value = inb_Voucher.Voucher_Value,
-                                                            Voucher_Currency = inb_Voucher.Voucher_Currency,
-                                                            Validity_From_Date = inb_Voucher.Validity_From_Date,
-                                                            Expiry_Date = inb_Voucher.Expiry_Date,
-                                                            Processing_Type = inb_Voucher.Processing_Type,
-                                                            Status = inb_Voucher.Status,
-                                                            Site = inb_Voucher.Site,
-                                                            Article_No = inb_Voucher.Article_No,
-                                                            Bonus_Buy = inb_Voucher.Bonus_Buy,
-                                                            POSNo = inb_Voucher.POSNo,
-                                                            ReceiptNo = inb_Voucher.ReceiptNo,
-                                                            TranDate = inb_Voucher.TranDate,
-                                                            TranTime = inb_Voucher.TranTime,
-                                                            FileName = inb_Voucher.SerialNo
-                                                        };
-                                                        string insertSql = @"INSERT INTO INB_VoucherToSAP 
+                                                            List<INB_VoucherToSAP> inbVoucherSap = new List<INB_VoucherToSAP>();
+                                                            {
+                                                                INB_VoucherToSAP iNB_VoucherToSAP = new INB_VoucherToSAP();
+                                                                iNB_VoucherToSAP.Voucher_Type = inb_Voucher.Voucher_Type;
+                                                                iNB_VoucherToSAP.SerialNo = inb_Voucher.SerialNo;
+                                                                iNB_VoucherToSAP.Voucher_Value = inb_Voucher.Voucher_Value;
+                                                                iNB_VoucherToSAP.Voucher_Currency = inb_Voucher.Voucher_Currency;
+                                                                iNB_VoucherToSAP.Validity_From_Date = inb_Voucher.Validity_From_Date;
+                                                                iNB_VoucherToSAP.Expiry_Date = inb_Voucher.Expiry_Date;
+                                                                iNB_VoucherToSAP.Processing_Type = inb_Voucher.Processing_Type;
+                                                                iNB_VoucherToSAP.Status = inb_Voucher.Status;
+                                                                iNB_VoucherToSAP.Site = inb_Voucher.Site;
+                                                                iNB_VoucherToSAP.Article_No = inb_Voucher.Article_No;
+                                                                iNB_VoucherToSAP.Bonus_Buy = inb_Voucher.Bonus_Buy;
+                                                                iNB_VoucherToSAP.POSNo = inb_Voucher.POSNo;
+                                                                iNB_VoucherToSAP.ReceiptNo = inb_Voucher.ReceiptNo;
+                                                                iNB_VoucherToSAP.TranDate = inb_Voucher.TranDate;
+                                                                iNB_VoucherToSAP.TranTime = inb_Voucher.TranTime;
+                                                                iNB_VoucherToSAP.FileName = inb_Voucher.SerialNo;
+                                                                inbVoucherSap.Add(iNB_VoucherToSAP);
+                                                            };
+                                                            string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                            int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                            _logger_VC.Information($"Update Status {inb_Voucher.SerialNo},{rowsAffectedupdate} Rows ");
+                                                            string insertSql = @"INSERT INTO INB_VoucherToSAP 
                                         (Voucher_Type, SerialNo, Voucher_Value, Voucher_Currency, Validity_From_Date, Expiry_Date, 
                                         Processing_Type, Status, Site, Article_No, Bonus_Buy, POSNo, ReceiptNo, TranDate, TranTime, FileName)
                                         VALUES
                                         (@Voucher_Type, @SerialNo, @Voucher_Value, @Voucher_Currency, @Validity_From_Date, @Expiry_Date,
                                         @Processing_Type, @Status, @Site, @Article_No, @Bonus_Buy, @POSNo, @ReceiptNo, @TranDate, @TranTime, @FileName)";
-                                                        int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
-                                                        if (rowsAffected > 0)
-                                                        {
-                                                            _logger.Information("Data inserted successfully!" + rowsAffected + "Row");
+                                                            int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
+                                                            _logger_VC.Information($"Insert Status {inb_Voucher.SerialNo},{rowsAffected} Rows  ");
                                                         }
-                                                        string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
-                                                        int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inbVoucherSap.SerialNo });
-
-                                                        if (rowsAffectedupdate > 0)
+                                                        else
                                                         {
-                                                            _logger.Information("Data Updated successfully!" + rowsAffectedupdate + " Row");
+                                                            string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                            int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                            _logger_VC.Information("Send  API : " + calResult + $"Update Status Vc: {inb_Voucher.SerialNo} ");
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        _logger.Information("Result API : " + calResult);
+                                                        _logger_VC.Information("Không có Data ");
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    _logger.Information("Không có Data ");
                                                 }
                                             }
                                         }
@@ -222,19 +221,19 @@ internal class Program
                                 }
                                 catch (Exception e)
                                 {
-                                    _logger.Error("Loi: Connect DB ", e.Message);
-
+                                    _logger_VC.Error("Loi: Connect DB ", e.Message);
+                                    sendEmailExample.SendMailError("Loi: Connect DB " + e.Message);
                                 }
                             }
                         }
                         catch (Exception e)
                         {
-                            _logger.Error("Loi: Connect DB", e.Message);
+                            _logger_VC.Error("Loi: Connect DB", e.Message);
+                            sendEmailExample.SendMailError("Loi: Connect DB " + e.Message);
                         }
                         break;
                     case "PRD_CARStockBalance":
-                        _logger_VINID.Information("------------------------------------------------------");
-                        _logger_VINID.Information("Run PRD_CARStockBalance");
+                        _logger_VINID.Information("-----------------------PRD_CARStockBalance-------------------------------");
                         var configcar = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalance" && p.Status == true);
                         if (configcar != null)
                         {
@@ -498,7 +497,7 @@ internal class Program
                                     using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
                                     {
                                         sqlConnection.Open();
-                                        var timeout = 300;
+                                        var timeout = 600;
                                         _logger_Job.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
                                         var ExcPblueSet = sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout);
                                         sqlConnection.Close();
@@ -507,13 +506,15 @@ internal class Program
                                 }
                                 catch (Exception e)
                                 {
-                                    _logger_Job.Error($"xLôi", e.Message);
+                                    _logger_Job.Error($"xLôi", e.ToString);
+                                    sendEmailExample.SendMailError($"Lỗi DB {cfig.Name}, SP_GET_SELLOUT_PBLUE_SET (10.235.25.91)");
                                 }
                             }
                         }
                         else
                         {
                             _logger_Job.Information("Staus đang Off or chưa khai báo Connections type = JOB_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = JOB_GCP_WCM");
                         }
                         break;
                     case "GCP_ARCHIVE":

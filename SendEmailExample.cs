@@ -22,7 +22,7 @@ namespace Job_By_SAP
         {
             _logger = logger;
         }
-        public void ConfigMail(string body)
+        public void SendMailError(string body)
         {
             using (var dbContext = new DbStaging_Inventory())
             {
