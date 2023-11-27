@@ -13,6 +13,11 @@ namespace Job_By_SAP
         {
             return @"SP_GET_GCP_SELLOUT_ALL";
         }
+
+        public static string Procedure_SaleOut_fix()
+        {
+            return @"SP_GET_SELLOUT";
+        }
         public static string SP_GET_SELLOUT_PBLUE_SET()
         {
             return @"SP_GET_SELLOUT_PBLUE_SET";
@@ -22,11 +27,27 @@ namespace Job_By_SAP
         {
             return @"SELECT * FROM [SUMD11_DISCOUNT_BLUE] NOLOCK WHERE UpdateFlg ='N'";
         }
+
+        public static string SUMD11_DISCOUNT_BLUE_New()
+        {
+            return @"  SELECT* FROM[SUMD11_DISCOUNT_BLUE] NOLOCK WHERE UpdateFlg ='N' and ReceiptNo IN @ReceiptNo";
+        }
+
         public static string SUMD11_PAYMENT()
         {
             return @"SELECT [ReceiptNo],[LineNo],[ExchangeRate],[TenderType],[AmountTendered],[CurrencyCode]
             ,[AmountInCurrency],[ReferenceNo],[ApprovalCode], [BankPOSCode],[BankCardType],[IsOnline] FROM [SUMD11_PAYMENT] NOLOCK";
         }
+        public static string SUMD11_PAYMENT_New()
+        {
+            return @"SELECT [ReceiptNo],[LineNo],[ExchangeRate],[TenderType],[AmountTendered],[CurrencyCode]
+            ,[AmountInCurrency],[ReferenceNo],[ApprovalCode], [BankPOSCode],[BankCardType],[IsOnline] FROM [SUMD11_PAYMENT] NOLOCK where ReceiptNo IN @ReceiptNo";
+        }
+        public static string SUMD11_Coupon_New()
+        {
+            return @"SELECT OrderNo ,[OrderLineNo] ParentLineId, [LineNo] LineId, ItemNo [OfferNo],OfferType, [Barcode],[DiscountAmount] FROM SUMD11_COUPON NOLOCK where OrderNo IN @ReceiptNo";
+        }
+
 
     }
 }

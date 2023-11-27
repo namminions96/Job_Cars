@@ -19,6 +19,7 @@ namespace Job_By_SAP
         }
         public void Insert_HR_All()
         {
+            SendEmailExample sendEmailExample = new SendEmailExample(_logger);
             try
             {
                 using (var db = new Dbhrcontext())
@@ -30,6 +31,8 @@ namespace Job_By_SAP
                     string Procedures = configuration["ProceduresHR"];
                     _logger.Information("Run: Exec " + Procedures);
                     //var result = db.Messages.FromSqlRaw("Exec SP_INSERT_SALE_PRICE_ONLINE").ToList();
+                    var timeoutSeconds = 10000;
+                    db.Database.SetCommandTimeout(timeoutSeconds);
                     var result = db.Errors.FromSqlRaw(Procedures).ToList();
                     Error message = new Models.Error();
                     foreach (var error in result)
@@ -43,11 +46,13 @@ namespace Job_By_SAP
             catch (Exception ex)
             {
                 _logger.Error(ex, "Lỗi Exec :Exec Procedures ");
+                sendEmailExample.SendMailError("SP_INSERT_HR_ALL: " + ex.Message);
             }
         }
 
         public void Insert_HR_All_PRD()
         {
+            SendEmailExample sendEmailExample = new SendEmailExample(_logger);
             try
             {
                 using (var db = new Dbhrcontext())
@@ -62,9 +67,9 @@ namespace Job_By_SAP
                     using (SqlConnection connection = new SqlConnection(connectionString))
                     {
                         connection.Open();
-
+                        var timeout = 10000;
                         // Thực hiện truy vấn sử dụng Dapper
-                        var results = connection.Query("SP_INSERT_HR_ALL_PRD", commandType: CommandType.StoredProcedure);
+                        var results = connection.Query("SP_INSERT_HR_ALL_PRD", commandType: CommandType.StoredProcedure, commandTimeout: timeout);
                         _logger.Information("Run: Exec SP_INSERT_HR_ALL Data: OK " );
                     }
                 }
@@ -72,6 +77,7 @@ namespace Job_By_SAP
             catch (Exception ex)
             {
                 _logger.Error(ex, "Lỗi Exec :Exec Procedures ");
+                sendEmailExample.SendMailError("SP_INSERT_HR_ALL_PRD: " + ex.Message);
             }
         }
 

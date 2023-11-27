@@ -29,9 +29,10 @@ namespace Read_xml.Models
         public string? ONBOA_DATE { get; set; }
         public string? WORK_PLACE { get; set; }
         public string? CONTRACT { get; set; }
+        public string? EDU_DEGREE { get; set; }
+        public string? AGE_GROUP { get; set; }
         public string? SENIORITY { get; set; }
         public string? DIRECT { get; set; }
         public string? FILENAME { get; set; }
     }
-
 }

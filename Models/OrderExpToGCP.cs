@@ -117,8 +117,15 @@ namespace Job_By_SAP.Models
     }
     public class Receipt_Retry
     {
+        public string OrderNo { get; set; }
+        public string UpdateFlg { get; set; }
+        public DateTime CrtDate { get; set; }
+    }
+    public class Receipt_Retry_WCM
+    {
         public string RECEIPT_NO { get; set; }
         public string UpdateFlg { get; set; }
         public DateTime CrtDate { get; set; }
     }
+
 }

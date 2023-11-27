@@ -20,8 +20,10 @@ namespace Job_By_SAP.WCM
         public string Header_ref_03 { get; set; }
         public string Header_ref_04 { get; set; }
         public string Header_ref_05 { get; set; }
+        public Boolean IsRetry { get; set; }
         public List<TransLineGCP> TransLine { get; set; }
         public List<TransPaymentEntryGCP> TransPaymentEntry { get; set; }
+        public List<TransDiscountCouponEntryGCP> TransDiscountCouponEntry { get; set; }
     }
     public class TransTempGCP_WCM
     {
@@ -46,6 +48,7 @@ namespace Job_By_SAP.WCM
         public string Header_ref_03 { get; set; }
         public string Header_ref_04 { get; set; }
         public string Header_ref_05 { get; set; }
+        public Boolean IsRetry { get; set; }
 
     }
     public class TransLineGCP
@@ -86,6 +89,16 @@ namespace Job_By_SAP.WCM
         public string OfferType { get; set; }
         public string OfferNo { get; set; }
         public decimal Quantity { get; set; }
+        public decimal DiscountAmount { get; set; }
+    }
+    public class TransDiscountCouponEntryGCP
+    {
+        public string OrderNo { get; set; }
+        public int ParentLineId { get; set; }
+        public int LineId { get; set; }
+        public string OfferNo { get; set; }
+        public string OfferType { get; set; }
+        public string Barcode { get; set; }
         public decimal DiscountAmount { get; set; }
     }
 }

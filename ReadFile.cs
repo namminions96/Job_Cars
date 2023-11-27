@@ -134,35 +134,17 @@ namespace Read_xml
                         {
                             var receipt = new Receipt_Retry
                             {
-                                RECEIPT_NO = record.RECEIPT_NO,
+                                OrderNo = record.RECEIPT_NO,
                                 UpdateFlg = "N",
                                 CrtDate = DateTime.Now,
                             };
                             receiptData.Add(receipt);
                         }
                     }
-                    string querry = $"SELECT RECEIPT_NO  ,[UpdateFlg] ,[CrtDate] FROM [{databaseName}].[dbo].[Temp_SalesGCP_Retry]";
-
-                    List<Receipt_Retry> datadb = DBINBOUND.Query<Receipt_Retry>(querry).AsList();
-
-                    var joinedData = receiptData
-                     .Join(datadb, receiptData => receiptData.RECEIPT_NO,
-                                         data => data.RECEIPT_NO,
-                            (receiptData, data) => new
-                            {
-                                RECEIPT_NO = receiptData.RECEIPT_NO,
-                                UpdateFlg = receiptData.UpdateFlg,
-                                CrtDate = receiptData.CrtDate,
-                            }
-                            ).ToList();
-                    if (joinedData.Count > 0)
+                    if (receiptData.Count > 0)
                     {
-                        string DeleteCommand = $"Delete Temp_SalesGCP_Retry WHERE RECEIPT_NO = @RECEIPT_NO";
-                        int rowsupdate = DBINBOUND.Execute(DeleteCommand, joinedData);
-                    }
-
-                  if(receiptData.Count > 0)
-                    {
+                        string DeleteCommand = $"Delete Temp_SalesGCP_Retry";
+                        int rowsupdate = DBINBOUND.Execute(DeleteCommand);
                         int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP_Retry(), receiptData);
                     }
                     if (Directory.Exists(processedFolderPathter))
@@ -192,6 +174,64 @@ namespace Read_xml
             }
         }
 
+
+        public void ProcessCSV_GCP_Sale_Retry_WCM(string csvFile, string processedFolderPathter, string configdb)
+        {
+            try
+            {
+                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(configdb);
+                string databaseName = builder.InitialCatalog;
+                List<Receipt_Retry_WCM> receiptData = new List<Receipt_Retry_WCM>();
+                using (SqlConnection DBINBOUND = new SqlConnection(configdb))
+                {
+                    DBINBOUND.Open();
+                    using (var reader = new StreamReader(csvFile))
+                    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)))
+                    {
+                        var records = csv.GetRecords<dynamic>().ToList();
+                        foreach (var record in records)
+                        {
+                            var receipt = new Receipt_Retry_WCM
+                            {
+                                RECEIPT_NO = record.RECEIPT_NO,
+                                UpdateFlg = "N",
+                                CrtDate = DateTime.Now,
+                            };
+                            receiptData.Add(receipt);
+                        }
+                    }
+                    if (receiptData.Count > 0)
+                    {
+                        string DeleteCommand = $"Delete Temp_SalesGCP_Retry";
+                        int rowsupdate = DBINBOUND.Execute(DeleteCommand);
+                        int rowsAffected = DBINBOUND.Execute(PLH_Data.InsertTemp_SalesGCP_Retry_WCM(), receiptData);
+                    }
+                    if (Directory.Exists(processedFolderPathter))
+                    {
+                        string destinationPath = Path.Combine(processedFolderPathter, Path.GetFileName(csvFile));
+                        if (File.Exists(destinationPath))
+                        {
+                            File.Delete(destinationPath);
+                        }
+                        File.Move(csvFile, destinationPath);
+                    }
+                    else
+                    {
+                        Directory.CreateDirectory(processedFolderPathter);
+                        string destinationPath = Path.Combine(processedFolderPathter, Path.GetFileName(csvFile));
+                        if (File.Exists(destinationPath))
+                        {
+                            File.Delete(destinationPath);
+                        }
+                        File.Move(csvFile, destinationPath);
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.Error(e, "Lỗi ProcessCSV_GCP_Sale_Retry");
+            }
+        }
 
         public string RemoveCommas(string input)
         {

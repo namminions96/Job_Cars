@@ -1,0 +1,142 @@
+2023-11-08 09:31:19.771 +07:00 [INF] --------------------------VoucherSAP----------------------------
+2023-11-08 09:31:31.782 +07:00 [INF] Connect DB : SET1
+2023-11-08 09:33:40.351 +07:00 [ERR] Loi: Connect DB 
+2023-11-08 09:34:13.319 +07:00 [INF] --------------------------VoucherSAP----------------------------
+2023-11-08 09:34:20.107 +07:00 [INF] Connect DB : SET1
+2023-11-08 09:36:07.150 +07:00 [INF] --------------------------VoucherSAP----------------------------
+2023-11-08 09:36:15.831 +07:00 [INF] Connect DB : SET1
+2023-11-08 09:36:49.311 +07:00 [INF] SeriaNo: 153521324000000315BP {"Status":400,"Message":"Mã voucher đã tồn tại: 153521324000000315BP, ","Data":null}
+2023-11-08 09:36:54.702 +07:00 [INF] Send  API : 400Update Status Vc: 153521324000000315BP 
+2023-11-08 09:37:07.195 +07:00 [INF] SeriaNo: 153585224000007043BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"153585224000007043BP","Value":"30000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:39:56.814 +07:00 [INF] --------------------------VoucherSAP----------------------------
+2023-11-08 09:40:02.717 +07:00 [INF] Connect DB : SET1
+2023-11-08 09:40:14.074 +07:00 [INF] SeriaNo: 153585224000007043BP {"Status":400,"Message":"Mã voucher đã tồn tại: 153585224000007043BP, ","Data":null}
+2023-11-08 09:40:17.882 +07:00 [INF] Send  API : 400Update Status Vc: 153585224000007043BP 
+2023-11-08 09:40:32.295 +07:00 [INF] SeriaNo: 153585224000090052BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"153585224000090052BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:40:48.995 +07:00 [INF] Insert Status 153585224000090052BP
+2023-11-08 09:40:52.166 +07:00 [INF] Update Status 153585224000090052BP,1 Rows 
+2023-11-08 09:40:58.154 +07:00 [INF] Connect DB : SET2
+2023-11-08 09:41:01.264 +07:00 [INF] SeriaNo: 201801324000000447BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000447BP","Value":"30000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:41:01.428 +07:00 [INF] Insert Status 201801324000000447BP
+2023-11-08 09:41:01.451 +07:00 [INF] Update Status 201801324000000447BP,1 Rows 
+2023-11-08 09:41:03.792 +07:00 [INF] SeriaNo: 201801324000000448BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000448BP","Value":"30000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:41:03.803 +07:00 [INF] Insert Status 201801324000000448BP
+2023-11-08 09:41:03.814 +07:00 [INF] Update Status 201801324000000448BP,1 Rows 
+2023-11-08 09:41:08.267 +07:00 [INF] SeriaNo: 201801324000000449BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000449BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:41:08.276 +07:00 [INF] Insert Status 201801324000000449BP
+2023-11-08 09:41:08.289 +07:00 [INF] Update Status 201801324000000449BP,1 Rows 
+2023-11-08 09:41:10.326 +07:00 [INF] SeriaNo: 201801324000000450BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000450BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:41:10.336 +07:00 [INF] Insert Status 201801324000000450BP
+2023-11-08 09:41:10.347 +07:00 [INF] Update Status 201801324000000450BP,2 Rows 
+2023-11-08 09:41:13.550 +07:00 [INF] SeriaNo: 201801324000000450BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:41:29.898 +07:00 [INF] Update Status 201801324000000450BP,2 Rows 
+2023-11-08 09:41:38.605 +07:00 [INF] SeriaNo: 201801324000000451BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000451BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:41:45.861 +07:00 [INF] Insert Status 201801324000000451BP
+2023-11-08 09:41:47.465 +07:00 [INF] Update Status 201801324000000451BP,2 Rows 
+2023-11-08 09:41:54.778 +07:00 [INF] SeriaNo: 201801324000000451BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:19.364 +07:00 [INF] Update Status 201801324000000451BP,2 Rows 
+2023-11-08 09:42:23.886 +07:00 [INF] SeriaNo: 201801324000000452BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000452BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:23.896 +07:00 [INF] Insert Status 201801324000000452BP
+2023-11-08 09:42:23.907 +07:00 [INF] Update Status 201801324000000452BP,2 Rows 
+2023-11-08 09:42:25.156 +07:00 [INF] SeriaNo: 201801324000000452BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:25.179 +07:00 [INF] Update Status 201801324000000452BP,2 Rows 
+2023-11-08 09:42:26.159 +07:00 [INF] SeriaNo: 201801324000000453BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000453BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:26.169 +07:00 [INF] Insert Status 201801324000000453BP
+2023-11-08 09:42:26.181 +07:00 [INF] Update Status 201801324000000453BP,2 Rows 
+2023-11-08 09:42:27.068 +07:00 [INF] SeriaNo: 201801324000000453BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:27.123 +07:00 [INF] Update Status 201801324000000453BP,2 Rows 
+2023-11-08 09:42:27.890 +07:00 [INF] SeriaNo: 201801324000000454BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000454BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:27.902 +07:00 [INF] Insert Status 201801324000000454BP
+2023-11-08 09:42:27.924 +07:00 [INF] Update Status 201801324000000454BP,2 Rows 
+2023-11-08 09:42:28.971 +07:00 [INF] SeriaNo: 201801324000000454BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:28.990 +07:00 [INF] Update Status 201801324000000454BP,2 Rows 
+2023-11-08 09:42:30.129 +07:00 [INF] SeriaNo: 201801324000000455BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000455BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:30.137 +07:00 [INF] Insert Status 201801324000000455BP
+2023-11-08 09:42:30.147 +07:00 [INF] Update Status 201801324000000455BP,2 Rows 
+2023-11-08 09:42:33.345 +07:00 [INF] SeriaNo: 201801324000000455BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:33.366 +07:00 [INF] Update Status 201801324000000455BP,2 Rows 
+2023-11-08 09:42:34.450 +07:00 [INF] SeriaNo: 201801324000000456BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000456BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:34.460 +07:00 [INF] Insert Status 201801324000000456BP
+2023-11-08 09:42:34.473 +07:00 [INF] Update Status 201801324000000456BP,2 Rows 
+2023-11-08 09:42:35.850 +07:00 [INF] SeriaNo: 201801324000000456BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:37.620 +07:00 [INF] Update Status 201801324000000456BP,2 Rows 
+2023-11-08 09:42:38.953 +07:00 [INF] SeriaNo: 201801324000000457BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000457BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:38.964 +07:00 [INF] Insert Status 201801324000000457BP
+2023-11-08 09:42:38.976 +07:00 [INF] Update Status 201801324000000457BP,2 Rows 
+2023-11-08 09:42:40.441 +07:00 [INF] SeriaNo: 201801324000000457BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:48.605 +07:00 [INF] Update Status 201801324000000457BP,2 Rows 
+2023-11-08 09:42:49.834 +07:00 [INF] SeriaNo: 201801324000000458BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000458BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:49.843 +07:00 [INF] Insert Status 201801324000000458BP
+2023-11-08 09:42:49.856 +07:00 [INF] Update Status 201801324000000458BP,1 Rows 
+2023-11-08 09:42:51.347 +07:00 [INF] SeriaNo: 201801324000000459BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000459BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:51.358 +07:00 [INF] Insert Status 201801324000000459BP
+2023-11-08 09:42:51.370 +07:00 [INF] Update Status 201801324000000459BP,2 Rows 
+2023-11-08 09:42:52.907 +07:00 [INF] SeriaNo: 201801324000000459BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:52.927 +07:00 [INF] Update Status 201801324000000459BP,2 Rows 
+2023-11-08 09:42:54.300 +07:00 [INF] SeriaNo: 201801324000000460BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000460BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:54.308 +07:00 [INF] Insert Status 201801324000000460BP
+2023-11-08 09:42:54.320 +07:00 [INF] Update Status 201801324000000460BP,2 Rows 
+2023-11-08 09:42:55.262 +07:00 [INF] SeriaNo: 201801324000000460BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:55.281 +07:00 [INF] Update Status 201801324000000460BP,2 Rows 
+2023-11-08 09:42:56.097 +07:00 [INF] SeriaNo: 201801324000000461BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000461BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:56.106 +07:00 [INF] Insert Status 201801324000000461BP
+2023-11-08 09:42:56.117 +07:00 [INF] Update Status 201801324000000461BP,2 Rows 
+2023-11-08 09:42:56.954 +07:00 [INF] SeriaNo: 201801324000000461BP {"Status":200,"Message":"Success","Data":[{"Status":"EXP","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":null,"Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:56.977 +07:00 [INF] Update Status 201801324000000461BP,2 Rows 
+2023-11-08 09:42:57.830 +07:00 [INF] SeriaNo: 201801324000000462BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000462BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:57.842 +07:00 [INF] Insert Status 201801324000000462BP
+2023-11-08 09:42:57.860 +07:00 [INF] Update Status 201801324000000462BP,1 Rows 
+2023-11-08 09:42:58.545 +07:00 [INF] SeriaNo: 201801324000000463BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000463BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:42:58.553 +07:00 [INF] Insert Status 201801324000000463BP
+2023-11-08 09:42:58.564 +07:00 [INF] Update Status 201801324000000463BP,1 Rows 
+2023-11-08 09:43:00.171 +07:00 [INF] SeriaNo: 201801324000000464BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000464BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:00.182 +07:00 [INF] Insert Status 201801324000000464BP
+2023-11-08 09:43:00.192 +07:00 [INF] Update Status 201801324000000464BP,1 Rows 
+2023-11-08 09:43:00.822 +07:00 [INF] SeriaNo: 201801324000000465BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801324000000465BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:00.830 +07:00 [INF] Insert Status 201801324000000465BP
+2023-11-08 09:43:00.842 +07:00 [INF] Update Status 201801324000000465BP,1 Rows 
+2023-11-08 09:43:01.702 +07:00 [INF] SeriaNo: 201893324000000116BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000116BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:01.712 +07:00 [INF] Insert Status 201893324000000116BP
+2023-11-08 09:43:01.724 +07:00 [INF] Update Status 201893324000000116BP,1 Rows 
+2023-11-08 09:43:03.083 +07:00 [INF] SeriaNo: 201893324000000117BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000117BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:03.101 +07:00 [INF] Insert Status 201893324000000117BP
+2023-11-08 09:43:03.114 +07:00 [INF] Update Status 201893324000000117BP,1 Rows 
+2023-11-08 09:43:04.330 +07:00 [INF] SeriaNo: 201893324000000118BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000118BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:04.339 +07:00 [INF] Insert Status 201893324000000118BP
+2023-11-08 09:43:04.350 +07:00 [INF] Update Status 201893324000000118BP,1 Rows 
+2023-11-08 09:43:07.724 +07:00 [INF] SeriaNo: 201893324000000119BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000119BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:07.734 +07:00 [INF] Insert Status 201893324000000119BP
+2023-11-08 09:43:07.744 +07:00 [INF] Update Status 201893324000000119BP,1 Rows 
+2023-11-08 09:43:09.264 +07:00 [INF] SeriaNo: 201893324000000120BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000120BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:09.273 +07:00 [INF] Insert Status 201893324000000120BP
+2023-11-08 09:43:09.287 +07:00 [INF] Update Status 201893324000000120BP,1 Rows 
+2023-11-08 09:43:15.007 +07:00 [INF] SeriaNo: 201893324000000121BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000121BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:43:34.315 +07:00 [INF] Insert Status 201893324000000121BP
+2023-11-08 09:43:38.075 +07:00 [INF] Update Status 201893324000000121BP,1 Rows 
+2023-11-08 09:44:04.481 +07:00 [INF] SeriaNo: 201893324000000122BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000122BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:04.490 +07:00 [INF] Insert Status 201893324000000122BP
+2023-11-08 09:44:04.503 +07:00 [INF] Update Status 201893324000000122BP,1 Rows 
+2023-11-08 09:44:04.666 +07:00 [INF] SeriaNo: 201893324000000123BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000123BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:04.678 +07:00 [INF] Insert Status 201893324000000123BP
+2023-11-08 09:44:04.699 +07:00 [INF] Update Status 201893324000000123BP,1 Rows 
+2023-11-08 09:44:04.959 +07:00 [INF] SeriaNo: 201893324000000124BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000124BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:04.968 +07:00 [INF] Insert Status 201893324000000124BP
+2023-11-08 09:44:04.979 +07:00 [INF] Update Status 201893324000000124BP,1 Rows 
+2023-11-08 09:44:05.102 +07:00 [INF] SeriaNo: 201893324000000125BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000125BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:05.111 +07:00 [INF] Insert Status 201893324000000125BP
+2023-11-08 09:44:05.121 +07:00 [INF] Update Status 201893324000000125BP,1 Rows 
+2023-11-08 09:44:05.409 +07:00 [INF] SeriaNo: 201893324000000126BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000126BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:05.418 +07:00 [INF] Insert Status 201893324000000126BP
+2023-11-08 09:44:05.430 +07:00 [INF] Update Status 201893324000000126BP,1 Rows 
+2023-11-08 09:44:05.586 +07:00 [INF] SeriaNo: 201893324000000127BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000127BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:05.594 +07:00 [INF] Insert Status 201893324000000127BP
+2023-11-08 09:44:05.606 +07:00 [INF] Update Status 201893324000000127BP,1 Rows 
+2023-11-08 09:44:05.742 +07:00 [INF] SeriaNo: 201893324000000128BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000128BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:05.751 +07:00 [INF] Insert Status 201893324000000128BP
+2023-11-08 09:44:05.756 +07:00 [INF] Update Status 201893324000000128BP,1 Rows 
+2023-11-08 09:44:06.256 +07:00 [INF] SeriaNo: 201893324000000129BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000129BP","Value":"10000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:06.264 +07:00 [INF] Insert Status 201893324000000129BP
+2023-11-08 09:44:06.276 +07:00 [INF] Update Status 201893324000000129BP,1 Rows 
+2023-11-08 09:44:06.410 +07:00 [INF] SeriaNo: 201893324000000130BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201893324000000130BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2023-11-08 09:44:06.418 +07:00 [INF] Insert Status 201893324000000130BP
+2023-11-08 09:44:06.428 +07:00 [INF] Update Status 201893324000000130BP,1 Rows 

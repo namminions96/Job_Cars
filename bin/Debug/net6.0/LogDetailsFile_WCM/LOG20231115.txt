@@ -1,0 +1,8 @@
+2023-11-15 09:31:11.104 +07:00 [INF] --------------------------Run GCP_WCM----------------------------
+2023-11-15 09:31:20.787 +07:00 [INF] Connect DB: WCM_GCP
+2023-11-15 09:31:21.780 +07:00 [INF] Không có DataProcedure SP_GET_GCP_SELLOUT_ALL has no parameters and arguments were supplied.
+2023-11-15 09:33:09.799 +07:00 [INF] --------------------------Run GCP_WCM----------------------------
+2023-11-15 09:33:13.119 +07:00 [INF] Connect DB: WCM_GCP
+2023-11-15 09:34:19.818 +07:00 [INF] Results Data 10 ! 
+2023-11-15 09:34:24.170 +07:00 [INF] TransDiscountGCP Data 221 ! 
+2023-11-15 09:34:25.235 +07:00 [INF] TransPaymentEntryGCP Data 609 ! 

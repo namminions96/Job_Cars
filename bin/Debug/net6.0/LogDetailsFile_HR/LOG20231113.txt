@@ -1,0 +1,123 @@
+2023-11-13 08:56:12.227 +07:00 [INF] Run HR_All
+2023-11-13 08:56:18.405 +07:00 [INF] Bắt đầu tải HR_Terninate : Call sftpHelper.DownloadNoAuthen
+2023-11-13 08:56:19.326 +07:00 [ERR] DownloadAuthen/TEST/FileTerminal
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 08:56:19.591 +07:00 [INF] Bắt đầu đọc file HR_TerninateFileTerminal/
+2023-11-13 08:56:19.592 +07:00 [INF] Process: 0 file HR_Terninate
+2023-11-13 08:56:19.603 +07:00 [INF] Bắt đầu tải HR_Dashboard: Call sftpHelper.DownloadNoAuthen 
+2023-11-13 08:56:19.741 +07:00 [ERR] DownloadAuthen/TEST/FileDashBoad
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 08:56:19.741 +07:00 [INF] Bắt đầu đọc HR_DashboardFileDashBoad/
+2023-11-13 08:56:19.742 +07:00 [INF] Process : 0 file HR_Dashboard
+2023-11-13 08:56:19.746 +07:00 [INF] Run: Exec 
+2023-11-13 08:56:19.776 +07:00 [ERR] Lỗi Exec :Exec Procedures 
+System.ArgumentNullException: Value cannot be null. (Parameter 'sql')
+   at Microsoft.EntityFrameworkCore.Utilities.Check.NotEmpty(String value, String parameterName)
+   at Microsoft.EntityFrameworkCore.RelationalQueryableExtensions.FromSqlRaw[TEntity](DbSet`1 source, String sql, Object[] parameters)
+   at Job_By_SAP.Insert_HR_ALL.Insert_HR_All() in D:\Read_SAP_\Read_xml\HR_SAP\Insert_HR_ALL.cs:line 33
+2023-11-13 08:56:19.780 +07:00 [INF] Run: Exec SP_INSERT_HR_ALL_PRD
+2023-11-13 08:56:19.832 +07:00 [ERR] Lỗi Exec :Exec Procedures 
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Job_By_SAP.Insert_HR_ALL.Insert_HR_All_PRD() in D:\Read_SAP_\Read_xml\HR_SAP\Insert_HR_ALL.cs:line 64
+2023-11-13 08:58:31.167 +07:00 [INF] Run HR_All
+2023-11-13 08:58:42.876 +07:00 [INF] Bắt đầu tải HR_Terninate : Call sftpHelper.DownloadNoAuthen
+2023-11-13 08:58:43.590 +07:00 [ERR] DownloadAuthen/TEST/FileTerminal
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 08:58:43.826 +07:00 [INF] Bắt đầu đọc file HR_TerninateFileTerminal/
+2023-11-13 08:58:54.071 +07:00 [INF] Process: 0 file HR_Terninate
+2023-11-13 08:58:58.900 +07:00 [INF] Bắt đầu tải HR_Dashboard: Call sftpHelper.DownloadNoAuthen 
+2023-11-13 08:58:59.469 +07:00 [ERR] DownloadAuthen/TEST/FileDashBoad
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 08:59:00.426 +07:00 [INF] Bắt đầu đọc HR_DashboardFileDashBoad/
+2023-11-13 09:05:51.130 +07:00 [INF] Run HR_All
+2023-11-13 09:05:55.533 +07:00 [INF] Bắt đầu tải HR_Terninate : Call sftpHelper.DownloadNoAuthen
+2023-11-13 09:05:55.991 +07:00 [ERR] DownloadAuthen/TEST/FileTerminal
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 09:05:56.141 +07:00 [INF] Bắt đầu đọc file HR_TerninateFileTerminal/
+2023-11-13 09:05:56.142 +07:00 [INF] Process: 0 file HR_Terninate
+2023-11-13 09:05:56.159 +07:00 [INF] Bắt đầu tải HR_Dashboard: Call sftpHelper.DownloadNoAuthen 
+2023-11-13 09:05:56.441 +07:00 [ERR] DownloadAuthen/TEST/FileDashBoad
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 09:05:56.441 +07:00 [INF] Bắt đầu đọc HR_DashboardFileDashBoad/
+2023-11-13 10:47:37.069 +07:00 [INF] Run HR_All
+2023-11-13 10:47:40.663 +07:00 [INF] Bắt đầu tải HR_Terninate : Call sftpHelper.DownloadNoAuthen
+2023-11-13 10:47:40.994 +07:00 [ERR] DownloadAuthen/TEST/FileTerminal
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 10:47:41.091 +07:00 [INF] Bắt đầu đọc file HR_TerninateFileTerminal/
+2023-11-13 10:47:41.091 +07:00 [INF] Process: 0 file HR_Terninate
+2023-11-13 10:47:41.103 +07:00 [INF] Bắt đầu tải HR_Dashboard: Call sftpHelper.DownloadNoAuthen 
+2023-11-13 10:47:41.181 +07:00 [ERR] DownloadAuthen/TEST/FileDashBoad
+Renci.SshNet.Common.SshAuthenticationException: No suitable authentication method found to complete authentication (password).
+   at Renci.SshNet.ClientAuthentication.Authenticate(IConnectionInfoInternal connectionInfo, ISession session)
+   at Renci.SshNet.ConnectionInfo.Authenticate(ISession session, IServiceFactory serviceFactory)
+   at Renci.SshNet.Session.Connect()
+   at Renci.SshNet.BaseClient.CreateAndConnectSession()
+   at Renci.SshNet.BaseClient.Connect()
+   at BluePosVoucher.SftpHelper.DownloadAuthen(String source, String destination) in D:\Read_SAP_\Read_xml\SftpHelper.cs:line 37
+2023-11-13 10:47:41.181 +07:00 [INF] Bắt đầu đọc HR_DashboardFileDashBoad/
+2023-11-13 10:49:51.309 +07:00 [ERR] Lỗi ProcessXmlFileDbdashboard
+System.IO.IOException: Cannot create 'D:\Read_SAP_\Read_xml\bin\Debug\net6.0\MoveFileDashBoad' because a file or directory with the same name already exists.
+   at System.IO.FileSystem.CreateDirectory(String fullPath, Byte[] securityDescriptor)
+   at System.IO.Directory.CreateDirectory(String path)
+   at Job_By_SAP.ReadFileHR.ProcessXmlFileDbdashboard(String xmlFile, String processedFolderPathter) in D:\Read_SAP_\Read_xml\HR_SAP\ReadFileHR.cs:line 98
+2023-11-13 10:50:03.965 +07:00 [INF] Process : 1 file HR_Dashboard
+2023-11-13 10:50:07.205 +07:00 [INF] Run: Exec 
+2023-11-13 10:50:07.252 +07:00 [ERR] Lỗi Exec :Exec Procedures 
+System.ArgumentNullException: Value cannot be null. (Parameter 'sql')
+   at Microsoft.EntityFrameworkCore.Utilities.Check.NotEmpty(String value, String parameterName)
+   at Microsoft.EntityFrameworkCore.RelationalQueryableExtensions.FromSqlRaw[TEntity](DbSet`1 source, String sql, Object[] parameters)
+   at Job_By_SAP.Insert_HR_ALL.Insert_HR_All() in D:\Read_SAP_\Read_xml\HR_SAP\Insert_HR_ALL.cs:line 33
+2023-11-13 10:50:07.664 +07:00 [INF] Run: Exec SP_INSERT_HR_ALL_PRD
+2023-11-13 10:50:07.692 +07:00 [ERR] Lỗi Exec :Exec Procedures 
+System.InvalidOperationException: The ConnectionString property has not been initialized.
+   at Microsoft.Data.SqlClient.SqlConnection.PermissionDemand()
+   at Microsoft.Data.ProviderBase.DbConnectionInternal.TryOpenConnectionInternal(DbConnection outerConnection, DbConnectionFactory connectionFactory, TaskCompletionSource`1 retry, DbConnectionOptions userOptions)
+   at Microsoft.Data.SqlClient.SqlConnection.TryOpen(TaskCompletionSource`1 retry, SqlConnectionOverrides overrides)
+   at Microsoft.Data.SqlClient.SqlConnection.Open(SqlConnectionOverrides overrides)
+   at Job_By_SAP.Insert_HR_ALL.Insert_HR_All_PRD() in D:\Read_SAP_\Read_xml\HR_SAP\Insert_HR_ALL.cs:line 64

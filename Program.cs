@@ -18,6 +18,7 @@ using Serilog;
 using System;
 using System.Data;
 using System.Diagnostics.Metrics;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -55,9 +56,12 @@ internal class Program
         using (var db = new DbConfigAll())
         {
             string functionName = args[0];
-            //string functionName = "VoucherSAP";
+            string Name = args[1];
+             //string Name = "WCM_GCP";
+             //string functionName = "GCP_WCM_NEW";
             if (args.Length > 0)
             {
+                // _logger_WCM.Information(Name);
                 switch (functionName)
                 {
                     case "VoucherSAP":
@@ -116,7 +120,8 @@ internal class Program
                                                     {
                                                         if (calResult == "200")
                                                         {
-                                                            List<INB_VoucherToSAP> inbVoucherSap = new List<INB_VoucherToSAP>();
+                                                            DBSetContext dBSetContext = new DBSetContext(connect);
+                                                            INB_VoucherToSAP inbVoucherSap = new INB_VoucherToSAP();
                                                             {
                                                                 INB_VoucherToSAP iNB_VoucherToSAP = new INB_VoucherToSAP();
                                                                 iNB_VoucherToSAP.Voucher_Type = inb_Voucher.Voucher_Type;
@@ -135,25 +140,32 @@ internal class Program
                                                                 iNB_VoucherToSAP.TranDate = inb_Voucher.TranDate;
                                                                 iNB_VoucherToSAP.TranTime = inb_Voucher.TranTime;
                                                                 iNB_VoucherToSAP.FileName = inb_Voucher.SerialNo;
-                                                                inbVoucherSap.Add(iNB_VoucherToSAP);
+                                                                dBSetContext.INB_VoucherToSAP.Add(iNB_VoucherToSAP);
+                                                                dBSetContext.SaveChanges();
+                                                                _logger_VC.Information($"Insert INB_VoucherToSAP:    {inb_Voucher.SerialNo}");
                                                             };
                                                             string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
                                                             int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
-                                                            _logger_VC.Information($"Update Status {inb_Voucher.SerialNo},{rowsAffectedupdate} Rows ");
-                                                            string insertSql = @"INSERT INTO INB_VoucherToSAP 
-                                        (Voucher_Type, SerialNo, Voucher_Value, Voucher_Currency, Validity_From_Date, Expiry_Date, 
-                                        Processing_Type, Status, Site, Article_No, Bonus_Buy, POSNo, ReceiptNo, TranDate, TranTime, FileName)
-                                        VALUES
-                                        (@Voucher_Type, @SerialNo, @Voucher_Value, @Voucher_Currency, @Validity_From_Date, @Expiry_Date,
-                                        @Processing_Type, @Status, @Site, @Article_No, @Bonus_Buy, @POSNo, @ReceiptNo, @TranDate, @TranTime, @FileName)";
-                                                            int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
-                                                            _logger_VC.Information($"Insert Status {inb_Voucher.SerialNo},{rowsAffected} Rows  ");
+                                                            _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+
+
+
+
+                                                            //                    string insertSql = @"INSERT INTO INB_VoucherToSAP 
+                                                            //(Voucher_Type, SerialNo, Voucher_Value, Voucher_Currency, Validity_From_Date, Expiry_Date, 
+                                                            //Processing_Type, Status, Site, Article_No, Bonus_Buy, POSNo, ReceiptNo, TranDate, TranTime, FileName)
+                                                            //VALUES
+                                                            //(@Voucher_Type, @SerialNo, @Voucher_Value, @Voucher_Currency, @Validity_From_Date, @Expiry_Date,
+                                                            //@Processing_Type, @Status, @Site, @Article_No, @Bonus_Buy, @POSNo, @ReceiptNo, @TranDate, @TranTime, @FileName)";
+
+                                                            //int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
+                                                            //_logger_VC.Information($"Insert Status {inb_Voucher.SerialNo},{rowsAffected} Rows  ");
                                                         }
                                                         else
                                                         {
                                                             string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
                                                             int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
-                                                            _logger_VC.Information("Send  API : " + calResult + $"Update Status Vc: {inb_Voucher.SerialNo} ");
+                                                            _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
                                                         }
                                                     }
                                                     else
@@ -170,7 +182,8 @@ internal class Program
                                                     {
                                                         if (calResult == "200")
                                                         {
-                                                            List<INB_VoucherToSAP> inbVoucherSap = new List<INB_VoucherToSAP>();
+                                                            DBSetContext dBSetContext = new DBSetContext(connect);
+                                                            INB_VoucherToSAP inbVoucherSap = new INB_VoucherToSAP();
                                                             {
                                                                 INB_VoucherToSAP iNB_VoucherToSAP = new INB_VoucherToSAP();
                                                                 iNB_VoucherToSAP.Voucher_Type = inb_Voucher.Voucher_Type;
@@ -189,25 +202,233 @@ internal class Program
                                                                 iNB_VoucherToSAP.TranDate = inb_Voucher.TranDate;
                                                                 iNB_VoucherToSAP.TranTime = inb_Voucher.TranTime;
                                                                 iNB_VoucherToSAP.FileName = inb_Voucher.SerialNo;
-                                                                inbVoucherSap.Add(iNB_VoucherToSAP);
+                                                                dBSetContext.INB_VoucherToSAP.Add(iNB_VoucherToSAP);
+                                                                dBSetContext.SaveChanges();
+                                                                _logger_VC.Information($"Insert INB_VoucherToSAP:   {inb_Voucher.SerialNo}");
                                                             };
                                                             string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
                                                             int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
-                                                            _logger_VC.Information($"Update Status {inb_Voucher.SerialNo},{rowsAffectedupdate} Rows ");
-                                                            string insertSql = @"INSERT INTO INB_VoucherToSAP 
-                                        (Voucher_Type, SerialNo, Voucher_Value, Voucher_Currency, Validity_From_Date, Expiry_Date, 
-                                        Processing_Type, Status, Site, Article_No, Bonus_Buy, POSNo, ReceiptNo, TranDate, TranTime, FileName)
-                                        VALUES
-                                        (@Voucher_Type, @SerialNo, @Voucher_Value, @Voucher_Currency, @Validity_From_Date, @Expiry_Date,
-                                        @Processing_Type, @Status, @Site, @Article_No, @Bonus_Buy, @POSNo, @ReceiptNo, @TranDate, @TranTime, @FileName)";
-                                                            int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
-                                                            _logger_VC.Information($"Insert Status {inb_Voucher.SerialNo},{rowsAffected} Rows  ");
+                                                            _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+                                                            //                    string insertSql = @"INSERT INTO INB_VoucherToSAP 
+                                                            //(Voucher_Type, SerialNo, Voucher_Value, Voucher_Currency, Validity_From_Date, Expiry_Date, 
+                                                            //Processing_Type, Status, Site, Article_No, Bonus_Buy, POSNo, ReceiptNo, TranDate, TranTime, FileName)
+                                                            //VALUES
+                                                            //(@Voucher_Type, @SerialNo, @Voucher_Value, @Voucher_Currency, @Validity_From_Date, @Expiry_Date,
+                                                            //@Processing_Type, @Status, @Site, @Article_No, @Bonus_Buy, @POSNo, @ReceiptNo, @TranDate, @TranTime, @FileName)";
+                                                            //                    int rowsAffected = connection.Execute(insertSql, inbVoucherSap);
+                                                            //                    _logger_VC.Information($"Insert Status {inb_Voucher.SerialNo},{rowsAffected} Rows  ");
                                                         }
                                                         else
                                                         {
                                                             string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
                                                             int rowsAffectedupdate = connection.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
-                                                            _logger_VC.Information("Send  API : " + calResult + $"Update Status Vc: {inb_Voucher.SerialNo} ");
+                                                            _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        _logger_VC.Information("Không có Data ");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                catch (Exception e)
+                                {
+                                    _logger_VC.Error("Loi: Connect DB ", e.Message);
+                                    sendEmailExample.SendMailError("Loi: Connect DB " + e.Message);
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        {
+                            _logger_VC.Error("Loi: Connect DB", e.Message);
+                            sendEmailExample.SendMailError("Loi: Connect DB " + e.Message);
+                        }
+                        break;
+                    case "VoucherSAPRetry":
+                        _logger_VC.Information("--------------------------VoucherSAPRetry----------------------------");
+                        try
+                        {
+                            var connectionsVC = db.ConfigConnections.ToList().Where(p => p.Type == "VC" && p.Status == true);
+                            if (Name == "All")
+                            {
+                                connectionsVC = connectionsVC.Where(p => p.Type == "VC" && p.Status == true).ToList();
+                            }
+                            else
+                            {
+                                connectionsVC = connectionsVC.Where(p => p.Type == "VC" && p.Status == true && p.Name == Name).ToList();
+                            }
+
+
+                            // --------------------------------Voucher SAP---------------------------------------------------------- 
+                            foreach (var connectionString in connectionsVC)
+                            {
+                                _logger_VC.Information("Connect DB : " + connectionString.Name);
+                                try
+                                {
+                                    var connectionsVC_Retry = db.ConfigConnections.ToList().Where(p => p.Type == "VC_Retry" && p.Status == true && p.Name == $"{connectionString.Name}_Retry");
+
+                                    string connect = connectionString.ConnectString;
+                                    using (SqlConnection connection = new SqlConnection(connect))
+                                    {
+                                        connection.Open();
+                                        var timeout = 300;
+                                        var parameters = new
+                                        {
+                                            Status = "",
+                                            Date = "",
+                                            Retry = 1
+                                        };
+                                        var results = connection.Query("INB_Voucher ", parameters, commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        if (results.Count == 0)
+                                        {
+                                            _logger_VC.Information($"{connectionString.Name} : Không có Data ");
+                                        }
+                                        else
+                                        {
+                                            Inb_Voucher inb_Voucher = new Inb_Voucher();
+                                            foreach (var result in results)
+                                            {
+                                                inb_Voucher.Voucher_Type = result.Voucher_Type;
+                                                inb_Voucher.SerialNo = result.SerialNo;
+                                                inb_Voucher.Voucher_Value = result.Voucher_Value;
+                                                inb_Voucher.Voucher_Currency = result.Voucher_Currency;
+                                                inb_Voucher.Validity_From_Date = result.Validity_From_Date;
+                                                inb_Voucher.Expiry_Date = result.Expiry_Date;
+                                                inb_Voucher.Processing_Type = result.Processing_Type;
+                                                inb_Voucher.Status = result.Status;
+                                                inb_Voucher.Site = result.Site;
+                                                inb_Voucher.Article_No = result.Article_No;
+                                                inb_Voucher.Bonus_Buy = result.Bonus_Buy;
+                                                inb_Voucher.POSNo = result.POSNo;
+                                                inb_Voucher.ReceiptNo = result.ReceiptNo;
+                                                inb_Voucher.TranDate = result.TranDate;
+                                                inb_Voucher.TranTime = result.TranTime;
+                                                string POSTerminal = inb_Voucher.ReceiptNo.Substring(0, 6);
+                                                if (inb_Voucher.Status == "EXP")
+                                                {
+                                                    var calResult = await inbVoucherSap1.CallApiSAPUpdate("VCM", inb_Voucher.SerialNo, inb_Voucher.Article_No, "ZVCN", inb_Voucher.Status, inb_Voucher.Site, POSTerminal);
+                                                    if (calResult != null)
+                                                    {
+                                                        if (calResult == "200")
+                                                        {
+                                                            DBSetContext dBSetContext = new DBSetContext(connect);
+                                                            INB_VoucherToSAP inbVoucherSap = new INB_VoucherToSAP();
+                                                            {
+                                                                INB_VoucherToSAP iNB_VoucherToSAP = new INB_VoucherToSAP();
+                                                                iNB_VoucherToSAP.Voucher_Type = inb_Voucher.Voucher_Type;
+                                                                iNB_VoucherToSAP.SerialNo = inb_Voucher.SerialNo;
+                                                                iNB_VoucherToSAP.Voucher_Value = inb_Voucher.Voucher_Value;
+                                                                iNB_VoucherToSAP.Voucher_Currency = inb_Voucher.Voucher_Currency;
+                                                                iNB_VoucherToSAP.Validity_From_Date = inb_Voucher.Validity_From_Date;
+                                                                iNB_VoucherToSAP.Expiry_Date = inb_Voucher.Expiry_Date;
+                                                                iNB_VoucherToSAP.Processing_Type = inb_Voucher.Processing_Type;
+                                                                iNB_VoucherToSAP.Status = inb_Voucher.Status;
+                                                                iNB_VoucherToSAP.Site = inb_Voucher.Site;
+                                                                iNB_VoucherToSAP.Article_No = inb_Voucher.Article_No;
+                                                                iNB_VoucherToSAP.Bonus_Buy = inb_Voucher.Bonus_Buy;
+                                                                iNB_VoucherToSAP.POSNo = inb_Voucher.POSNo;
+                                                                iNB_VoucherToSAP.ReceiptNo = inb_Voucher.ReceiptNo;
+                                                                iNB_VoucherToSAP.TranDate = inb_Voucher.TranDate;
+                                                                iNB_VoucherToSAP.TranTime = inb_Voucher.TranTime;
+                                                                iNB_VoucherToSAP.FileName = inb_Voucher.SerialNo;
+                                                                dBSetContext.INB_VoucherToSAP.Add(iNB_VoucherToSAP);
+                                                                dBSetContext.SaveChanges();
+                                                                _logger_VC.Information($"Insert INB_VoucherToSAP:    {inb_Voucher.SerialNo}");
+                                                            };
+
+                                                            foreach (var connections_retry in connectionsVC_Retry)
+                                                            {
+                                                                _logger_VC.Information("Connect DB : " + connections_retry.Name);
+                                                                using (SqlConnection connection_Retry = new SqlConnection(connections_retry.ConnectString))
+                                                                {
+                                                                    string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                                    int rowsAffectedupdate = connection_Retry.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                                    _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            foreach (var connections_retry in connectionsVC_Retry)
+                                                            {
+                                                                _logger_VC.Information("Connect DB : " + connections_retry.Name);
+                                                                using (SqlConnection connection_Retry = new SqlConnection(connections_retry.ConnectString))
+                                                                {
+                                                                    string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                                    int rowsAffectedupdate = connection_Retry.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                                    _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        _logger_VC.Information("Không có Data ");
+                                                    }
+                                                }
+                                                if (inb_Voucher.Status == "SOLD")
+                                                {
+                                                    var calResult = await inbVoucherSap1.CallApiSAPCreate(inb_Voucher.SerialNo, inb_Voucher.Voucher_Value,
+                                                                     inb_Voucher.Validity_From_Date, inb_Voucher.Expiry_Date, inb_Voucher.Site,
+                                                                     inb_Voucher.Bonus_Buy, inb_Voucher.Article_No, POSTerminal);
+                                                    if (calResult != null)
+                                                    {
+                                                        if (calResult == "200")
+                                                        {
+                                                            DBSetContext dBSetContext = new DBSetContext(connect);
+                                                            INB_VoucherToSAP inbVoucherSap = new INB_VoucherToSAP();
+                                                            {
+                                                                INB_VoucherToSAP iNB_VoucherToSAP = new INB_VoucherToSAP();
+                                                                iNB_VoucherToSAP.Voucher_Type = inb_Voucher.Voucher_Type;
+                                                                iNB_VoucherToSAP.SerialNo = inb_Voucher.SerialNo;
+                                                                iNB_VoucherToSAP.Voucher_Value = inb_Voucher.Voucher_Value;
+                                                                iNB_VoucherToSAP.Voucher_Currency = inb_Voucher.Voucher_Currency;
+                                                                iNB_VoucherToSAP.Validity_From_Date = inb_Voucher.Validity_From_Date;
+                                                                iNB_VoucherToSAP.Expiry_Date = inb_Voucher.Expiry_Date;
+                                                                iNB_VoucherToSAP.Processing_Type = inb_Voucher.Processing_Type;
+                                                                iNB_VoucherToSAP.Status = inb_Voucher.Status;
+                                                                iNB_VoucherToSAP.Site = inb_Voucher.Site;
+                                                                iNB_VoucherToSAP.Article_No = inb_Voucher.Article_No;
+                                                                iNB_VoucherToSAP.Bonus_Buy = inb_Voucher.Bonus_Buy;
+                                                                iNB_VoucherToSAP.POSNo = inb_Voucher.POSNo;
+                                                                iNB_VoucherToSAP.ReceiptNo = inb_Voucher.ReceiptNo;
+                                                                iNB_VoucherToSAP.TranDate = inb_Voucher.TranDate;
+                                                                iNB_VoucherToSAP.TranTime = inb_Voucher.TranTime;
+                                                                iNB_VoucherToSAP.FileName = inb_Voucher.SerialNo;
+                                                                dBSetContext.INB_VoucherToSAP.Add(iNB_VoucherToSAP);
+                                                                dBSetContext.SaveChanges();
+                                                                _logger_VC.Information($"Insert INB_VoucherToSAP:   {inb_Voucher.SerialNo}");
+                                                            };
+                                                            foreach (var connections_retry in connectionsVC_Retry)
+                                                            {
+                                                                _logger_VC.Information("Connect DB : " + connections_retry.Name);
+                                                                using (SqlConnection connection_Retry = new SqlConnection(connections_retry.ConnectString))
+                                                                {
+                                                                    string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                                    int rowsAffectedupdate = connection_Retry.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                                    _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+
+                                                                }
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            foreach (var connections_retry in connectionsVC_Retry)
+                                                            {
+                                                                _logger_VC.Information("Connect DB : " + connections_retry.Name);
+                                                                using (SqlConnection connection_Retry = new SqlConnection(connections_retry.ConnectString))
+                                                                {
+                                                                    string updatetSql = @"UPDATE TransCpnVchIssue SET IsSend = 1 WHERE SerialNo = @SerialNo ";
+                                                                    int rowsAffectedupdate = connection_Retry.Execute(updatetSql, new { SerialNo = inb_Voucher.SerialNo });
+                                                                    _logger_VC.Information($"Update Status:  {inb_Voucher.SerialNo},- {rowsAffectedupdate} Rows ");
+
+                                                                }
+                                                            }
                                                         }
                                                     }
                                                     else
@@ -410,7 +631,7 @@ internal class Program
                         break;
                     case "GCP_WCM":
                         _logger_WCM.Information("--------------------------Run GCP_WCM----------------------------");
-                        var configWCM = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP" && p.Status == true);//config DB
+                        var configWCM = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
                         if (configWCM.Count() > 0)
                         {
                             WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
@@ -420,9 +641,10 @@ internal class Program
                                 //using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
                                 //{
                                 //    sqlConnection.Open();
-                                //    var timeout = 300;
+                                //    var timeout = 600;
                                 //    _logger_WCM.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
-                                //    var ExcPblueSet = sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout);
+                                //    var ExcPblueSet = sqlConnection.Query(SP_GET_SELLOUT, commandType: CommandType.StoredProcedure, commandTimeout: timeout);
+                                //    _logger_WCM.Information($"Done : SP_GET_SELLOUT_PBLUE_SET");
                                 //    sqlConnection.Close();
                                 //}
                                 var listOrder = WCM_To_GCPs.OrderWcmToGCPAsync(cfig.ConnectString);//listOrder
@@ -468,8 +690,8 @@ internal class Program
                                         }
                                         catch (Exception ex)
                                         {
-                                            _logger_WCM.Error("Lỗi: " + ex.InnerException);
-
+                                            _logger_WCM.Error("Lỗi:GCP_WCM " + ex.InnerException);
+                                            sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
                                         }
                                     }
                                 }
@@ -486,7 +708,7 @@ internal class Program
                         break;
                     case "JOB_GCP_WCM":
                         _logger_Job.Information("--------RUN_JOB_GCP_WCM----------");
-                        var configWCM_JOB = db.ConfigConnections.ToList().Where(p => p.Type == "WCM_GCP" && p.Status == true);//config DB
+                        var configWCM_JOB = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);
                         if (configWCM_JOB.Count() > 0)
                         {
                             foreach (var cfig in configWCM_JOB)
@@ -497,7 +719,7 @@ internal class Program
                                     using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
                                     {
                                         sqlConnection.Open();
-                                        var timeout = 600;
+                                        var timeout = 2200;
                                         _logger_Job.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
                                         var ExcPblueSet = sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout);
                                         sqlConnection.Close();
@@ -648,35 +870,15 @@ internal class Program
                         }
 
                         break;
-                    case "GCP_Sale_Retry":
+                    case "GCP_Sale_Retry_WCM":
                         _logger.Information("Run GCP_Sale_Retry");
-                        var configPLH_RetrySftp = db.Configs.SingleOrDefault(p => p.Type == "GCP_Sale_Retry" && p.Status == true);
+                        var configPLH_RetrySftp = db.Configs.SingleOrDefault(p => p.Type == Name && p.Status == true);
                         if (configPLH_RetrySftp != null)
                         {
                             if (configPLH_RetrySftp.IsDownload == true)
                             {
                                 SftpHelper sftpHelper = new SftpHelper(configPLH_RetrySftp.IpSftp, 22, configPLH_RetrySftp.username, configPLH_RetrySftp.password, _logger);
                                 sftpHelper.DownloadNoAuthen(configPLH_RetrySftp.pathRemoteDirectory, configPLH_RetrySftp.LocalFoderPath, true);
-                            }
-                        }
-                        _logger.Information("RUN PLH_GCP_Retry");
-                        var configPLH_inbound = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_GCP_Retry" && p.Status == true);//config DB
-                        foreach (var connection in configPLH_inbound)
-                        {
-                            if (Directory.Exists(configPLH_RetrySftp.LocalFoderPath))
-                            {
-                                string[] filteredStrings = Directory.GetFiles(configPLH_RetrySftp.LocalFoderPath, "*.CSV");
-                                string[] xmlFilester = filteredStrings.Where(str => str.Contains("PLH")).ToArray();
-                                foreach (string xmlFilesterString in xmlFilester)
-                                {
-                                    readfilSAP.ProcessCSV_GCP_Sale_Retry(xmlFilesterString, configPLH_RetrySftp.MoveFolderPath, connection.ConnectString);
-                                }
-                                _logger.Information($"Run {xmlFilester.Length} Thành Công");
-                            }
-                            else
-                            {
-                                Directory.CreateDirectory(configPLH_RetrySftp.LocalFoderPath);
-                                _logger.Information("Không có file or thư mục");
                             }
                         }
                         _logger.Information("RUN WCM_GCP_Retry");
@@ -689,13 +891,45 @@ internal class Program
                                 string[] xmlFilewcm = filteredWcm.Where(str => str.Contains("SALEOUT")).ToArray();
                                 foreach (string xmlFileWcm in xmlFilewcm)
                                 {
-                                    readfilSAP.ProcessCSV_GCP_Sale_Retry(xmlFileWcm, configPLH_RetrySftp.MoveFolderPath, connection.ConnectString);
+                                    readfilSAP.ProcessCSV_GCP_Sale_Retry_WCM(xmlFileWcm, configPLH_RetrySftp.MoveFolderPath, connection.ConnectString);
                                 }
                                 _logger.Information($"Run {xmlFilewcm.Length} Thành Công");
                             }
                             else
                             {
                                 Directory.CreateDirectory(configPLH_RetrySftp.LocalFoderPath);
+                                _logger.Information("Không có file or thư mục");
+                            }
+                        }
+                        break;
+                    case "GCP_Sale_Retry_PL":
+                        _logger.Information("Run GCP_Sale_Retry_PL");
+                        var configPLH_RetrySftpPL = db.Configs.SingleOrDefault(p => p.Type == Name && p.Status == true);
+                        if (configPLH_RetrySftpPL != null)
+                        {
+                            if (configPLH_RetrySftpPL.IsDownload == true)
+                            {
+                                SftpHelper sftpHelper = new SftpHelper(configPLH_RetrySftpPL.IpSftp, 22, configPLH_RetrySftpPL.username, configPLH_RetrySftpPL.password, _logger);
+                                sftpHelper.DownloadNoAuthen(configPLH_RetrySftpPL.pathRemoteDirectory, configPLH_RetrySftpPL.LocalFoderPath, true);
+                            }
+                        }
+                        _logger.Information("RUN PLH_GCP_Retry");
+                        var configPLH_inbound_PL = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_GCP_Retry" && p.Status == true);//config DB
+                        foreach (var connection in configPLH_inbound_PL)
+                        {
+                            if (Directory.Exists(configPLH_RetrySftpPL.LocalFoderPath))
+                            {
+                                string[] filteredStrings = Directory.GetFiles(configPLH_RetrySftpPL.LocalFoderPath, "*.CSV");
+                                string[] xmlFilester = filteredStrings.Where(str => str.Contains("PLH")).ToArray();
+                                foreach (string xmlFilesterString in xmlFilester)
+                                {
+                                    readfilSAP.ProcessCSV_GCP_Sale_Retry(xmlFilesterString, configPLH_RetrySftpPL.MoveFolderPath, connection.ConnectString);
+                                }
+                                _logger.Information($"Run {xmlFilester.Length} Thành Công");
+                            }
+                            else
+                            {
+                                Directory.CreateDirectory(configPLH_RetrySftpPL.LocalFoderPath);
                                 _logger.Information("Không có file or thư mục");
                             }
                         }
@@ -925,14 +1159,120 @@ internal class Program
                             _logger.Information("Chưa khai báo thư mục cần xóa !");
                         }
                         break;
+                    case "GCP_WCM_NEW":
+                        var configWCM_new = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
+                        if (configWCM_new.Count() > 0)
+                        {
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
+                            foreach (var cfig in configWCM_new)
+                            {
+                               // _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                {
+                                    try
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 3000;
+                                        var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+
+                                        if (results.Count > 0)
+                                        {
+                                            var ReceiptNos = results.GroupBy(p => p.ReceiptNo).Select(group => group.Key).ToList();
+
+                                            var batchSize = 1900;
+                                            for (int i = 0; i < ReceiptNos.Count; i += batchSize)
+                                            {
+                                                List<string> batch = ReceiptNos.Skip(i).Take(batchSize).ToList();
+                                                var filteredResults = results.Where(r => batch.Contains(r.ReceiptNo)).ToList();
+
+                                                var listOrder = WCM_To_GCPs.OrderWcmToGCPAsync_Fix(cfig.ConnectString, batch, filteredResults);//listOrder
+
+                                                List<List<WcmGCPModels>> orderBatches = listOrder
+                                                .Select((order, index) => new { order, index })
+                                                .GroupBy(x => x.index / 1000)
+                                                .Select(group => group.Select(x => x.order).ToList())
+                                                .ToList();
+                                                if (listOrder.Count > 0)
+                                                {
+                                                  //  _logger_WCM.Information($"Send Data To API: {listOrder.Count} Row DB: {cfig.Name}");
+                                                    string apiUrl = configuration["API_GCP_WCM"];
+                                                    using (HttpClient httpClient = new HttpClient())
+                                                    {
+                                                        try
+                                                        {
+                                                            foreach (var batch_Send in orderBatches)
+                                                            {
+                                                                string json = JsonConvert.SerializeObject(batch_Send);
+                                                                DateTime currentDateTime = DateTime.Now;
+                                                                string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
+                                                                string filePathError = $"LogSend\\Data{cfig.Name}{dateTimeString}.text";
+                                                                File.WriteAllText(filePathError, json);
+                                                                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                                request.Content = content;
+                                                                HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                                if (response.IsSuccessStatusCode)
+                                                                {
+                                                                }
+                                                                else
+                                                                {
+                                                                    //DateTime currentDateTime = DateTime.Now;
+                                                                    //string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
+                                                                    _logger_WCM.Information($"Response API: {response.StatusCode}");
+                                                                    //string filePathError = $"data{dateTimeString}.text";
+                                                                    File.WriteAllText(filePathError, json);
+                                                                    _logger_WCM.Information($"Send API Data Fail");
+                                                                    sendEmailExample.SendMailError("Send API Data Fail");
+                                                                }
+                                                            }
+                                                            _logger_WCM.Information($"Send Data To API: {listOrder.Count} Row Done DB: {cfig.Name}");
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                                            sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                                        }
+                                                        sqlConnection.Close();
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    _logger_WCM.Information($"Không có Send data GCP");
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger_WCM.Information($"Không có Send data GCP");
+
+                                        }
+                                    }
+                                    catch(Exception ex)
+                                    {
+                                        _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                        sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                    }
+                                }
+                                _logger_WCM.Information($"------------END {cfig.Name}----------------");
+                            }
+                        }
+                        else
+                        {
+                            _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                        }
+                       
+                        break;
                     default:
                         _logger.Information("Invalid function name.");
+                        sendEmailExample.SendMailError("Invalid function name.");
                         break;
                 }
             }
             else
             {
                 _logger.Information("Please provide a function name as an argument.");
+                sendEmailExample.SendMailError("Please provide a function name as an argument.");
             }
         }
     }
