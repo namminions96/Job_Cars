@@ -36,6 +36,8 @@ internal class Program
     private static ILogger _logger_HR;
     private static ILogger _logger_Job;
     private static ILogger _logger_VC;
+    private static ILogger _logger_Einvoice;
+    private static ILogger _logger_DeleteFile;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
@@ -45,6 +47,8 @@ internal class Program
         _logger_HR = SerilogLogger.GetLogger_HR();
         _logger_Job = SerilogLogger.GetLogger_Job();
         _logger_VC = SerilogLogger.GetLogger_VC();
+        _logger_Einvoice = SerilogLogger.GetLogger_Einvoice();
+        _logger_DeleteFile = SerilogLogger.GetLogger_DeleteFile();
 
         SendEmailExample sendEmailExample = new SendEmailExample(_logger);
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger_VC);
@@ -57,8 +61,8 @@ internal class Program
         {
             string functionName = args[0];
             string Name = args[1];
-             //string Name = "WCM_GCP";
-             //string functionName = "GCP_WCM_NEW";
+            // string Name = "ExpEinvoice";
+            // string functionName = "PRD_ExportHD";
             if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
@@ -1122,41 +1126,17 @@ internal class Program
                         insertDBPRD.Insert_HR_All_PRD();
                         break;
                     case "JobDeleteFile":
-                        _logger_VINID.Information("JobDeleteFile_VINID");
-                        var configJobDeleteFile = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalance" && p.Status == true);
+                        _logger_DeleteFile.Information($"JobDeleteFile {Name}");
+                        DeleteFileArchive deleteFileArchive = new DeleteFileArchive(_logger_DeleteFile);
+                        var configJobDeleteFile = db.Configs.SingleOrDefault(p => p.Type == Name && p.Status == true);
                         if (configJobDeleteFile.MoveFolderPath != null)
                         {
                             string folderPath = configJobDeleteFile.MoveFolderPath;
-                            string[] files = Directory.GetFiles(folderPath);
-                            if (files.Length > 0)
-                            {
-                                DateTime currentDate = DateTime.Now;
-                                int daysToKeep = 5;
-                                foreach (string filePath in files)
-                                {
-                                    FileInfo fileInfo = new FileInfo(filePath);
-                                    TimeSpan timeSinceCreation = currentDate - fileInfo.CreationTime;
-                                    if (timeSinceCreation.Days >= daysToKeep)
-                                    {
-                                        try
-                                        {
-                                            File.Delete(filePath);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            _logger.Error($"Lỗi khi xóa tệp {filePath}: {e.Message}");
-                                        }
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                _logger.Information("Không có file để xóa");
-                            }
+                            deleteFileArchive.DeleteFileAr(folderPath);
                         }
                         else
                         {
-                            _logger.Information("Chưa khai báo thư mục cần xóa !");
+                            _logger_DeleteFile.Information("Chưa khai báo thư mục cần xóa !");
                         }
                         break;
                     case "GCP_WCM_NEW":
@@ -1166,7 +1146,7 @@ internal class Program
                             WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
                             foreach (var cfig in configWCM_new)
                             {
-                               // _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                // _logger_WCM.Information($"------------START {cfig.Name}----------------");
                                 using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
                                 {
                                     try
@@ -1194,7 +1174,7 @@ internal class Program
                                                 .ToList();
                                                 if (listOrder.Count > 0)
                                                 {
-                                                  //  _logger_WCM.Information($"Send Data To API: {listOrder.Count} Row DB: {cfig.Name}");
+                                                    //  _logger_WCM.Information($"Send Data To API: {listOrder.Count} Row DB: {cfig.Name}");
                                                     string apiUrl = configuration["API_GCP_WCM"];
                                                     using (HttpClient httpClient = new HttpClient())
                                                     {
@@ -1247,7 +1227,7 @@ internal class Program
 
                                         }
                                     }
-                                    catch(Exception ex)
+                                    catch (Exception ex)
                                     {
                                         _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
                                         sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
@@ -1261,7 +1241,126 @@ internal class Program
                             _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                             sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                         }
-                       
+
+                        break;
+                    case "PRD_ExportHD":
+                        _logger_Einvoice.Information("-----------------------ExpEinvoice-------------------------------");
+                        ReadFile ExportXML = new ReadFile(_logger_Einvoice);
+                        try
+                        {
+                            var connections = db.ConfigConnections.SingleOrDefault(p => p.Type == Name && p.Status == true);
+                            var configXml = db.Configs.SingleOrDefault(p => p.Type == Name && p.Status == true);
+                            if (connections != null && connections.ConnectString != null)
+                            {
+                                var currentDatepathxml = DateTime.Now;
+                                string currentDatepath = currentDatepathxml.ToString("yyyyMMddHHmmss");
+                                //--------------------------------------------------//
+                                string[] splitValues = configXml.TimeRun.Split(';');
+                                if (splitValues.Length >= 3)
+                                {
+                                    string lastdate = splitValues[0];
+                                    int intValue;
+                                    int.TryParse(lastdate, out intValue);
+                                    string firstValuePOS = splitValues[1];
+                                    string secondValueSAP = splitValues[2];
+                                    //---------------------------------------------//
+                                    var currentDatexml = DateTime.Today;
+                                    var previousDate = currentDatexml.AddDays(-intValue);
+                                    string StartDateString = previousDate.ToString("yyyy-MM-dd");
+                                    string EndDateString = previousDate.ToString("yyyy-MM-dd");
+                                    if (firstValuePOS.Length > 0)
+                                    {
+                                        var resultxmlPOS = ExportXML.ConvertSQLtoXML(connections.ConnectString, firstValuePOS, StartDateString, EndDateString, "0104918404", "", "");
+                                        string outputFilePathPos = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_STORE_{currentDatepath}.xml";
+                                        if (resultxmlPOS != null)
+                                        {
+                                            using (StreamWriter writer = new StreamWriter(outputFilePathPos))
+                                            {
+                                                writer.Write(resultxmlPOS.ToString());
+                                                //   _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;(1);2  :: 1 là Tạo file POS ");
+                                    }
+                                    if (secondValueSAP.Length > 0)
+                                    {
+                                        var resultxmlSAP = ExportXML.ConvertSQLtoXML(connections.ConnectString, secondValueSAP, StartDateString, EndDateString, "0104918404", "", "");
+                                        string outputFilePathSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_NOSTORE_{currentDatepath}.xml";
+                                        if (resultxmlSAP != null)
+                                        {
+                                            using (StreamWriter writer = new StreamWriter(outputFilePathSAP))
+                                            {
+                                                writer.Write(resultxmlSAP.ToString());
+                                                //  _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
+                                            }
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;(2)   2 : Tạo file SAP ");
+                                    }
+                                }
+                                else
+                                {
+                                    _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;2  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP ");
+                                }
+                                string[] filteredStringsxml = Directory.GetFiles(configXml.LocalFoderPath, "*.XML");
+                                if (filteredStringsxml.Length > 0)
+                                {
+                                    if (Directory.Exists(configXml.MoveFolderPath))
+                                    {
+                                        foreach (string f in filteredStringsxml)
+                                        {
+                                            string fName = f.Substring(configXml.LocalFoderPath.Length);
+                                            File.Copy(Path.Combine(configXml.LocalFoderPath, fName), Path.Combine(configXml.MoveFolderPath, fName), true);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Directory.CreateDirectory(configXml.MoveFolderPath);
+                                        foreach (string f in filteredStringsxml)
+                                        {
+                                            string fName = f.Substring(configXml.LocalFoderPath.Length);
+                                            File.Copy(Path.Combine(configXml.LocalFoderPath, fName), Path.Combine(configXml.MoveFolderPath, fName), true);
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    _logger_VINID.Information("Không có file Copy");
+                                }
+                                if (filteredStringsxml.Length > 0)
+                                {
+                                    if (configXml != null && configXml.pathRemoteDirectory != null && configXml.MoveFolderPath != null
+                                        && configXml.IpSftp != null && configXml.username != null && configXml.password != null && configXml.LocalFoderPath != null)
+                                    {
+                                        SftpHelper sftpHelperupfile = new SftpHelper(configXml.IpSftp, 22, configXml.username, configXml.password, _logger_Einvoice);
+                                        sftpHelperupfile.UploadSftpLinux2(configXml.LocalFoderPath, configXml.pathRemoteDirectory, configXml.MoveFolderPath, "*.XML");
+                                    }
+                                    else
+                                    {
+                                        _logger_Einvoice.Information("Chưa khai báo Upload file config ExpEinvoice");
+                                    }
+                                }
+                                else
+                                {
+                                    _logger_Einvoice.Information("Không Có data để UpLoad.");
+                                }
+                            }
+                            else
+                            {
+                                _logger_Einvoice.Information("Chưa khai báo đủ connection or config");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger_Einvoice.Information(ex.Message);
+                        }
+
                         break;
                     default:
                         _logger.Information("Invalid function name.");

@@ -20,5 +20,6 @@ namespace BluePosVoucher.Models
         public bool? Status { get; set; }
         public DateTime? LastTimeRun { get; set; }
         public bool? IsDownload { get; set; }
+        public string? TimeRun { get; set; }
     }
 }

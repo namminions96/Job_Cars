@@ -1,0 +1,2 @@
+2023-11-29 11:09:55.169 +07:00 [INF] Please provide a function name as an argument.
+2023-11-29 11:10:19.116 +07:00 [INF] Please provide a function name as an argument.

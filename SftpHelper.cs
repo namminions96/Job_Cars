@@ -189,6 +189,7 @@ namespace BluePosVoucher
                 //keybAuth.AuthenticationPrompt += new EventHandler<AuthenticationPromptEventArgs>(HandleKeyEvent);
                 //ConnectionInfo conInfo = new ConnectionInfo(host, SftpPort, username, keybAuth);
 
+
                 using (SftpClient client = new SftpClient(Host, Port, Username, Password))
                 {
                     client.Connect();
@@ -341,7 +342,6 @@ namespace BluePosVoucher
                             }
                             count++;
                         }
-
                         if (isMoveFile)
                         {
                           File.Delete(source + file.Name);

@@ -18,6 +18,8 @@ using Job_By_SAP.PLH;
 using Dapper;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using System.Data;
+using System.Reflection.PortableExecutable;
 
 namespace Read_xml
 {
@@ -242,43 +244,61 @@ namespace Read_xml
 
             return input;
         }
-        public string ConvertSQLtoXML(string connectionString, string query)
+        public string ConvertSQLtoXML(string connectionString,string SearchBy,string StartDate,
+                                      string EndDate,string Taxcode,string Branch,string Serial)
         {
             StringBuilder xml = new StringBuilder();
-            xml.AppendLine("<Data>");
-
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 connection.Open();
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using (SqlCommand command = new SqlCommand("vcm_get_list_einvoice_report_exp_Nam", connection))
                 {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@FromDate", StartDate);
+                    command.Parameters.AddWithValue("@ToDate", EndDate);
+                    command.Parameters.AddWithValue("@SearchBy", SearchBy);
+                    command.Parameters.AddWithValue("@Branch", Branch); // Giá trị null hoặc trống
+                    command.Parameters.AddWithValue("@Taxcode", Taxcode);//"0104918404"
+                    command.Parameters.AddWithValue("@Serial", Serial); // Giá trị null hoặc trống
+                       
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        while (reader.Read())
+                        if (reader.HasRows) // Kiểm tra nếu có bản ghi để đọc
                         {
-                            xml.AppendLine("<Record>");
+                            xml.AppendLine("<n0:MAPPING xmlns:n0=\"urn:Vincommerce:BLUEPOS_FPT:To:BW:Tax_Reconcicle\">");
 
-                            for (int i = 0; i < reader.FieldCount; i++)
+                            while (reader.Read())
                             {
-                                string fieldName = reader.GetName(i);
-                                string fieldValue = reader[i].ToString();
+                                xml.AppendLine("<CONTENT>");
 
-                                // Chuyển đổi các dấu phẩy thành dấu chấm trong các trường số
-                                if (fieldName.EndsWith("Qty"))
+                                for (int i = 0; i < reader.FieldCount; i++)
                                 {
-                                    fieldValue = fieldValue.Replace(",", ".");
+                                    string fieldName = reader.GetName(i);
+                                    string fieldValue = reader[i].ToString();
+                                    // Chuyển đổi các dấu phẩy thành dấu chấm trong các trường số
+                                    if (fieldName.EndsWith("REV_AMT_WO_TAX"))
+                                    {
+                                        fieldValue = fieldValue.Replace(",", ".");
+                                    }
+                                    if (fieldName.EndsWith("TAX_AMOUNT"))
+                                    {
+                                        fieldValue = fieldValue.Replace(",", ".");
+                                    }
+                                    xml.AppendLine($"<{fieldName}>{fieldValue}</{fieldName}>");
                                 }
-
-                                xml.AppendLine($"<{fieldName}>{fieldValue}</{fieldName}>");
+                                xml.AppendLine("</CONTENT>");
                             }
-
-                            xml.AppendLine("</Record>");
+                            xml.AppendLine("</n0:MAPPING>");
                         }
+                        else
+                        {
+                            _logger.Information($"Không Có Data Type : {SearchBy}");
+                            return null;
+                        }
+
                     }
                 }
             }
-
-            xml.AppendLine("</Data>");
 
             return xml.ToString();
         }
