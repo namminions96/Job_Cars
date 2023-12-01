@@ -1,5 +1,0 @@
-2023-11-15 15:53:57.099 +07:00 [INF] --------------------------VoucherSAPRetry----------------------------
-2023-11-15 15:54:05.170 +07:00 [INF] Connect DB : SET1
-2023-11-15 15:54:45.106 +07:00 [INF] SeriaNo: 15350121230800254 {"Status":200,"Message":"Success","Data":[{"Status":"Serial number doesn't existed","Return":"E4","ActicleNo":null,"ActicleType":null,"VoucherNumber":null,"Value":"","Voucher_Currency":"","Validity_From_Date":null,"Expiry_Date":"","CompanyCode":null,"Partner":null,"IsEmployee":null}]}
-2023-11-15 15:54:54.816 +07:00 [INF] Insert INB_VoucherToSAP:    15350121230800254
-2023-11-15 15:55:20.132 +07:00 [INF] Update Status:  15350121230800254,- 0 Rows 

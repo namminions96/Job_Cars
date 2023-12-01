@@ -1,3 +1,0 @@
-2023-11-22 14:13:32.479 +07:00 [ERR] Lỗi:GCP_WCM Could not find server '10.235.25.88' in sys.servers. Verify that the correct server name was specified. If necessary, execute the stored procedure sp_addlinkedserver to add the server to sys.servers.
-2023-11-22 14:20:46.304 +07:00 [ERR] Lỗi:GCP_WCM Could not find a part of the path 'D:\Read_SAP_\Read_xml\bin\Debug\net6.0\LogSend\dataWCM_GCP20231122142033.text'.
-2023-11-22 14:22:35.544 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.

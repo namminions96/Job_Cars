@@ -346,8 +346,6 @@ namespace BluePosVoucher
                         {
                           File.Delete(source + file.Name);
                         }
-
-                        _logger.Information("Uploaded file: " + file.Name);
                     }
                     client.Disconnect();
                 }

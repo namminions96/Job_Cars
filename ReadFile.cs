@@ -244,8 +244,8 @@ namespace Read_xml
 
             return input;
         }
-        public string ConvertSQLtoXML(string connectionString,string SearchBy,string StartDate,
-                                      string EndDate,string Taxcode,string Branch,string Serial)
+        public string ConvertSQLtoXML(string connectionString, string SearchBy, string StartDate,
+                                      string EndDate, string Taxcode, string Branch, string Serial)
         {
             StringBuilder xml = new StringBuilder();
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -259,8 +259,7 @@ namespace Read_xml
                     command.Parameters.AddWithValue("@SearchBy", SearchBy);
                     command.Parameters.AddWithValue("@Branch", Branch); // Giá trị null hoặc trống
                     command.Parameters.AddWithValue("@Taxcode", Taxcode);//"0104918404"
-                    command.Parameters.AddWithValue("@Serial", Serial); // Giá trị null hoặc trống
-                       
+                    command.Parameters.AddWithValue("@Serial", Serial); // Giá trị null hoặc trống                     
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows) // Kiểm tra nếu có bản ghi để đọc
@@ -275,7 +274,6 @@ namespace Read_xml
                                 {
                                     string fieldName = reader.GetName(i);
                                     string fieldValue = reader[i].ToString();
-                                    // Chuyển đổi các dấu phẩy thành dấu chấm trong các trường số
                                     if (fieldName.EndsWith("REV_AMT_WO_TAX"))
                                     {
                                         fieldValue = fieldValue.Replace(",", ".");
@@ -295,7 +293,6 @@ namespace Read_xml
                             _logger.Information($"Không Có Data Type : {SearchBy}");
                             return null;
                         }
-
                     }
                 }
             }

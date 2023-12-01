@@ -7,6 +7,7 @@ using Job_By_SAP;
 using Job_By_SAP.Data;
 using Job_By_SAP.Models;
 using Job_By_SAP.PLH;
+using Job_By_SAP.SAP;
 using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -59,10 +60,10 @@ internal class Program
        .Build();
         using (var db = new DbConfigAll())
         {
-            string functionName = args[0];
-            string Name = args[1];
-            // string Name = "ExpEinvoice";
-            // string functionName = "PRD_ExportHD";
+           string functionName = args[0];
+           string Name = args[1];
+           // string Name = "ExpEinvoice";
+           // string functionName = "PRD_ExportHD";
             if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
@@ -1244,123 +1245,10 @@ internal class Program
 
                         break;
                     case "PRD_ExportHD":
-                        _logger_Einvoice.Information("-----------------------ExpEinvoice-------------------------------");
-                        ReadFile ExportXML = new ReadFile(_logger_Einvoice);
-                        try
-                        {
-                            var connections = db.ConfigConnections.SingleOrDefault(p => p.Type == Name && p.Status == true);
-                            var configXml = db.Configs.SingleOrDefault(p => p.Type == Name && p.Status == true);
-                            if (connections != null && connections.ConnectString != null)
-                            {
-                                var currentDatepathxml = DateTime.Now;
-                                string currentDatepath = currentDatepathxml.ToString("yyyyMMddHHmmss");
-                                //--------------------------------------------------//
-                                string[] splitValues = configXml.TimeRun.Split(';');
-                                if (splitValues.Length >= 3)
-                                {
-                                    string lastdate = splitValues[0];
-                                    int intValue;
-                                    int.TryParse(lastdate, out intValue);
-                                    string firstValuePOS = splitValues[1];
-                                    string secondValueSAP = splitValues[2];
-                                    //---------------------------------------------//
-                                    var currentDatexml = DateTime.Today;
-                                    var previousDate = currentDatexml.AddDays(-intValue);
-                                    string StartDateString = previousDate.ToString("yyyy-MM-dd");
-                                    string EndDateString = previousDate.ToString("yyyy-MM-dd");
-                                    if (firstValuePOS.Length > 0)
-                                    {
-                                        var resultxmlPOS = ExportXML.ConvertSQLtoXML(connections.ConnectString, firstValuePOS, StartDateString, EndDateString, "0104918404", "", "");
-                                        string outputFilePathPos = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_STORE_{currentDatepath}.xml";
-                                        if (resultxmlPOS != null)
-                                        {
-                                            using (StreamWriter writer = new StreamWriter(outputFilePathPos))
-                                            {
-                                                writer.Write(resultxmlPOS.ToString());
-                                                //   _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;(1);2  :: 1 là Tạo file POS ");
-                                    }
-                                    if (secondValueSAP.Length > 0)
-                                    {
-                                        var resultxmlSAP = ExportXML.ConvertSQLtoXML(connections.ConnectString, secondValueSAP, StartDateString, EndDateString, "0104918404", "", "");
-                                        string outputFilePathSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_NOSTORE_{currentDatepath}.xml";
-                                        if (resultxmlSAP != null)
-                                        {
-                                            using (StreamWriter writer = new StreamWriter(outputFilePathSAP))
-                                            {
-                                                writer.Write(resultxmlSAP.ToString());
-                                                //  _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
-                                            }
-                                        }
-
-                                    }
-                                    else
-                                    {
-                                        _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;(2)   2 : Tạo file SAP ");
-                                    }
-                                }
-                                else
-                                {
-                                    _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;2  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP ");
-                                }
-                                string[] filteredStringsxml = Directory.GetFiles(configXml.LocalFoderPath, "*.XML");
-                                if (filteredStringsxml.Length > 0)
-                                {
-                                    if (Directory.Exists(configXml.MoveFolderPath))
-                                    {
-                                        foreach (string f in filteredStringsxml)
-                                        {
-                                            string fName = f.Substring(configXml.LocalFoderPath.Length);
-                                            File.Copy(Path.Combine(configXml.LocalFoderPath, fName), Path.Combine(configXml.MoveFolderPath, fName), true);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        Directory.CreateDirectory(configXml.MoveFolderPath);
-                                        foreach (string f in filteredStringsxml)
-                                        {
-                                            string fName = f.Substring(configXml.LocalFoderPath.Length);
-                                            File.Copy(Path.Combine(configXml.LocalFoderPath, fName), Path.Combine(configXml.MoveFolderPath, fName), true);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    _logger_VINID.Information("Không có file Copy");
-                                }
-                                if (filteredStringsxml.Length > 0)
-                                {
-                                    if (configXml != null && configXml.pathRemoteDirectory != null && configXml.MoveFolderPath != null
-                                        && configXml.IpSftp != null && configXml.username != null && configXml.password != null && configXml.LocalFoderPath != null)
-                                    {
-                                        SftpHelper sftpHelperupfile = new SftpHelper(configXml.IpSftp, 22, configXml.username, configXml.password, _logger_Einvoice);
-                                        sftpHelperupfile.UploadSftpLinux2(configXml.LocalFoderPath, configXml.pathRemoteDirectory, configXml.MoveFolderPath, "*.XML");
-                                    }
-                                    else
-                                    {
-                                        _logger_Einvoice.Information("Chưa khai báo Upload file config ExpEinvoice");
-                                    }
-                                }
-                                else
-                                {
-                                    _logger_Einvoice.Information("Không Có data để UpLoad.");
-                                }
-                            }
-                            else
-                            {
-                                _logger_Einvoice.Information("Chưa khai báo đủ connection or config");
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger_Einvoice.Information(ex.Message);
-                        }
-
+                        _logger_Einvoice.Information("-----------------------Start ExpEinvoice-----------------------------");
+                        ExpInvoiceSAP expInvoiceSAP = new ExpInvoiceSAP(_logger_Einvoice);
+                        expInvoiceSAP.ExpInvoiceSAPXML(Name);
+                        _logger_Einvoice.Information("-----------------------End ExpEinvoice-------------------------------");
                         break;
                     default:
                         _logger.Information("Invalid function name.");
