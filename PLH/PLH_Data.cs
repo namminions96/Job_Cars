@@ -55,6 +55,12 @@ namespace Job_By_SAP.PLH
                      FROM CentralSales.dbo.TransDiscountCouponEntry NOLOCK 
                      WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')";
         }
+
+        public static string TransPoinEntryQuery()
+        {
+            return @"select OrderNo,Sum(EarnPoints) EarnPoints,MemberNumber,CardLevel,MemberCSN from CentralSales.dbo.TransPointLine (NOLOCK) where OrderNo IN @OrderNo
+                    group by OrderNo,CardLevel,MemberCSN,MemberNumber";
+        }
         public static string TransDiscountCouponEntryQuery()
         {
             return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ItemNo OfferNo,OfferType,Barcode
@@ -84,6 +90,24 @@ namespace Job_By_SAP.PLH
                                         VALUES
                                         (@RECEIPT_NO, @UpdateFlg, @CrtDate)";
         }
+
+        public static string GCP_CSV_PLH_Archive()
+        {
+            return @"SELECT A.OrderNo,Sum(EarnPoints) EarnPoints ,A.MemberNumber,A.CardLevel,MemberCSN 
+                     FROM CentralSalesArchive.[dbo].[TransPointLine]A
+                     join CentralSalesArchive.[dbo].TransHeader B On A.OrderNo = B.OrderNo
+                     where OrderDate between '20231207' and'20231213'
+                     group by A.OrderNo,A.CardLevel,A.MemberCSN,A.MemberNumber";
+        }
+        public static string GCP_CSV_PLH_Prd()
+        {
+            return @"SELECT A.OrderNo,Sum(EarnPoints) EarnPoints,A.MemberNumber,A.CardLevel,MemberCSN 
+                        FROM CentralSales.[dbo].[TransPointLine]A
+                        join CentralSales.[dbo].TransHeader B On A.OrderNo = B.OrderNo
+                        where OrderDate between '20231207' and'20231213'
+                        group by A.OrderNo,A.CardLevel,A.MemberCSN,A.MemberNumber";
+        }
+
 
     }
 }

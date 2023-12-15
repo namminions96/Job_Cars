@@ -63,6 +63,7 @@ namespace Job_By_SAP.PLH
                                 var resultTransDiscountCoupon = connection.Query<TransDiscountCouponEntry_PLH_BLUEPOS>(PLH_Data.TransDiscountCouponEntryQuery(), new { orderNo = results_order }, commandTimeout: timeout).ToList();
                                 var resultTransPayment = connection.Query<TransPaymentEntry_PLH_BLUEPOS>(PLH_Data.TransPaymentEntryQuery(), new { orderNo = results_order }, commandTimeout: timeout).ToList();
                                 var resultTransDiscount = connection.Query<TransDiscountEntry_PLH_BLUEPOS>(PLH_Data.TransDiscountEntryQuery(), new { orderNo = results_order }, commandTimeout: timeout).ToList();
+                                var resultTransPoin = connection.Query<TransPointEntry_PLH_BLUEPOS>(PLH_Data.TransPoinEntryQuery(), new { orderNo = results_order }).ToList();
                                 connection.Close();
                                 foreach (var order in orderlist)
                                 {
@@ -82,7 +83,7 @@ namespace Job_By_SAP.PLH
                                     orderExp.CouponEntry = resultTransDiscountCoupon.Where(p => p.OrderNo == order.OrderNo).ToList();
                                     orderExp.Payments = resultTransPayment.Where(p => p.OrderNo == order.OrderNo).ToList();
                                     orderExp.DiscountEntry = resultTransDiscount.Where(p => p.OrderNo == order.OrderNo).ToList();
-                                    orderExp.Loyalty = new List<TransPointLine_PLH_BLUEPOS>();
+                                    orderExp.TransPointEntry = resultTransPoin.Where(p => p.OrderNo == order.OrderNo).ToList();
                                     listOrder.Add(orderExp);
                                 }
                             }

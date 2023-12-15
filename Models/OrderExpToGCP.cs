@@ -24,9 +24,9 @@ namespace Job_By_SAP.Models
         public bool IsRetry { get; set; }
         public List<TransLine_PLH_BLUEPOS> Items { get; set; }
         public List<TransPaymentEntry_PLH_BLUEPOS> Payments { get; set; }
-        public List<TransPointLine_PLH_BLUEPOS> Loyalty { get; set; }
         public List<TransDiscountEntry_PLH_BLUEPOS> DiscountEntry { get; set; }
         public List<TransDiscountCouponEntry_PLH_BLUEPOS> CouponEntry { get; set; }
+        public List<TransPointEntry_PLH_BLUEPOS> TransPointEntry { get; set; }
     }
 
     public class TransLine_PLH_BLUEPOS
@@ -76,16 +76,6 @@ namespace Job_By_SAP.Models
         public string TraceCode { get; set; }
         public string ReferenceId { get; set; }
     }
-    public class TransPointLine_PLH_BLUEPOS
-    {
-        public string OrderNo { get; set; }
-        public int ParentLineId { get; set; }
-        public int LineId { get; set; }
-        public string MemberCardNumber { get; set; }
-        public string ClubCode { get; set; }
-        public decimal LoyaltyPointsEarn { get; set; }
-        public decimal LoyaltyPointsRedeem { get; set; }
-    }
     public class TransDiscountEntry_PLH_BLUEPOS
     {
         public string OrderNo { get; set; }
@@ -106,6 +96,16 @@ namespace Job_By_SAP.Models
         public string OfferType { get; set; }
         public string Barcode { get; set; }
     }
+    public class TransPointEntry_PLH_BLUEPOS
+    {
+        public string OrderNo { get; set; }
+        public double EarnPoints { get; set; }
+        public string MemberNumber { get; set; }
+        public string CardLevel { get; set; }
+        public string MemberCSN { get; set; }
+
+    }
+
     public class TempSalesGCP
     {  
         public int ID { get; set; }

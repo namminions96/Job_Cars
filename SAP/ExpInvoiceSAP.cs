@@ -41,15 +41,17 @@ namespace Job_By_SAP.SAP
                             string firstValuePOS = splitValues[1];
                             string secondValueSAP = splitValues[2];
                             string ValueCancel = splitValues[3];
+                            string Reconcile = splitValues[4];
                             //---------------------------------------------//
                             var currentDatexml = DateTime.Today;
                             var previousDate = currentDatexml.AddDays(-intValue);
                             string StartDateString = previousDate.ToString("yyyy-MM-dd");
                             string EndDateString = previousDate.ToString("yyyy-MM-dd");
+
                             if (firstValuePOS == "1")
                             {
-                                var resultxmlPOS = ExportXML.ConvertSQLtoXML(connections.ConnectString, firstValuePOS, StartDateString, EndDateString, "0104918404", "", "");
-                                string outputFilePathPos = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_STORE_{currentDatepath}.xml";
+                                var resultxmlPOS = ExportXML.ConvertSQLtoXML(connections.ConnectString, "1", StartDateString, EndDateString, "0104918404", "", "");
+                                string outputFilePathPos = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_POS_{currentDatepath}.xml";
                                 if (resultxmlPOS != null)
                                 {
                                     using (StreamWriter writer = new StreamWriter(outputFilePathPos))
@@ -61,13 +63,13 @@ namespace Job_By_SAP.SAP
                             }
                             else
                             {
-                                _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;(1);2  :: 1 là Tạo file POS ");
-                                sendEmailExample.SendMailError($"Chưa Khai Báo Time Run định Dạng  2;(1);2  :: 1 là Tạo file POS ");
+                                _logger_Einvoice.Information($"Tạo file POS OFF ");
+                               
                             }
                             if (secondValueSAP == "2")
                             {
-                                var resultxmlSAP = ExportXML.ConvertSQLtoXML(connections.ConnectString, secondValueSAP, StartDateString, EndDateString, "0104918404", "", "");
-                                string outputFilePathSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_NOSTORE_{currentDatepath}.xml";
+                                var resultxmlSAP = ExportXML.ConvertSQLtoXML(connections.ConnectString, "2", StartDateString, EndDateString, "0104918404", "", "");
+                                string outputFilePathSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_SAP_{currentDatepath}.xml";
                                 if (resultxmlSAP != null)
                                 {
                                     using (StreamWriter writer = new StreamWriter(outputFilePathSAP))
@@ -79,16 +81,16 @@ namespace Job_By_SAP.SAP
                             }
                             else
                             {
-                                _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;(2)   2 : Tạo file SAP ");
-                                sendEmailExample.SendMailError($"Chưa Khai Báo Time Run định Dạng  2;1;(2)   2 : Tạo file SAP ");
+                                _logger_Einvoice.Information($"Tạo file SAP OFF");
+                               
                             }
                             if (ValueCancel == "3")
                             {
                                 DateTime startDate = new DateTime(previousDate.Year, previousDate.Month, 1);
                                 string StartDateCancel = startDate.ToString("yyyy-MM-dd");
                                 string EndDateCancel = currentDatexml.ToString("yyyy-MM-dd");
-                                var resultxmlCancel = ExportXML.ConvertSQLtoXML(connections.ConnectString, ValueCancel, StartDateCancel, EndDateCancel, "0104918404", "", "");
-                                string outputFilePathCancel = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_CANCEL_{currentDatepath}.xml";
+                                var resultxmlCancel = ExportXML.ConvertSQLtoXML(connections.ConnectString, "3", StartDateCancel, EndDateCancel, "0104918404", "", "");
+                                string outputFilePathCancel = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_POS_CANCEL_{currentDatepath}.xml";
                                 if (resultxmlCancel != null)
                                 {
                                     using (StreamWriter writer = new StreamWriter(outputFilePathCancel))
@@ -97,17 +99,63 @@ namespace Job_By_SAP.SAP
                                         //  _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
                                     }
                                 }
+                                var resultxmlCancelSAP = ExportXML.ConvertSQLtoXML(connections.ConnectString, "4", StartDateCancel, EndDateCancel, "0104918404", "", "");
+                                string outputFilePathCancelSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_SAP_CANCEL_{currentDatepath}.xml";
+                                if (resultxmlCancel != null)
+                                {
+                                    using (StreamWriter writer = new StreamWriter(outputFilePathCancelSAP))
+                                    {
+                                        writer.Write(resultxmlCancelSAP.ToString());
+                                        //  _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
+                                    }
+                                }
+
                             }
                             else
                             {
-                                _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;2,(3)   3 : Tạo file Cancel ");
-                                sendEmailExample.SendMailError($"Chưa Khai Báo Time Run định Dạng  2;1;2,(3)   3 : Tạo file Cancel ");
+                                _logger_Einvoice.Information($" Tạo file Cancel Off");
+                                
                             }
+                            if (Reconcile == "4")
+                            {
+                                string RetryStore = "1";
+                                //DateTime startDate = new DateTime(previousDate.Year, previousDate.Month, 1);
+                                //string StartDateRetry = startDate.ToString("yyyy-MM-dd");
+                                //string EndDateRetry = currentDatexml.ToString("yyyy-MM-dd");
+                                var resultxmlStore = ExportXML.ConvertSQLtoXMLRetry(connections.ConnectString, RetryStore);
+                                string outputFilePathRetry = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_POS_RETRY_{currentDatepath}.xml";
+                                if (resultxmlStore != null)
+                                {
+                                    using (StreamWriter writer = new StreamWriter(outputFilePathRetry))
+                                    {
+                                        writer.Write(resultxmlStore.ToString());
+                                        //  _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
+                                    }
+                                }
+                                string RetryNostore = "2";
+                                var resultxmlNostore = ExportXML.ConvertSQLtoXMLRetry(connections.ConnectString, RetryNostore);
+                                string outputFilePathRetryNostore = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_SAP_RETRY_{currentDatepath}.xml";
+                                if (resultxmlNostore != null)
+                                {
+                                    using (StreamWriter writer = new StreamWriter(outputFilePathRetryNostore))
+                                    {
+                                        writer.Write(resultxmlNostore.ToString());
+                                        //  _logger_Einvoice.Information($"Tạo File TAX_RECONCILE_NOSTORE_{currentDatepath}.xml Done");
+                                    }
+                                }
+
+                            }
+                            else
+                            {
+                                _logger_Einvoice.Information($"Tạo file Retry Off ");
+                               
+                            }
+
                         }
                         else
                         {
-                            _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;2  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP ");
-                            sendEmailExample.SendMailError($"Chưa Khai Báo Time Run định Dạng  2;1;2  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP ");
+                            _logger_Einvoice.Information($"Chưa Khai Báo Time Run định Dạng  2;1;2;3;4  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP, 3: Send file Cancel, 4 : Send file Retry ");
+                            sendEmailExample.SendMailError($"Chưa Khai Báo Time Run định Dạng  2;1;2;3;4  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP, 3: Send file Cancel, 4 : Send file Retry ");
                         }
                         string[] filteredStringsxml = Directory.GetFiles(configXml.LocalFoderPath, "*.XML");
                         if (filteredStringsxml.Length > 0)

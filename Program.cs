@@ -18,9 +18,12 @@ using Read_xml.Data;
 using Serilog;
 using System;
 using System.Data;
+using System.Diagnostics;
 using System.Diagnostics.Metrics;
+using System.Drawing;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
 using System.Xml.Linq;
@@ -54,16 +57,22 @@ internal class Program
         SendEmailExample sendEmailExample = new SendEmailExample(_logger);
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger_VC);
         ReadFile readfilSAP = new ReadFile(_logger);
+        SendLogger sendLogger = new SendLogger();
+        Stopwatch stopwatch = new Stopwatch();
         IConfiguration configuration = new ConfigurationBuilder()
        .SetBasePath(AppContext.BaseDirectory)
        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
        .Build();
+        string apiUrllog = "https://apibluepos.winmart.vn/api/common/logging";
         using (var db = new DbConfigAll())
         {
-           string functionName = args[0];
-           string Name = args[1];
-           // string Name = "ExpEinvoice";
-           // string functionName = "PRD_ExportHD";
+            string functionName = args[0];
+            string Name = args[1];
+            //string Name = "PLH_INBOUND";
+            // string functionName = "GCP_PLH";
+
+            // string Name = "PLH_INBOUND";
+            // string functionName = "PRD_ExportCSV_PLH_TransPoint";
             if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
@@ -582,10 +591,10 @@ internal class Program
                             _logger_VINID.Information("Chưa khai báo Host");
                         }
                         break;
-                    case "GCP":
+                    case "GCP_PLH":
                         _logger_PLH.Information("------------------------------------------------------");
                         _logger_PLH.Information("Run GCP");
-                        var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_INBOUND" && p.Status == true);//config DB
+                        var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
                         if (configPLH.Count() > 0)
                         {
                             PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger_PLH);
@@ -602,6 +611,8 @@ internal class Program
                                         try
                                         {
                                             string json = JsonConvert.SerializeObject(listOrder);
+                                            //  string filePathError = $"Data.text";
+                                            // File.WriteAllText(filePathError, json);
                                             var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
                                             StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                                             request.Content = content;
@@ -1141,6 +1152,7 @@ internal class Program
                         }
                         break;
                     case "GCP_WCM_NEW":
+                        stopwatch.Start();
                         var configWCM_new = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
                         if (configWCM_new.Count() > 0)
                         {
@@ -1153,7 +1165,7 @@ internal class Program
                                     try
                                     {
                                         sqlConnection.Open();
-                                        var timeout = 3000;
+                                        var timeout = 10000;
                                         var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
 
                                         if (results.Count > 0)
@@ -1187,7 +1199,7 @@ internal class Program
                                                                 DateTime currentDateTime = DateTime.Now;
                                                                 string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
                                                                 string filePathError = $"LogSend\\Data{cfig.Name}{dateTimeString}.text";
-                                                                File.WriteAllText(filePathError, json);
+                                                                //File.WriteAllText(filePathError, json);
                                                                 var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
                                                                 StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                                                                 request.Content = content;
@@ -1221,6 +1233,34 @@ internal class Program
                                                     _logger_WCM.Information($"Không có Send data GCP");
                                                 }
                                             }
+                                            stopwatch.Stop();
+                                            string jsonDatawcm = $@"{{
+                                                      ""HttpContext"": ""{functionName}"",
+                                                      ""PosNo"": ""{Name}"",
+                                                      ""WebApi"": ""GCP_WCM"",
+                                                      ""DeveloperMessage"": ""Done"",
+                                                      ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                                         }}";
+                                            using (HttpClient client = new HttpClient())
+                                            {
+                                                string username = "BLUEOPS";
+                                                string password = "BluePos@123";
+                                                string authInfo = $"{username}:{password}";
+                                                authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                                                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                                                StringContent content = new StringContent(jsonDatawcm, Encoding.UTF8, "application/json");
+                                                HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                                                if (response.IsSuccessStatusCode)
+                                                {
+                                                    string responseBody = await response.Content.ReadAsStringAsync();
+                                                    _logger_WCM.Information("Phản hồi từ API: " + responseBody);
+                                                }
+                                                else
+                                                {
+                                                    _logger_WCM.Information("Lỗi: " + response.StatusCode);
+                                                }
+                                            }
+
                                         }
                                         else
                                         {
@@ -1250,6 +1290,57 @@ internal class Program
                         expInvoiceSAP.ExpInvoiceSAPXML(Name);
                         _logger_Einvoice.Information("-----------------------End ExpEinvoice-------------------------------");
                         break;
+                    case "PRD_ExportCSV_PLH_TransPoint":
+                        stopwatch.Start();
+                        _logger_Einvoice.Information("-----------------------Start EXP-----------------------------");
+                        ReadFile ExportXML_PLH = new ReadFile(_logger_Einvoice);
+                        var connections = db.ConfigConnections.SingleOrDefault(p => p.Type == Name && p.Status == true);
+
+                        string ProcessCSV = configuration["Status_CSV_PLH"];
+                        if (ProcessCSV == "1")
+                        {
+                            ExportXML_PLH.ConvertSQLtoXML_CSV_PLH(connections.ConnectString, PLH_Data.GCP_CSV_PLH_Prd());
+                        }
+                        else if (ProcessCSV == "2")
+                        {
+                            ExportXML_PLH.ConvertSQLtoXML_CSV_PLH(connections.ConnectString, PLH_Data.GCP_CSV_PLH_Archive());
+                        }
+                        else
+                        {
+                            _logger.Information("Job Off");
+                        }
+                        stopwatch.Stop();
+                        //sendLogger.SendKibanaAsync(functionName, "PLH", "ExportCSV_PLH", "Done", stopwatch.ElapsedMilliseconds);
+
+                        // Dữ liệu để gửi đi dưới dạng JSON
+                        string jsonData = $@"{{
+                           ""HttpContext"": ""{functionName}"",
+                          ""PosNo"": ""PLH"",
+                          ""WebApi"": ""ExportCSV_PLH"",
+                          ""DeveloperMessage"": ""Done"",
+                          ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                              }}";
+                        using (HttpClient client = new HttpClient())
+                        {
+                            string username = "BLUEOPS";
+                            string password = "BluePos@123";
+                            string authInfo = $"{username}:{password}";
+                            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                            HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                            if (response.IsSuccessStatusCode)
+                            {
+                                string responseBody = await response.Content.ReadAsStringAsync();
+                                Console.WriteLine("Phản hồi từ API: " + responseBody);
+                            }
+                            else
+                            {
+                                Console.WriteLine("Lỗi: " + response.StatusCode);
+                            }
+                        }
+                        _logger_Einvoice.Information($"-----------------------End EXP-------------------------------");
+                        break;
                     default:
                         _logger.Information("Invalid function name.");
                         sendEmailExample.SendMailError("Invalid function name.");
@@ -1262,6 +1353,7 @@ internal class Program
                 sendEmailExample.SendMailError("Please provide a function name as an argument.");
             }
         }
+
     }
 }
 

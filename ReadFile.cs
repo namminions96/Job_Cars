@@ -250,16 +250,68 @@ namespace Read_xml
             StringBuilder xml = new StringBuilder();
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
+                int timeout = 1000;
                 connection.Open();
                 using (SqlCommand command = new SqlCommand("vcm_get_list_einvoice_report_exp_Nam", connection))
                 {
                     command.CommandType = CommandType.StoredProcedure;
+                    command.CommandTimeout = 1000;
                     command.Parameters.AddWithValue("@FromDate", StartDate);
                     command.Parameters.AddWithValue("@ToDate", EndDate);
                     command.Parameters.AddWithValue("@SearchBy", SearchBy);
                     command.Parameters.AddWithValue("@Branch", Branch); // Giá trị null hoặc trống
                     command.Parameters.AddWithValue("@Taxcode", Taxcode);//"0104918404"
                     command.Parameters.AddWithValue("@Serial", Serial); // Giá trị null hoặc trống                     
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows) // Kiểm tra nếu có bản ghi để đọc
+                        {
+                            xml.AppendLine("<n0:MAPPING xmlns:n0=\"urn:Vincommerce:BLUEPOS_FPT:To:BW:Tax_Reconcicle\">");
+
+                            while (reader.Read())
+                            {
+                                xml.AppendLine("<CONTENT>");
+
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    string fieldName = reader.GetName(i);
+                                    string fieldValue = reader[i].ToString();
+                                    if (fieldName.EndsWith("REV_AMT_WO_TAX"))
+                                    {
+                                        fieldValue = fieldValue.Replace(",", ".");
+                                    }
+                                    if (fieldName.EndsWith("TAX_AMOUNT"))
+                                    {
+                                        fieldValue = fieldValue.Replace(",", ".");
+                                    }
+                                    xml.AppendLine($"<{fieldName}>{fieldValue}</{fieldName}>");
+                                }
+                                xml.AppendLine("</CONTENT>");
+                            }
+                            xml.AppendLine("</n0:MAPPING>");
+                        }
+                        else
+                        {
+                            _logger.Information($"Không Có Data Type  : {SearchBy}");
+                            return null;
+                        }
+                    }
+                }
+            }
+
+            return xml.ToString();
+        }
+
+        public string ConvertSQLtoXMLRetry(string connectionString, string SearchBy)
+        {
+            StringBuilder xml = new StringBuilder();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                using (SqlCommand command = new SqlCommand("vcm_get_list_einvoice_report_exp_Retry", connection))
+                {
+                    command.CommandType = CommandType.StoredProcedure;
+                    command.Parameters.AddWithValue("@SearchBy", SearchBy);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         if (reader.HasRows) // Kiểm tra nếu có bản ghi để đọc
@@ -299,6 +351,55 @@ namespace Read_xml
 
             return xml.ToString();
         }
+
+        public void ConvertSQLtoXML_CSV_PLH(string connectionString,string query)
+        {
+            StringBuilder xml = new StringBuilder();
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                int timeout = 1000;
+                connection.Open();
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.CommandTimeout = 1000;
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.HasRows) // Kiểm tra nếu có bản ghi để đọc
+                        {
+                            var currentDatepathxml = DateTime.Now;
+                            string currentDatepath = currentDatepathxml.ToString("yyyyMMddHHmmss");
+                            string outputFilePathPos = @$"TransPoint_Reconcile\TransPoint_Reconcile_{currentDatepath}.csv";
+                            using (var writer = new StreamWriter(outputFilePathPos, false, Encoding.UTF8))
+                            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                            {
+                                for (int i = 0; i < reader.FieldCount; i++)
+                                {
+                                    csv.WriteField(reader.GetName(i));
+                                }
+                                csv.NextRecord();
+
+                                // Ghi dữ liệu từ SqlDataReader vào file CSV
+                                while (reader.Read())
+                                {
+                                    for (int i = 0; i < reader.FieldCount; i++)
+                                    {
+                                        csv.WriteField(reader[i]);
+                                    }
+                                    csv.NextRecord();
+                                }
+                                _logger.Information("Done");
+                            }
+                        }
+                        else
+                        {
+                            _logger.Information("Không Có Data");
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 }
 
