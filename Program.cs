@@ -66,6 +66,11 @@ internal class Program
         string apiUrllog = "https://apibluepos.winmart.vn/api/common/logging";
         using (var db = new DbConfigAll())
         {
+            string usernameapi = "BLUEOPS";
+            string passwordapi = "BluePos@123";
+            string authInfo = $"{usernameapi}:{passwordapi}";
+            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+            //-------------------------------------------
             string functionName = args[0];
             string Name = args[1];
             //string Name = "PLH_INBOUND";
@@ -468,6 +473,7 @@ internal class Program
                         }
                         break;
                     case "PRD_CARStockBalance":
+                        stopwatch.Start();
                         _logger_VINID.Information("-----------------------PRD_CARStockBalance-------------------------------");
                         var configcar = db.Configs.SingleOrDefault(p => p.Type == "PRD_CARStockBalance" && p.Status == true);
                         if (configcar != null)
@@ -590,8 +596,23 @@ internal class Program
                         {
                             _logger_VINID.Information("Chưa khai báo Host");
                         }
+                        stopwatch.Stop();
+                        string jsonDataVinid = $@"{{
+                                                      ""HttpContext"": ""{functionName}"",
+                                                      ""PosNo"": ""{Name}"",
+                                                      ""WebApi"": ""VIND_CARStock"",
+                                                      ""DeveloperMessage"": ""Done"",
+                                                      ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                                         }}";
+                        using (HttpClient client = new HttpClient())
+                        {
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                            StringContent content = new StringContent(jsonDataVinid, Encoding.UTF8, "application/json");
+                            HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                        }
                         break;
                     case "GCP_PLH":
+                        stopwatch.Start();
                         _logger_PLH.Information("------------------------------------------------------");
                         _logger_PLH.Information("Run GCP");
                         var configPLH = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
@@ -644,177 +665,20 @@ internal class Program
                         {
                             _logger_PLH.Information("Staus đang Off or chưa khai báo Connections type = PLH_INBOUND");
                         }
-                        break;
-                    case "GCP_WCM":
-                        _logger_WCM.Information("--------------------------Run GCP_WCM----------------------------");
-                        var configWCM = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
-                        if (configWCM.Count() > 0)
+                        stopwatch.Stop();
+                        string jsonDataPLH = $@"{{
+                                                      ""HttpContext"": ""{functionName}"",
+                                                      ""PosNo"": ""{Name}"",
+                                                      ""WebApi"": ""GCP_PLH"",
+                                                      ""DeveloperMessage"": ""Done"",
+                                                      ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                                         }}";
+                        using (HttpClient client = new HttpClient())
                         {
-                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
-                            foreach (var cfig in configWCM)
-                            {
-                                _logger_WCM.Information($"Connect DB: {cfig.Name}");
-                                //using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
-                                //{
-                                //    sqlConnection.Open();
-                                //    var timeout = 600;
-                                //    _logger_WCM.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
-                                //    var ExcPblueSet = sqlConnection.Query(SP_GET_SELLOUT, commandType: CommandType.StoredProcedure, commandTimeout: timeout);
-                                //    _logger_WCM.Information($"Done : SP_GET_SELLOUT_PBLUE_SET");
-                                //    sqlConnection.Close();
-                                //}
-                                var listOrder = WCM_To_GCPs.OrderWcmToGCPAsync(cfig.ConnectString);//listOrder
-                                if (listOrder.Count > 0)
-                                {
-                                    //string json = JsonConvert.SerializeObject(listOrder);
-                                    //string filePathError = "data.text";
-                                    //File.WriteAllText(filePathError, json);
-                                    _logger_WCM.Information($"Send Data To API: {listOrder.Count} Row");
-                                    string apiUrl = configuration["API_GCP_WCM"];
-                                    using (HttpClient httpClient = new HttpClient())
-                                    {
-                                        try
-                                        {
-                                            List<List<WcmGCPModels>> orderBatches = listOrder
-                                          .Select((order, index) => new { order, index })
-                                          .GroupBy(x => x.index / 1000)
-                                          .Select(group => group.Select(x => x.order).ToList())
-                                          .ToList();
-                                            foreach (var batch in orderBatches)
-                                            {
-                                                string json = JsonConvert.SerializeObject(batch);
-                                                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
-                                                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                                                request.Content = content;
-                                                HttpResponseMessage response = await httpClient.SendAsync(request);
-                                                // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
-
-                                                if (response.IsSuccessStatusCode)
-                                                {
-                                                    _logger_WCM.Information($"Response API: {response.StatusCode}, {batch.Count} Row Thành Công!!");
-                                                }
-                                                else
-                                                {
-                                                    DateTime currentDateTime = DateTime.Now;
-                                                    string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
-                                                    _logger_WCM.Information($"Response API: {response.StatusCode}");
-                                                    string filePathError = $"data{dateTimeString}.text";
-                                                    File.WriteAllText(filePathError, json);
-                                                    _logger_WCM.Information($"Send API Data Fail");
-                                                }
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            _logger_WCM.Error("Lỗi:GCP_WCM " + ex.InnerException);
-                                            sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    _logger_WCM.Information($"Không có Send data GCP");
-                                }
-                            }
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                            StringContent content = new StringContent(jsonDataPLH, Encoding.UTF8, "application/json");
+                            HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
                         }
-                        else
-                        {
-                            _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
-                        }
-                        break;
-                    case "JOB_GCP_WCM":
-                        _logger_Job.Information("--------RUN_JOB_GCP_WCM----------");
-                        var configWCM_JOB = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);
-                        if (configWCM_JOB.Count() > 0)
-                        {
-                            foreach (var cfig in configWCM_JOB)
-                            {
-                                try
-                                {
-                                    _logger_Job.Information($"Connect DB: {cfig.Name}");
-                                    using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
-                                    {
-                                        sqlConnection.Open();
-                                        var timeout = 2200;
-                                        _logger_Job.Information($"Exec:SP_GET_SELLOUT_PBLUE_SET");
-                                        var ExcPblueSet = sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout);
-                                        sqlConnection.Close();
-                                        _logger_Job.Information($"Run Job Done");
-                                    }
-                                }
-                                catch (Exception e)
-                                {
-                                    _logger_Job.Error($"xLôi", e.ToString);
-                                    sendEmailExample.SendMailError($"Lỗi DB {cfig.Name}, SP_GET_SELLOUT_PBLUE_SET (10.235.25.91)");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _logger_Job.Information("Staus đang Off or chưa khai báo Connections type = JOB_GCP_WCM");
-                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = JOB_GCP_WCM");
-                        }
-                        break;
-                    case "GCP_ARCHIVE":
-                        _logger.Information("Run GCP_ARCHIVE");
-                        var configPLH_Ar = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_GCP_Retry" && p.Status == true);//config DB
-                        if (configPLH_Ar.Count() > 0)
-                        {
-                            PLH_To_GCP_Retry pLH_To_GCP_Retry = new PLH_To_GCP_Retry(_logger);
-                            foreach (var cfig in configPLH_Ar)
-                            {
-                                _logger.Information($"Connect DB : {cfig.Name}");
-                                var listOrder = pLH_To_GCP_Retry.OrderExpToGCPAsyncArchive(cfig.ConnectString);//listOrder
-                                if (listOrder.Count > 0)
-                                {
-                                    _logger.Information($"Send Data To API: {listOrder.Count} Row");
-                                    string apiUrl = configuration["API_GCP"];
-                                    using (HttpClient httpClient = new HttpClient())
-                                    {
-                                        try
-                                        {
-                                            List<List<OrderExpToGCP>> orderBatches = listOrder
-                                            .Select((order, index) => new { order, index })
-                                            .GroupBy(x => x.index / 1900)
-                                            .Select(group => group.Select(x => x.order).ToList())
-                                            .ToList();
-                                            foreach (var batch in orderBatches)
-                                            {
-                                                string json = JsonConvert.SerializeObject(batch);
-                                                var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
-                                                StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                                                request.Content = content;
-                                                HttpResponseMessage response = await httpClient.SendAsync(request);
-                                                // HttpResponseMessage response = await httpClient.PostAsync(apiUrl, content);
-                                                _logger.Information($"Response API: {response.StatusCode}");
-                                                PLH_To_GCP PLH_To_GCPs = new PLH_To_GCP(_logger);
-                                                if (response.IsSuccessStatusCode)
-                                                {
-                                                    PLH_To_GCPs.InsertTempGCP(batch, "True", cfig.ConnectString);
-                                                }
-                                                else
-                                                {
-                                                    PLH_To_GCPs.InsertTempGCP(batch, "False", cfig.ConnectString);
-                                                }
-                                            }
-                                        }
-                                        catch (Exception ex)
-                                        {
-                                            _logger.Error("Lỗi: " + ex.Message);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    _logger.Information($"Không có data GCP");
-                                }
-                            }
-                        }
-                        else
-                        {
-                            _logger.Information("Staus đang Off or chưa khai báo Connections type = GCP_ARCHIVE");
-                        }
-
                         break;
                     case "GCP_ARCHIVE_fix":
                         _logger.Information("Run GCP_ARCHIVE");
@@ -951,6 +815,7 @@ internal class Program
                         }
                         break;
                     case "HR_All":
+                        stopwatch.Start();
                         _logger_HR.Information("Run HR_All");
                         Insert_HR_ALL insertDBPRD = new Insert_HR_ALL(_logger_HR);
                         using (var dbhr = new Dbhrcontext())
@@ -1136,6 +1001,20 @@ internal class Program
                         }
                         insertDBPRD.Insert_HR_All();
                         insertDBPRD.Insert_HR_All_PRD();
+                        stopwatch.Stop();
+                        string jsonDataHRSAP = $@"{{
+                                                      ""HttpContext"": ""{functionName}"",
+                                                      ""PosNo"": ""{Name}"",
+                                                      ""WebApi"": ""HR_SAP"",
+                                                      ""DeveloperMessage"": ""Done"",
+                                                      ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                                         }}";
+                        using (HttpClient client = new HttpClient())
+                        {
+                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                            StringContent content = new StringContent(jsonDataHRSAP, Encoding.UTF8, "application/json");
+                            HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                        }
                         break;
                     case "JobDeleteFile":
                         _logger_DeleteFile.Information($"JobDeleteFile {Name}");
@@ -1243,22 +1122,19 @@ internal class Program
                                                          }}";
                                             using (HttpClient client = new HttpClient())
                                             {
-                                                string username = "BLUEOPS";
-                                                string password = "BluePos@123";
-                                                string authInfo = $"{username}:{password}";
                                                 authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
                                                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
                                                 StringContent content = new StringContent(jsonDatawcm, Encoding.UTF8, "application/json");
                                                 HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
-                                                if (response.IsSuccessStatusCode)
-                                                {
-                                                    string responseBody = await response.Content.ReadAsStringAsync();
-                                                    _logger_WCM.Information("Phản hồi từ API: " + responseBody);
-                                                }
-                                                else
-                                                {
-                                                    _logger_WCM.Information("Lỗi: " + response.StatusCode);
-                                                }
+                                                //if (response.IsSuccessStatusCode)
+                                                //{
+                                                //    string responseBody = await response.Content.ReadAsStringAsync();
+                                                //    _logger_WCM.Information("Phản hồi từ API: " + responseBody);
+                                                //}
+                                                //else
+                                                //{
+                                                //    _logger_WCM.Information("Lỗi: " + response.StatusCode);
+                                                //}
                                             }
 
                                         }
@@ -1322,10 +1198,10 @@ internal class Program
                               }}";
                         using (HttpClient client = new HttpClient())
                         {
-                            string username = "BLUEOPS";
-                            string password = "BluePos@123";
-                            string authInfo = $"{username}:{password}";
-                            authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                            //string username = "BLUEOPS";
+                            //string password = "BluePos@123";
+                            //string authInfo = $"{username}:{password}";
+                           // authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
                             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
                             StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
                             HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
