@@ -77,3 +77,4 @@ D:\Read_SAP_\Read_xml\obj\Release\net6.0\refint\Job_By_SAP.dll
 D:\Read_SAP_\Read_xml\obj\Release\net6.0\Job_By_SAP.pdb
 D:\Read_SAP_\Read_xml\obj\Release\net6.0\Job_By_SAP.genruntimeconfig.cache
 D:\Read_SAP_\Read_xml\obj\Release\net6.0\ref\Job_By_SAP.dll
+D:\Read_SAP_\Read_xml\obj\Release\net6.0\Job_By_SAP.sourcelink.json

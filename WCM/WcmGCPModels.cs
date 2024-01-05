@@ -101,4 +101,21 @@ namespace Job_By_SAP.WCM
         public string Barcode { get; set; }
         public decimal DiscountAmount { get; set; }
     }
+    public class TransInputDataGCP
+    {
+        public string TransNo { get; set; }
+        public string LineNumber { get; set; }
+        public string TableName { get; set; }
+        public string DataType { get; set; }
+        public string DataValue { get; set; }
+    }
+    public class SP_Data_WCM
+    {
+        public string OrderNo { get; set; }
+        public DateTime OrderDate { get; set; }
+        public string DataJson { get; set; }
+        public bool IsRead { get; set; }
+        public DateTime ChgDate  { get; set; }
+        public Guid ID { get; set; }
+    }
 }

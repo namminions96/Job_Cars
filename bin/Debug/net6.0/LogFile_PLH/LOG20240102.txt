@@ -1,0 +1,28 @@
+2024-01-02 16:22:08.782 +07:00 [INF] SELECT top 1000
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].OrderNo') AS OrderNo,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].OrderDate') AS OrderDate,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].StoreNo') AS StoreNo,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].Label') AS CustName,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].OrderTime') AS OrderTime,
+    ISNULL(JSON_VALUE(JsonData, '$.Data.TransHeader[0].Note'), '') AS Note,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].TransactionType') AS TransactionType,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].SalesType') AS SalesType,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].ReturnedOrderNo') AS ReturnedOrderNo,
+    JSON_VALUE(JsonData, '$.Data.TransHeader[0].POSTerminalNo') AS PosNo
+FROM
+    SaleDataJson where IsRead=0
+2024-01-02 16:22:19.175 +07:00 [INF] Total Data results: 2
+2024-01-02 16:38:32.144 +07:00 [INF] Total Data results: 2
+2024-01-02 16:41:16.742 +07:00 [INF] Total Data results: 2
+2024-01-02 16:54:03.005 +07:00 [INF] Total Data results: 2
+2024-01-02 16:55:39.176 +07:00 [INF] Total Data results: 2
+2024-01-02 16:56:54.289 +07:00 [INF] Total Data results: 2
+2024-01-02 16:58:55.185 +07:00 [INF] Total Data results: 2
+2024-01-02 17:01:01.023 +07:00 [INF] Total Data results: 2
+2024-01-02 17:04:31.274 +07:00 [INF] Total Data results: 2
+2024-01-02 17:09:40.338 +07:00 [INF] Total Data results: 2
+2024-01-02 17:10:22.894 +07:00 [INF] Total Data results: 2
+2024-01-02 17:11:36.589 +07:00 [INF] Total Data results: 2
+2024-01-02 17:13:44.121 +07:00 [INF] Total Data results: 2
+2024-01-02 17:16:11.261 +07:00 [INF] Total Data results: 2
+2024-01-02 17:18:00.339 +07:00 [INF] Total Data results: 2

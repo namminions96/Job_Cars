@@ -1,0 +1,1 @@
+2023-12-20 14:16:52.477 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).

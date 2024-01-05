@@ -13,10 +13,12 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Read_xml;
 using Read_xml.Data;
 using Serilog;
 using System;
+using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
@@ -28,6 +30,7 @@ using System.Text;
 using System.Threading;
 using System.Xml.Linq;
 using static Azure.Core.HttpHeader;
+using static Job_By_SAP.Models.GCP_PLH_NEW;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 internal class Program
@@ -63,20 +66,29 @@ internal class Program
        .SetBasePath(AppContext.BaseDirectory)
        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
        .Build();
-        string apiUrllog = "https://apibluepos.winmart.vn/api/common/logging";
+
+        //string apiUrllog = "http://api-bluepos.masan.local/api/common/logging";
         using (var db = new DbConfigAll())
         {
-            string usernameapi = "BLUEOPS";
-            string passwordapi = "BluePos@123";
+            var configKibana = db.Configs.SingleOrDefault(p => p.Type == "Kibana" && p.Status == true);//config DB
+            if (configKibana == null)
+            {
+                _logger.Information("Config Send Kibana Chưa Khai báo or đang off (91).");
+                //sendEmailExample.SendMailError("Config Send Kibana Chưa Khai báo or đang off (91).");
+            }
+
+            string apiUrllog = configKibana?.IpSftp ?? "Kibana";
+            string usernameapi = configKibana?.username ?? "Kibana";
+            string passwordapi = configKibana?.password ?? "Kibana";
             string authInfo = $"{usernameapi}:{passwordapi}";
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
-            //-------------------------------------------
+            //---------------------------------------------------------------------------------
             string functionName = args[0];
             string Name = args[1];
-            //string Name = "PLH_INBOUND";
-            // string functionName = "GCP_PLH";
+            //string Name = "WCM_GCP_NEW";
+            //string functionName = "GCP_WCM_Json";
 
-            // string Name = "PLH_INBOUND";
+            //string Name = "PLH_INBOUND";
             // string functionName = "PRD_ExportCSV_PLH_TransPoint";
             if (args.Length > 0)
             {
@@ -1113,28 +1125,31 @@ internal class Program
                                                 }
                                             }
                                             stopwatch.Stop();
-                                            string jsonDatawcm = $@"{{
+                                            if (apiUrllog != "Kibana")
+                                            {
+                                                string jsonDatawcm = $@"{{
                                                       ""HttpContext"": ""{functionName}"",
                                                       ""PosNo"": ""{Name}"",
                                                       ""WebApi"": ""GCP_WCM"",
                                                       ""DeveloperMessage"": ""Done"",
                                                       ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
                                                          }}";
-                                            using (HttpClient client = new HttpClient())
-                                            {
-                                                authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
-                                                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
-                                                StringContent content = new StringContent(jsonDatawcm, Encoding.UTF8, "application/json");
-                                                HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
-                                                //if (response.IsSuccessStatusCode)
-                                                //{
-                                                //    string responseBody = await response.Content.ReadAsStringAsync();
-                                                //    _logger_WCM.Information("Phản hồi từ API: " + responseBody);
-                                                //}
-                                                //else
-                                                //{
-                                                //    _logger_WCM.Information("Lỗi: " + response.StatusCode);
-                                                //}
+                                                using (HttpClient client = new HttpClient())
+                                                {
+                                                    authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                                                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                                                    StringContent content = new StringContent(jsonDatawcm, Encoding.UTF8, "application/json");
+                                                    HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                                                    //if (response.IsSuccessStatusCode)
+                                                    //{
+                                                    //    string responseBody = await response.Content.ReadAsStringAsync();
+                                                    //    _logger_WCM.Information("Phản hồi từ API: " + responseBody);
+                                                    //}
+                                                    //else
+                                                    //{
+                                                    //    _logger_WCM.Information("Lỗi: " + response.StatusCode);
+                                                    //}
+                                                }
                                             }
 
                                         }
@@ -1143,6 +1158,8 @@ internal class Program
                                             _logger_WCM.Information($"Không có Send data GCP");
 
                                         }
+
+
                                     }
                                     catch (Exception ex)
                                     {
@@ -1158,7 +1175,6 @@ internal class Program
                             _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                             sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                         }
-
                         break;
                     case "PRD_ExportHD":
                         _logger_Einvoice.Information("-----------------------Start ExpEinvoice-----------------------------");
@@ -1168,54 +1184,149 @@ internal class Program
                         break;
                     case "PRD_ExportCSV_PLH_TransPoint":
                         stopwatch.Start();
-                        _logger_Einvoice.Information("-----------------------Start EXP-----------------------------");
-                        ReadFile ExportXML_PLH = new ReadFile(_logger_Einvoice);
-                        var connections = db.ConfigConnections.SingleOrDefault(p => p.Type == Name && p.Status == true);
+                        try
+                        {
+                            _logger_Einvoice.Information("-----------------------Start EXP-----------------------------");
+                            ReadFile ExportXML_PLH = new ReadFile(_logger_Einvoice);
+                            var connections = db.ConfigConnections.SingleOrDefault(p => p.Type == Name && p.Status == true);
 
-                        string ProcessCSV = configuration["Status_CSV_PLH"];
-                        if (ProcessCSV == "1")
-                        {
-                            ExportXML_PLH.ConvertSQLtoXML_CSV_PLH(connections.ConnectString, PLH_Data.GCP_CSV_PLH_Prd());
-                        }
-                        else if (ProcessCSV == "2")
-                        {
-                            ExportXML_PLH.ConvertSQLtoXML_CSV_PLH(connections.ConnectString, PLH_Data.GCP_CSV_PLH_Archive());
-                        }
-                        else
-                        {
-                            _logger.Information("Job Off");
-                        }
-                        stopwatch.Stop();
-                        //sendLogger.SendKibanaAsync(functionName, "PLH", "ExportCSV_PLH", "Done", stopwatch.ElapsedMilliseconds);
-
-                        // Dữ liệu để gửi đi dưới dạng JSON
-                        string jsonData = $@"{{
-                           ""HttpContext"": ""{functionName}"",
-                          ""PosNo"": ""PLH"",
-                          ""WebApi"": ""ExportCSV_PLH"",
-                          ""DeveloperMessage"": ""Done"",
-                          ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
-                              }}";
-                        using (HttpClient client = new HttpClient())
-                        {
-                            //string username = "BLUEOPS";
-                            //string password = "BluePos@123";
-                            //string authInfo = $"{username}:{password}";
-                           // authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
-                            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
-                            StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
-                            HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
-                            if (response.IsSuccessStatusCode)
+                            string ProcessCSV = configuration["Status_CSV_PLH"];
+                            if (ProcessCSV == "1")
                             {
-                                string responseBody = await response.Content.ReadAsStringAsync();
-                                Console.WriteLine("Phản hồi từ API: " + responseBody);
+                                ExportXML_PLH.ConvertSQLtoXML_CSV_PLH(connections.ConnectString, PLH_Data.GCP_CSV_PLH_Prd());
+                            }
+                            else if (ProcessCSV == "2")
+                            {
+                                ExportXML_PLH.ConvertSQLtoXML_CSV_PLH(connections.ConnectString, PLH_Data.GCP_CSV_PLH_Archive());
                             }
                             else
                             {
-                                Console.WriteLine("Lỗi: " + response.StatusCode);
+                                _logger.Information("Job Off");
                             }
+                            stopwatch.Stop();
+                            //sendLogger.SendKibanaAsync(functionName, "PLH", "ExportCSV_PLH", "Done", stopwatch.ElapsedMilliseconds);
+
+                            // Dữ liệu để gửi đi dưới dạng JSON
+                            if (apiUrllog != "Kibana")
+                            {
+                                string jsonData = $@"{{
+                                  ""HttpContext"": ""{functionName}"",
+                                  ""PosNo"": ""PLH"",
+                                  ""WebApi"": ""ExportCSV_PLH"",
+                                  ""DeveloperMessage"": ""Done"",
+                                  ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                       }}";
+                                using (HttpClient client = new HttpClient())
+                                {
+                                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                                    StringContent content = new StringContent(jsonData, Encoding.UTF8, "application/json");
+                                    HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+
+                                }
+                            }
+
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger_Einvoice.Error("Lỗi:GCP_WCM " + ex.Message);
+                            sendEmailExample.SendMailError("Loi: " + ex.Message);
                         }
                         _logger_Einvoice.Information($"-----------------------End EXP-------------------------------");
+                        break;
+                    //---------------------------------------------------------------------------------------------//
+                    case "GCP_WCM_Json":
+
+                        stopwatch.Start();
+                        var configWCM_ss = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
+                        if (configWCM_ss.Count() > 0)
+                        {
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
+                            foreach (var cfig in configWCM_ss)
+                            {
+                                 _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                {
+                                    try
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 10000;
+                                        List<SP_Data_WCM> results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, results);
+                                        if (result.Count > 0)
+                                        {
+                                            var dataID = results.Select(p => p.ID).ToList();
+                                            string json = JsonConvert.SerializeObject(result);
+                                            string apiUrl = configuration["API_GCP_WCM"];
+                                            using (HttpClient httpClient = new HttpClient())
+                                            {
+                                                try
+                                                {
+                                                    DateTime currentDateTime = DateTime.Now;
+                                                    string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
+                                                    var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                    request.Content = content;
+                                                    HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                    if (response.IsSuccessStatusCode)
+                                                    {
+                                                        _logger_WCM.Information($"Send Data To API: {result.Count} Row Done DB: {cfig.Name}");
+                                                    }
+                                                    else
+                                                    {
+                                                        _logger_WCM.Information($"Response API: {response.StatusCode}");
+                                                        string filePathError = $"data{dateTimeString}.text";
+                                                        File.WriteAllText(filePathError, json);
+                                                        _logger_WCM.Information($"Send API Data Fail");
+                                                        sendEmailExample.SendMailError("Send API Data Fail");
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                                    sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger_WCM.Information("Không có data Send GCP");
+                                        }
+                                        sqlConnection.Close();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                        sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                    }
+                                }
+                                _logger_WCM.Information($"------------END {cfig.Name}----------------");
+                            }
+                            stopwatch.Stop();
+                            if (apiUrllog != "Kibana")
+                            {
+                                string jsonDatawcm = $@"{{
+                                                      ""HttpContext"": ""{functionName}"",
+                                                      ""PosNo"": ""{Name}"",
+                                                      ""WebApi"": ""GCP_WCM"",
+                                                      ""DeveloperMessage"": ""Done"",
+                                                      ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                                         }}";
+                                using (HttpClient client = new HttpClient())
+                                {
+                                    authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                                    StringContent content = new StringContent(jsonDatawcm, Encoding.UTF8, "application/json");
+                                    HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                                }
+                            }
+
+                        }
+                        else
+                        {
+                            _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                        }
+
                         break;
                     default:
                         _logger.Information("Invalid function name.");

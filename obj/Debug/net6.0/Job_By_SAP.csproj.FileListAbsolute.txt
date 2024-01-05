@@ -71,6 +71,7 @@ D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.GeneratedMSBuildEditorConfig.e
 D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.AssemblyInfoInputs.cache
 D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.AssemblyInfo.cs
 D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.csproj.CoreCompileInputs.cache
+D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.sourcelink.json
 D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.csproj.CopyComplete
 D:\Read_SAP_\Read_xml\obj\Debug\net6.0\Job_By_SAP.dll
 D:\Read_SAP_\Read_xml\obj\Debug\net6.0\refint\Job_By_SAP.dll

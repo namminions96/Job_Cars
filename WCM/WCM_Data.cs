@@ -23,6 +23,22 @@ namespace Job_By_SAP
             return @"SP_GET_SELLOUT_PBLUE_SET";
         }
 
+        public static string SP_Sale_GCP()
+        {
+            return @"SP_Sale_GCP";
+        }
+        public static string UpdateWCM()
+        {
+                return @" UPDATE[dbo].[DataRawJson]
+                        SET
+                      [OrderNo] = @OrderNo
+                      ,[IsRead] = @IsRead
+                      ,[ChgDate] = @ChgDate
+                       WHERE[Id] = @Id";
+        }
+
+
+
         public static string SUMD11_DISCOUNT_BLUE()
         {
             return @"SELECT * FROM [SUMD11_DISCOUNT_BLUE] NOLOCK WHERE UpdateFlg ='N'";

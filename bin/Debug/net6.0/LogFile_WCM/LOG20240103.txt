@@ -1,0 +1,54 @@
+2024-01-03 11:21:05.880 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 11:23:41.544 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 13:37:04.065 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 13:38:21.428 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 13:38:21.432 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 13:54:29.902 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 13:54:29.906 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:14:41.661 +07:00 [INF] Không có DataCan not convert Null to Decimal.
+2024-01-03 15:14:41.667 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:15:45.669 +07:00 [INF] Không có DataCan not convert Null to Decimal.
+2024-01-03 15:15:45.674 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:16:02.347 +07:00 [INF] Không có DataCan not convert Null to Decimal.
+2024-01-03 15:16:02.351 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:16:16.043 +07:00 [INF] Không có DataCan not convert Null to Decimal.
+2024-01-03 15:16:16.047 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:17:28.800 +07:00 [INF] Không có DataCan not convert Null to Decimal.
+2024-01-03 15:17:28.806 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:25:13.083 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:25:13.089 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:26:21.115 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:26:21.119 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:28:13.219 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:28:13.224 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:29:21.619 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:29:21.624 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:29:49.807 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:29:49.812 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:30:35.233 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:30:35.237 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:30:55.092 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:30:55.095 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:31:02.934 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:31:02.940 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:34:33.753 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:34:33.760 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:36:46.427 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-01-03 15:36:46.524 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:45:49.072 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:50:34.449 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:56:37.762 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 15:57:56.514 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:08:59.072 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:24:08.398 +07:00 [INF] Không có DataCan not convert Null to DateTime.
+2024-01-03 16:24:08.406 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:24:23.814 +07:00 [INF] Không có DataCan not convert Null to DateTime.
+2024-01-03 16:24:23.818 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:24:40.700 +07:00 [INF] Không có DataCan not convert Null to DateTime.
+2024-01-03 16:24:52.855 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:25:56.873 +07:00 [INF] Không có DataCan not convert Null to DateTime.
+2024-01-03 16:25:56.877 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:26:14.535 +07:00 [INF] Không có DataCan not convert Null to DateTime.
+2024-01-03 16:26:14.538 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:31:26.703 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-03 16:43:10.663 +07:00 [ERR] Lỗi:GCP_WCM Error parsing column 0 (Id=1921b88e-63f3-4344-b4ed-483c0948e47f - Object)
