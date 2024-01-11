@@ -27,6 +27,10 @@ namespace Job_By_SAP
         {
             return @"SP_Sale_GCP";
         }
+        public static string SP_Sale_Void_GCP()
+        {
+            return @"SP_Sale_Void_GCP";
+        }
         public static string UpdateWCM()
         {
                 return @" UPDATE[dbo].[DataRawJson]

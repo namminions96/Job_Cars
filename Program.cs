@@ -45,6 +45,7 @@ internal class Program
     private static ILogger _logger_VC;
     private static ILogger _logger_Einvoice;
     private static ILogger _logger_DeleteFile;
+    private static ILogger _logger_WCM_Void;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
@@ -56,7 +57,7 @@ internal class Program
         _logger_VC = SerilogLogger.GetLogger_VC();
         _logger_Einvoice = SerilogLogger.GetLogger_Einvoice();
         _logger_DeleteFile = SerilogLogger.GetLogger_DeleteFile();
-
+        _logger_WCM_Void= SerilogLogger.GetLogger_WCM_Void();
         SendEmailExample sendEmailExample = new SendEmailExample(_logger);
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger_VC);
         ReadFile readfilSAP = new ReadFile(_logger);
@@ -83,14 +84,14 @@ internal class Program
             string authInfo = $"{usernameapi}:{passwordapi}";
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
             //---------------------------------------------------------------------------------
-            string functionName = args[0];
-            string Name = args[1];
-            //string Name = "WCM_GCP_NEW";
-            //string functionName = "GCP_WCM_Json";
+            //string functionName = args[0];
+            //string Name = args[1];
+            string Name = "WCM_GCP_NEW";
+            string functionName = "GCP_WCM_Void";
 
             //string Name = "PLH_INBOUND";
             // string functionName = "PRD_ExportCSV_PLH_TransPoint";
-            if (args.Length > 0)
+            if (args.Length == 0)
             {
                 // _logger_WCM.Information(Name);
                 switch (functionName)
@@ -1233,17 +1234,15 @@ internal class Program
                         }
                         _logger_Einvoice.Information($"-----------------------End EXP-------------------------------");
                         break;
-                    //---------------------------------------------------------------------------------------------//
                     case "GCP_WCM_Json":
-
                         stopwatch.Start();
-                        var configWCM_ss = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
+                        var configWCM_ss = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
                         if (configWCM_ss.Count() > 0)
                         {
                             WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
                             foreach (var cfig in configWCM_ss)
                             {
-                                 _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                _logger_WCM.Information($"------------START {cfig.Name}----------------");
                                 using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
                                 {
                                     try
@@ -1251,47 +1250,59 @@ internal class Program
                                         sqlConnection.Open();
                                         var timeout = 10000;
                                         List<SP_Data_WCM> results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
-                                        var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, results);
-                                        if (result.Count > 0)
+
+                                        if (results.Count > 0)
                                         {
-                                            var dataID = results.Select(p => p.ID).ToList();
-                                            string json = JsonConvert.SerializeObject(result);
-                                            string apiUrl = configuration["API_GCP_WCM"];
-                                            using (HttpClient httpClient = new HttpClient())
+                                            var ReceiptNos = results.GroupBy(p => p.DataJson).Select(group => group.Key).ToList();
+                                            var batchSize = 1000;
+                                            for (int i = 0; i < ReceiptNos.Count; i += batchSize)
                                             {
-                                                try
+                                                DateTime currentDateTime = DateTime.Now;
+                                                string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
+                                                List<string> batch = ReceiptNos.Skip(i).Take(batchSize).ToList();
+                                                var filteredResults = results.Where(r => batch.Contains(r.DataJson)).ToList();
+                                                var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, filteredResults);
+                                                if (result.Count > 0)
                                                 {
-                                                    DateTime currentDateTime = DateTime.Now;
-                                                    string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
-                                                    var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
-                                                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                                                    request.Content = content;
-                                                    HttpResponseMessage response = await httpClient.SendAsync(request);
-                                                    if (response.IsSuccessStatusCode)
+                                                    string json = JsonConvert.SerializeObject(result);
+                                                    string filePathSave = $"LogSend\\DataWCM_{cfig.Name}_{dateTimeString}.text";
+                                                    File.WriteAllText(filePathSave, json);
+                                                    string apiUrl = configuration["API_GCP_WCM"];
+                                                    using (HttpClient httpClient = new HttpClient())
                                                     {
-                                                        _logger_WCM.Information($"Send Data To API: {result.Count} Row Done DB: {cfig.Name}");
-                                                    }
-                                                    else
-                                                    {
-                                                        _logger_WCM.Information($"Response API: {response.StatusCode}");
-                                                        string filePathError = $"data{dateTimeString}.text";
-                                                        File.WriteAllText(filePathError, json);
-                                                        _logger_WCM.Information($"Send API Data Fail");
-                                                        sendEmailExample.SendMailError("Send API Data Fail");
+                                                        try
+                                                        {
+                                                            var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                            StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                            request.Content = content;
+                                                            HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                            if (response.IsSuccessStatusCode)
+                                                            {
+                                                                _logger_WCM.Information($"Send Data To API: {result.Count} Row Done DB: {cfig.Name}");
+                                                            }
+                                                            else
+                                                            {
+                                                                _logger_WCM.Information($"Response API: {response.StatusCode}");
+                                                                string filePathError = $"data{dateTimeString}.text";
+                                                                File.WriteAllText(filePathError, json);
+                                                                _logger_WCM.Information($"Send API Data Fail_{response.RequestMessage}");
+                                                                sendEmailExample.SendMailError($"Send API Data Fail_{response.RequestMessage}");
+                                                            }
+                                                        }
+                                                        catch (Exception ex)
+                                                        {
+                                                            _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                                            sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                                        }
                                                     }
                                                 }
-                                                catch (Exception ex)
+                                                else
                                                 {
-                                                    _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
-                                                    sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                                    _logger_WCM.Information("Không có data Send GCP");
                                                 }
+                                                sqlConnection.Close();
                                             }
                                         }
-                                        else
-                                        {
-                                            _logger_WCM.Information("Không có data Send GCP");
-                                        }
-                                        sqlConnection.Close();
                                     }
                                     catch (Exception ex)
                                     {
@@ -1328,6 +1339,106 @@ internal class Program
                         }
 
                         break;
+                    case "GCP_WCM_Void":
+                        stopwatch.Start();
+                        var configWCM_void = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
+                        if (configWCM_void.Count() > 0)
+                        {
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
+                            foreach (var cfig in configWCM_void)
+                            {
+                                _logger_WCM_Void.Information($"------------START {cfig.Name}----------------");
+                                using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                {
+                                    try
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 10000;
+                                        List<SP_Data_WCM> results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_Void_GCP(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+
+                                        if (results.Count > 0)
+                                        {
+                                            var ReceiptNos = results.GroupBy(p => p.DataJson).Select(group => group.Key).ToList();
+                                            var batchSize = 1000;
+                                            for (int i = 0; i < ReceiptNos.Count; i += batchSize)
+                                            {
+                                                DateTime currentDateTime = DateTime.Now;
+                                                string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
+                                                List<string> batch = ReceiptNos.Skip(i).Take(batchSize).ToList();
+                                                var filteredResults = results.Where(r => batch.Contains(r.DataJson)).ToList();
+
+                                                var result = WCM_To_GCPs.OrderWcmToGCPVoidAsync_Json(cfig.ConnectString, filteredResults);
+                                                string json = JsonConvert.SerializeObject(result);
+                                                string apiUrl = configuration["API_GCP_Void_WCM"];
+                                                using (HttpClient httpClient = new HttpClient())
+                                                {
+                                                    try
+                                                    {
+                                                        var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                        request.Content = content;
+                                                        HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                        if (response.IsSuccessStatusCode)
+                                                        {
+                                                            string filePathSave = $"LogSend_Void\\DataVoid_{Name}_{dateTimeString}.text";
+                                                            WCM_To_GCPs.SaveFile(json, filePathSave);
+                                                            _logger_WCM_Void.Information($"Send Data To API: {result.Count} Row Done DB: {cfig.Name}");
+                                                        }
+                                                        else
+                                                        {
+                                                            _logger_WCM_Void.Information($"Response API: {response.StatusCode}");
+                                                            string filePathError = $"LogSend_Void\\dataIssue.text";
+                                                            WCM_To_GCPs.SaveFile(json,filePathError);
+                                                            _logger_WCM_Void.Information($"Send API Data Fail_{response.RequestMessage}");
+                                                            sendEmailExample.SendMailError($"Send API Data Fail_{response.RequestMessage}");
+                                                        }
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        _logger_WCM_Void.Error("Lỗi:GCP_WCM " + ex.Message);
+                                                        sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                                    }
+                                                }
+                                                sqlConnection.Close();
+                                               
+                                            }
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger_WCM_Void.Error("Lỗi:GCP_WCM " + ex.Message);
+                                        sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                    }
+                                }
+                                _logger_WCM_Void.Information($"------------END {cfig.Name}----------------");
+                            }
+                            stopwatch.Stop();
+                            if (apiUrllog != "Kibana")
+                            {
+                                string jsonDatawcm = $@"{{
+                                                      ""HttpContext"": ""{functionName}"",
+                                                      ""PosNo"": ""{Name}"",
+                                                      ""WebApi"": ""GCP_WCM"",
+                                                      ""DeveloperMessage"": ""Done"",
+                                                      ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
+                                                         }}";
+                                using (HttpClient client = new HttpClient())
+                                {
+                                    authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
+                                    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authInfo);
+                                    StringContent content = new StringContent(jsonDatawcm, Encoding.UTF8, "application/json");
+                                    HttpResponseMessage response = await client.PostAsync(apiUrllog, content);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            _logger_WCM_Void.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                        }
+
+                        break;
+
                     default:
                         _logger.Information("Invalid function name.");
                         sendEmailExample.SendMailError("Invalid function name.");

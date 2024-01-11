@@ -136,24 +136,30 @@ namespace Job_By_SAP.WCM
         }
         public void UpdateStatusWCM(List<SP_Data_WCM> SP_Data_WCM, string configWcm)
         {
-            var timeout = 600;
-            foreach (SP_Data_WCM data_WCMs in SP_Data_WCM)
+            try
             {
-                using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                var timeout = 600;
+                foreach (SP_Data_WCM data_WCMs in SP_Data_WCM)
                 {
-                    DbsetWcm.Open();
-                    using (SqlCommand command = new SqlCommand())
+                    using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
                     {
-                        command.Connection = DbsetWcm;
-                        command.CommandText = WCM_Data.UpdateWCM();
-                        command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
-                        command.Parameters.AddWithValue("@Id", data_WCMs.ID);
-                        command.Parameters.AddWithValue("@IsRead", data_WCMs.IsRead);
-                        command.Parameters.AddWithValue("@ChgDate", data_WCMs.ChgDate);
-                        int rowsAffected = command.ExecuteNonQuery();
+                        DbsetWcm.Open();
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.UpdateWCM();
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            command.Parameters.AddWithValue("@Id", data_WCMs.ID);
+                            command.Parameters.AddWithValue("@IsRead", data_WCMs.IsRead);
+                            command.Parameters.AddWithValue("@ChgDate", data_WCMs.ChgDate);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
                     }
                 }
+            }catch(Exception ex)
+            {
+
             }
-        }
+         }
     }
 }

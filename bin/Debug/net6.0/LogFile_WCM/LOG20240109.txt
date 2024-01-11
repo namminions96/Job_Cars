@@ -1,0 +1,15 @@
+2024-01-09 10:32:18.148 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-09 10:32:18.556 +07:00 [INF] Không có DataCannot access child value on Newtonsoft.Json.Linq.JValue.
+2024-01-09 10:32:18.557 +07:00 [INF] Không có data Send GCP
+2024-01-09 10:32:18.557 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-09 10:33:36.257 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-09 10:33:47.760 +07:00 [INF] Không có DataCannot access child value on Newtonsoft.Json.Linq.JValue.
+2024-01-09 10:33:59.257 +07:00 [INF] Không có data Send GCP
+2024-01-09 10:33:59.257 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-09 10:34:04.521 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-09 10:37:02.969 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-09 10:37:36.846 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-09 10:37:59.184 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-09 10:47:15.846 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-09 10:47:19.122 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-09 10:47:41.243 +07:00 [INF] ------------END WCM_GCP_NEW----------------

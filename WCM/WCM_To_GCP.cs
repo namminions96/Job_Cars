@@ -1,6 +1,7 @@
 ﻿using Azure;
 using BluePosVoucher;
 using BluePosVoucher.Data;
+using CsvHelper.Delegates;
 using Dapper;
 using Job_By_SAP.Models;
 using Job_By_SAP.PLH;
@@ -157,7 +158,7 @@ namespace Job_By_SAP
                             {
                                 TransLines.Price = (decimal)unitPriceValue;
                             }
-                            if (Item.TryGetValue("LineAmountIncVAT", out var lineAmountValue) && lineAmountValue.Type != JTokenType.Null)
+                            if (Item.TryGetValue("AmountBeforeDiscount", out var lineAmountValue) && lineAmountValue.Type != JTokenType.Null)
                             {
                                 TransLines.Amount = (decimal)lineAmountValue;
                             }
@@ -186,17 +187,18 @@ namespace Job_By_SAP
                             WcmGCPModels TransHeaders = new WcmGCPModels();
                             TransHeaders.CalendarDay = (string)headerItem["OrderDate"];
                             TransHeaders.StoreCode = (string)headerItem["StoreNo"];
-                            TransHeaders.PosNo = (string)headerItem["POSTerminalNo"];
+                            string posNo = (string)headerItem["POSTerminalNo"];
+                            TransHeaders.PosNo = posNo.Substring(posNo.Length - 2, 2);
                             TransHeaders.ReceiptNo = (string)headerItem["OrderNo"];
                             TransHeaders.TranTime = ScanTime.ToString("HHmmssfff");
                             TransHeaders.MemberCardNo = (string)headerItem["MemberCardNo"];
                             TransHeaders.VinidCsn = (string)headerItem["VinidCsn"];
-                            TransHeaders.Header_ref_01 = (string)headerItem["OrigOrderNo"];
-                            TransHeaders.Header_ref_02 = SOURCEBILL?.DataType;
-                            TransHeaders.Header_ref_03 = (string)headerItem["RefKey1"];
-                            TransHeaders.Header_ref_04 = CUSTYPE?.DataType;
+                            TransHeaders.Header_ref_01 = (string)headerItem["ReturnedOrderNo"];// mã đơn trả hàng
+                            TransHeaders.Header_ref_02 = SOURCEBILL?.DataValue; /// Souce Bill
+                            TransHeaders.Header_ref_03 = (string)headerItem["RefKey1"];//Đơn Hàng đối tác
+                            TransHeaders.Header_ref_04 = CUSTYPE?.DataValue; /// mã KKH
                             string zoneNo = (string)headerItem["ZoneNo"];
-                            if (zoneNo == "TCBTOPUP" || zoneNo == "TCBWITHDRAW")
+                            if (zoneNo == "TCBTOPUP" || zoneNo == "TCBWITHDRAW")//Nocap//
                             {
                                 TransHeaders.Header_ref_05 = "NO_CAP";
                             }
@@ -233,6 +235,102 @@ namespace Job_By_SAP
                     return new List<WcmGCPModels>();
                 }
             }
+        }
+
+
+        public List<TransVoidGCP> OrderWcmToGCPVoidAsync_Json(string configWcm, List<SP_Data_WCM> reciept)
+        {
+            ReadDataRawJson readDataRawJson = new ReadDataRawJson();
+            var timeout = 600;
+            using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+            {
+                ReadTranVoid_GCP readTranVoid_GCP = new ReadTranVoid_GCP();
+                try
+                {
+                    DbsetWcm.Open();
+                    List<SP_Data_WCM> SP_Data_WCMs = new List<SP_Data_WCM>();
+                    var concurrentBag = new ConcurrentBag<TransVoidGCP>();
+                    foreach (var result in reciept)
+                    {
+                        JObject jsonObject = JObject.Parse(result.DataJson);
+
+                        //TransVoidLine//
+                        JArray TransVoidLine = (JArray)jsonObject["Data"]["TransVoidLine"];
+                        //List<TransVoidLine> TransVoidLineResult = readTranVoid_GCP.TransVoidLine(TransVoidLine);
+                        List<TransVoidLine> TransInputDatasss = new List<TransVoidLine>();
+                        foreach (JObject TransInputDatass in TransVoidLine)
+                        {
+                            SP_Data_WCM SP_Data_WCMss = new SP_Data_WCM();
+                            if ((int)TransInputDatass["LineType"] == 0)
+                            {
+                                TransVoidLine TransInputDatas = new TransVoidLine();
+                                TransInputDatas.ScanTime = (DateTime)TransInputDatass["ScanTime"];
+                                TransInputDatas.OrderNo = (string)TransInputDatass["DocumentNo"];
+                                TransInputDatas.LineType = (int)TransInputDatass["LineType"];
+                                TransInputDatas.LocationCode = (string)TransInputDatass["LocationCode"];
+                                TransInputDatas.ItemNo = (string)TransInputDatass["ItemNo"];
+                                TransInputDatas.Description = (string)TransInputDatass["Description"];
+                                TransInputDatas.UnitOfMeasure = (string)TransInputDatass["UnitOfMeasure"];
+                                TransInputDatas.Quantity = (decimal)TransInputDatass["Quantity"];
+                                TransInputDatas.UnitPrice = (decimal)TransInputDatass["UnitPrice"];
+                                TransInputDatas.DiscountAmount = (decimal)TransInputDatass["DiscountAmount"];
+                                TransInputDatas.LineAmountIncVAT = (decimal)TransInputDatass["LineAmountIncVAT"];
+                                TransInputDatas.StaffID = (string)TransInputDatass["StaffID"];
+                                TransInputDatas.VATCode = (string)TransInputDatass["VATCode"];
+                                TransInputDatas.DeliveringMethod = (int)TransInputDatass["DeliveringMethod"];
+                                TransInputDatas.Barcode = (string)TransInputDatass["Barcode"];
+                                TransInputDatas.DivisionCode = (string)TransInputDatass["DivisionCode"];
+                                TransInputDatas.SerialNo = (string)TransInputDatass["SerialNo"];
+                                TransInputDatas.OrigOrderNo = (string)TransInputDatass["OrigOrderNo"];
+                                TransInputDatas.LotNo = (string)TransInputDatass["LotNo"];
+                                TransInputDatas.ArticleType = (string)TransInputDatass["ArticleType"];
+                                TransInputDatas.LastUpdated = DateTime.Now;
+                                TransInputDatasss.Add(TransInputDatas);
+
+                                SP_Data_WCMss.ID = result.ID;
+                                SP_Data_WCMss.OrderNo = TransInputDatas.OrderNo;
+                                string OrderDate = TransInputDatas.ScanTime.ToString();
+                                SP_Data_WCMss.ChgDate = DateTime.Now;
+                                SP_Data_WCMss.IsRead = true;
+                                SP_Data_WCMss.DataJson = result.DataJson;
+                                SP_Data_WCMs.Add(SP_Data_WCMss);
+
+                            }
+                            else
+                            {
+                                SP_Data_WCMss.ID = result.ID;
+                                SP_Data_WCMss.OrderNo = (string)TransInputDatass["DocumentNo"];
+                                string OrderDate = (string)TransInputDatass["ExpireDate"];
+                                SP_Data_WCMss.ChgDate = DateTime.Now;
+                                SP_Data_WCMss.IsRead = true;
+                                SP_Data_WCMss.DataJson = result.DataJson;
+                                SP_Data_WCMs.Add(SP_Data_WCMss);
+                            }
+                        }
+
+                        //TransVoidHeader//
+                        JArray TransVoidHeader = (JArray)jsonObject["Data"]["TransVoidHeader"];
+                        List<TransVoidHeader> TransVoidHeaderResult = readTranVoid_GCP.TransVoidHeader(TransVoidHeader);
+
+                        TransVoidGCP transVoidGCP=new TransVoidGCP();
+                        transVoidGCP.TransVoidLine = TransInputDatasss;
+                        transVoidGCP.TransVoidHeader = TransVoidHeaderResult;
+                        concurrentBag.Add(transVoidGCP);
+                    }
+                    readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
+                    return concurrentBag.ToList();
+                }
+                catch (Exception e)
+                {
+                    _logger.Information("Không có Data" + e.Message);
+                    return new List<TransVoidGCP>();
+                }
+            }
+        }
+        public void SaveFile(string json,string FilePath)
+        {
+            string filePathSave = FilePath;
+            File.WriteAllText(filePathSave, json);
         }
     }
 

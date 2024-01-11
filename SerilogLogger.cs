@@ -70,5 +70,13 @@ namespace BluePosVoucher
                 .WriteTo.File("Log_DeleteFile/LOG.txt", rollingInterval: RollingInterval.Day, shared: true, retainedFileCountLimit: 30)
                 .CreateLogger();
         }
+
+        public static ILogger GetLogger_WCM_Void()
+        {
+            return new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File("Log_Void_GCP/LOG.txt", rollingInterval: RollingInterval.Day, shared: true, retainedFileCountLimit: 30)
+                .CreateLogger();
+        }
     }
 }
