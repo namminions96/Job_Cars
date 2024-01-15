@@ -1,0 +1,14 @@
+2024-01-12 10:34:02.511 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 10:38:16.670 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-12 10:38:39.032 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-12 10:50:58.834 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 10:52:09.232 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 10:55:20.294 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 10:59:23.093 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 11:00:32.415 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 11:01:01.726 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-12 11:07:04.677 +07:00 [INF] ------------START GCP_WCM_Retry----------------
+2024-01-12 11:07:35.816 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-12 11:11:13.797 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-12 11:11:50.651 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-12 11:12:13.655 +07:00 [INF] ------------END WCM_GCP_NEW----------------

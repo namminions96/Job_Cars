@@ -114,7 +114,7 @@ namespace Job_By_SAP
             }
         }
 
-        public List<WcmGCPModels> OrderWcmToGCPAsync_Json(string configWcm, List<SP_Data_WCM> reciept)
+        public List<WcmGCPModels> OrderWcmToGCPAsync_Json(string configWcm, List<SP_Data_WCM> reciept, string Namefuntion)
         {
             ReadDataRawJson readDataRawJson = new ReadDataRawJson();
             var timeout = 600;
@@ -144,36 +144,43 @@ namespace Job_By_SAP
                         JArray TransLine = (JArray)jsonObject["Data"]["TransLine"];
                         List<TransLineGCP> TransLineResult = new List<TransLineGCP>();
                         DateTime ScanTime = new DateTime();
+                        decimal VATAmount = 0;
+                        decimal LineAmountIncVAT = 0;
+                        decimal DiscountAmount = 0;
                         foreach (JObject Item in TransLine)
                         {
-                            TransLineGCP TransLines = new TransLineGCP();
-                            int Linetype = (int)Item["LineType"];
-                            TransLines.TranNo = (int)Item["LineNo"];
-                            TransLines.Barcode = (string)Item["Barcode"];
-                            TransLines.Article = (string)Item["ItemNo"];
-                            TransLines.Uom = (string)Item["UnitOfMeasure"];
-                            TransLines.Name = (string)Item["Description"];
-                            TransLines.POSQuantity = (decimal)Item["Quantity"];
-                            if (Item.TryGetValue("UnitPrice", out var unitPriceValue) && unitPriceValue.Type != JTokenType.Null)
+                            if ((int)Item["LineType"] == 0)
                             {
-                                TransLines.Price = (decimal)unitPriceValue;
-                            }
-                            if (Item.TryGetValue("AmountBeforeDiscount", out var lineAmountValue) && lineAmountValue.Type != JTokenType.Null)
-                            {
-                                TransLines.Amount = (decimal)lineAmountValue;
-                            }
-                            TransLines.Brand = (string)Item["DivisionCode"];
-                            TransLines.DiscountEntry = DiscountEntryResult.Where(p => p.ItemNo == TransLines.Article && p.TranNo == TransLines.TranNo).ToList();
+                                VATAmount += (decimal)Item["VATAmount"];
+                                LineAmountIncVAT +=(decimal)Item["LineAmountIncVAT"];
+                                DiscountAmount +=(decimal)Item["DiscountAmount"];
 
-                            if (Item.TryGetValue("ScanTime", out var scanTimeValue) && scanTimeValue.Type != JTokenType.Null)
-                            {
-                                if (DateTime.TryParse(scanTimeValue.ToString(), out DateTime scanTime))
+                                TransLineGCP TransLines = new TransLineGCP();
+                                int Linetype = (int)Item["LineType"];
+                                TransLines.TranNo = (int)Item["LineNo"];
+                                TransLines.Barcode = (string)Item["Barcode"];
+                                TransLines.Article = (string)Item["ItemNo"];
+                                TransLines.Uom = (string)Item["UnitOfMeasure"];
+                                TransLines.Name = (string)Item["Description"];
+                                TransLines.POSQuantity = (decimal)Item["Quantity"];
+                                if (Item.TryGetValue("UnitPrice", out var unitPriceValue) && unitPriceValue.Type != JTokenType.Null)
                                 {
-                                    ScanTime = scanTime;
+                                    TransLines.Price = (decimal)unitPriceValue;
                                 }
-                            }
-                            if (Linetype == 0)
-                            {
+                                if (Item.TryGetValue("AmountBeforeDiscount", out var lineAmountValue) && lineAmountValue.Type != JTokenType.Null)
+                                {
+                                    TransLines.Amount = (decimal)lineAmountValue;
+                                }
+                                TransLines.Brand = (string)Item["DivisionCode"];
+                                TransLines.DiscountEntry = DiscountEntryResult.Where(p => p.ItemNo == TransLines.Article && p.TranNo == TransLines.TranNo).ToList();
+
+                                if (Item.TryGetValue("ScanTime", out var scanTimeValue) && scanTimeValue.Type != JTokenType.Null)
+                                {
+                                    if (DateTime.TryParse(scanTimeValue.ToString(), out DateTime scanTime))
+                                    {
+                                        ScanTime = scanTime;
+                                    }
+                                }
                                 TransLineResult.Add(TransLines);
                             }
                         }
@@ -206,7 +213,14 @@ namespace Job_By_SAP
                             {
                                 TransHeaders.Header_ref_05 = zoneNo;
                             }
-                            TransHeaders.IsRetry = false;
+                            if (Namefuntion == "GCP_WCM_Retry")
+                            {
+                                TransHeaders.IsRetry = true;
+                            }
+                            else
+                            {
+                                TransHeaders.IsRetry = false;
+                            }
                             TransHeaders.TransLine = TransLineResult.ToList();
                             TransHeaders.TransPaymentEntry = PaymentEntryResult.ToList();
                             TransHeaders.TransDiscountCouponEntry = CouponEntryResult.Where
@@ -223,10 +237,23 @@ namespace Job_By_SAP
                             SP_Data_WCMss.ChgDate = DateTime.Now;
                             SP_Data_WCMss.IsRead = true;
                             SP_Data_WCMss.DataJson = TransHeaders.ReceiptNo;
+                            SP_Data_WCMss.MemberCardNo = TransHeaders.MemberCardNo;
+                            SP_Data_WCMss.VATAmount = VATAmount;
+                            SP_Data_WCMss.LineAmountIncVAT = LineAmountIncVAT;
+                            SP_Data_WCMss.DiscountAmount = DiscountAmount;
                             SP_Data_WCMs.Add(SP_Data_WCMss);
                         }
                     }
-                    readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
+
+                    if (Namefuntion == "GCP_WCM_Retry")
+                    {
+                        readDataRawJson.UpdateStatusWCM_Retry(SP_Data_WCMs, configWcm);
+                    }
+                    else
+                    {
+                        readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
+                    }
+
                     return concurrentBag.ToList();
                 }
                 catch (Exception e)
@@ -312,7 +339,7 @@ namespace Job_By_SAP
                         JArray TransVoidHeader = (JArray)jsonObject["Data"]["TransVoidHeader"];
                         List<TransVoidHeader> TransVoidHeaderResult = readTranVoid_GCP.TransVoidHeader(TransVoidHeader);
 
-                        TransVoidGCP transVoidGCP=new TransVoidGCP();
+                        TransVoidGCP transVoidGCP = new TransVoidGCP();
                         transVoidGCP.TransVoidLine = TransInputDatasss;
                         transVoidGCP.TransVoidHeader = TransVoidHeaderResult;
                         concurrentBag.Add(transVoidGCP);
@@ -327,7 +354,7 @@ namespace Job_By_SAP
                 }
             }
         }
-        public void SaveFile(string json,string FilePath)
+        public void SaveFile(string json, string FilePath)
         {
             string filePathSave = FilePath;
             File.WriteAllText(filePathSave, json);

@@ -117,5 +117,9 @@ namespace Job_By_SAP.WCM
         public bool IsRead { get; set; }
         public DateTime ChgDate  { get; set; }
         public Guid ID { get; set; }
+        public string MemberCardNo { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public decimal VATAmount { get; set; }
+        public decimal LineAmountIncVAT { get; set; }
     }
 }

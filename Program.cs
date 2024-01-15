@@ -84,14 +84,15 @@ internal class Program
             string authInfo = $"{usernameapi}:{passwordapi}";
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
             //---------------------------------------------------------------------------------
-            //string functionName = args[0];
-            //string Name = args[1];
-            string Name = "WCM_GCP_NEW";
-            string functionName = "GCP_WCM_Void";
+            string functionName = args[0];
+            string Name = args[1];
+            //string Name = "WCM_GCP_NEW";
+            //////string Name = "GCP_WCM_Retry";
+            //string functionName = "GCP_WCM_Json";
 
             //string Name = "PLH_INBOUND";
             // string functionName = "PRD_ExportCSV_PLH_TransPoint";
-            if (args.Length == 0)
+            if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
                 switch (functionName)
@@ -1249,8 +1250,16 @@ internal class Program
                                     {
                                         sqlConnection.Open();
                                         var timeout = 10000;
-                                        List<SP_Data_WCM> results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        var results = new List<SP_Data_WCM>();
+                                        if (Name == "GCP_WCM_Retry")
+                                        {
+                                             results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP_Retry(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        }
+                                        else
+                                        {
+                                             results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
 
+                                        }
                                         if (results.Count > 0)
                                         {
                                             var ReceiptNos = results.GroupBy(p => p.DataJson).Select(group => group.Key).ToList();
@@ -1261,7 +1270,7 @@ internal class Program
                                                 string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
                                                 List<string> batch = ReceiptNos.Skip(i).Take(batchSize).ToList();
                                                 var filteredResults = results.Where(r => batch.Contains(r.DataJson)).ToList();
-                                                var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, filteredResults);
+                                                var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, filteredResults,functionName);
                                                 if (result.Count > 0)
                                                 {
                                                     string json = JsonConvert.SerializeObject(result);

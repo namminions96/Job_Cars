@@ -27,21 +27,34 @@ namespace Job_By_SAP
         {
             return @"SP_Sale_GCP";
         }
+        public static string SP_Sale_GCP_Retry()
+        {
+            return @"SP_Sale_GCP_Retry";
+        }
         public static string SP_Sale_Void_GCP()
         {
             return @"SP_Sale_Void_GCP";
         }
         public static string UpdateWCM()
         {
-                return @" UPDATE[dbo].[DataRawJson]
+            return @" UPDATE[dbo].[DataRawJson]
                         SET
                       [OrderNo] = @OrderNo
                       ,[IsRead] = @IsRead
                       ,[ChgDate] = @ChgDate
+                      ,[MemberCardNo] = @MemberCardNo
+                      ,[DiscountAmount] = @DiscountAmount
+                      ,[VATAmount] = @VATAmount
+                      ,[LineAmountIncVAT] = @LineAmountIncVAT
                        WHERE[Id] = @Id";
         }
-
-
+        public static string UpdateWCM_Retry()
+        {
+            return @" UPDATE[dbo].[Temp_SalesGCP_Retry]
+                        SET
+                       [UpdateFlg] = 'Y'
+                       WHERE [RECEIPT_NO] = @OrderNo";
+        }
 
         public static string SUMD11_DISCOUNT_BLUE()
         {

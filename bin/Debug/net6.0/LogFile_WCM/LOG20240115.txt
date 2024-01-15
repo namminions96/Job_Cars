@@ -1,0 +1,9 @@
+2024-01-15 10:22:33.444 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-15 10:37:56.615 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-15 10:39:29.698 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-15 10:43:14.066 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-15 10:46:13.880 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-15 10:46:37.154 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-01-15 10:50:48.938 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-15 10:51:06.931 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.
+2024-01-15 10:51:29.650 +07:00 [INF] ------------END WCM_GCP_NEW----------------

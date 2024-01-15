@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using BluePosVoucher.Data;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Concurrent;
@@ -152,14 +153,48 @@ namespace Job_By_SAP.WCM
                             command.Parameters.AddWithValue("@Id", data_WCMs.ID);
                             command.Parameters.AddWithValue("@IsRead", data_WCMs.IsRead);
                             command.Parameters.AddWithValue("@ChgDate", data_WCMs.ChgDate);
+                            command.Parameters.AddWithValue("@MemberCardNo", data_WCMs.MemberCardNo);
+                            command.Parameters.AddWithValue("@DiscountAmount", data_WCMs.DiscountAmount);
+                            command.Parameters.AddWithValue("@VATAmount", data_WCMs.VATAmount);
+                            command.Parameters.AddWithValue("@LineAmountIncVAT", data_WCMs.LineAmountIncVAT);
                             int rowsAffected = command.ExecuteNonQuery();
                         }
                     }
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
 
             }
-         }
+        }
+        public void UpdateStatusWCM_Retry(List<SP_Data_WCM> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                {
+                    DbsetWcm.Open();
+                    foreach (SP_Data_WCM data_WCMs in SP_Data_WCM)
+                    { 
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.UpdateWCM_Retry();
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+                    DbsetWcm.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+
     }
+
 }
