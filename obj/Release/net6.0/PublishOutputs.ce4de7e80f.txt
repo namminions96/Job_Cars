@@ -3,10 +3,13 @@ Z:\Job_SAP\Job_By_SAP.dll
 Z:\Job_SAP\Job_By_SAP.deps.json
 Z:\Job_SAP\Job_By_SAP.runtimeconfig.json
 Z:\Job_SAP\Job_By_SAP.pdb
+Z:\Job_SAP\AWSSDK.Core.dll
+Z:\Job_SAP\AWSSDK.SecurityToken.dll
 Z:\Job_SAP\Azure.Core.dll
 Z:\Job_SAP\Azure.Identity.dll
 Z:\Job_SAP\CsvHelper.dll
 Z:\Job_SAP\Dapper.dll
+Z:\Job_SAP\DnsClient.dll
 Z:\Job_SAP\Microsoft.Bcl.AsyncInterfaces.dll
 Z:\Job_SAP\Microsoft.Data.SqlClient.dll
 Z:\Job_SAP\Microsoft.EntityFrameworkCore.dll
@@ -38,9 +41,15 @@ Z:\Job_SAP\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 Z:\Job_SAP\Microsoft.IdentityModel.Tokens.dll
 Z:\Job_SAP\Microsoft.SqlServer.Server.dll
 Z:\Job_SAP\Microsoft.Win32.SystemEvents.dll
+Z:\Job_SAP\MongoDB.Bson.dll
+Z:\Job_SAP\MongoDB.Driver.dll
+Z:\Job_SAP\MongoDB.Driver.Core.dll
+Z:\Job_SAP\MongoDB.Libmongocrypt.dll
 Z:\Job_SAP\Newtonsoft.Json.dll
 Z:\Job_SAP\Serilog.dll
 Z:\Job_SAP\Serilog.Sinks.File.dll
+Z:\Job_SAP\SharpCompress.dll
+Z:\Job_SAP\Snappier.dll
 Z:\Job_SAP\Renci.SshNet.dll
 Z:\Job_SAP\SshNet.Security.Cryptography.dll
 Z:\Job_SAP\System.Configuration.ConfigurationManager.dll
@@ -53,6 +62,7 @@ Z:\Job_SAP\System.Security.Permissions.dll
 Z:\Job_SAP\System.Text.Encodings.Web.dll
 Z:\Job_SAP\System.Text.Json.dll
 Z:\Job_SAP\System.Windows.Extensions.dll
+Z:\Job_SAP\ZstdSharp.dll
 Z:\Job_SAP\runtimes\unix\lib\net6.0\Microsoft.Data.SqlClient.dll
 Z:\Job_SAP\runtimes\win\lib\net6.0\Microsoft.Data.SqlClient.dll
 Z:\Job_SAP\runtimes\win-arm\native\Microsoft.Data.SqlClient.SNI.dll
@@ -60,6 +70,9 @@ Z:\Job_SAP\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
 Z:\Job_SAP\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
 Z:\Job_SAP\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 Z:\Job_SAP\runtimes\win\lib\net6.0\Microsoft.Win32.SystemEvents.dll
+Z:\Job_SAP\runtimes\linux\native\libmongocrypt.so
+Z:\Job_SAP\runtimes\osx\native\libmongocrypt.dylib
+Z:\Job_SAP\runtimes\win\native\mongocrypt.dll
 Z:\Job_SAP\runtimes\unix\lib\net6.0\System.Drawing.Common.dll
 Z:\Job_SAP\runtimes\win\lib\net6.0\System.Drawing.Common.dll
 Z:\Job_SAP\runtimes\win\lib\net6.0\System.Runtime.Caching.dll

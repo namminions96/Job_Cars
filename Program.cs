@@ -1,38 +1,26 @@
-﻿using Azure;
-using BluePosVoucher;
+﻿using BluePosVoucher;
 using BluePosVoucher.Data;
 using BluePosVoucher.Models;
 using Dapper;
 using Job_By_SAP;
-using Job_By_SAP.Data;
-using Job_By_SAP.Models;
+using Job_By_SAP.MongoDB;
 using Job_By_SAP.PLH;
 using Job_By_SAP.SAP;
 using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using Read_xml;
 using Read_xml.Data;
 using Serilog;
-using System;
-using System.Collections.Concurrent;
 using System.Data;
 using System.Diagnostics;
-using System.Diagnostics.Metrics;
-using System.Drawing;
-using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading;
-using System.Xml.Linq;
-using static Azure.Core.HttpHeader;
-using static Job_By_SAP.Models.GCP_PLH_NEW;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-
+using System.Text.Json;
 internal class Program
 {
     private static IConfiguration _configuration;
@@ -87,11 +75,10 @@ internal class Program
             string functionName = args[0];
             string Name = args[1];
             //string Name = "WCM_GCP_NEW";
-            //////string Name = "GCP_WCM_Retry";
+            //string Name = "WCM_GCP_NEW";
             //string functionName = "GCP_WCM_Json";
-
             //string Name = "PLH_INBOUND";
-            // string functionName = "PRD_ExportCSV_PLH_TransPoint";
+            //string functionName = "GCP_PLH";
             if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
@@ -1270,12 +1257,12 @@ internal class Program
                                                 string dateTimeString = currentDateTime.ToString("yyyyMMddHHmmss");
                                                 List<string> batch = ReceiptNos.Skip(i).Take(batchSize).ToList();
                                                 var filteredResults = results.Where(r => batch.Contains(r.DataJson)).ToList();
-                                                var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, filteredResults,functionName);
+                                                var result = WCM_To_GCPs.OrderWcmToGCPAsync_Json(cfig.ConnectString, filteredResults, Name);
                                                 if (result.Count > 0)
                                                 {
                                                     string json = JsonConvert.SerializeObject(result);
-                                                    string filePathSave = $"LogSend\\DataWCM_{cfig.Name}_{dateTimeString}.text";
-                                                    File.WriteAllText(filePathSave, json);
+                                                    //string filePathSave = $"LogSend\\DataWCM_{cfig.Name}_{dateTimeString}.text";
+                                                    //File.WriteAllText(filePathSave, json);
                                                     string apiUrl = configuration["API_GCP_WCM"];
                                                     using (HttpClient httpClient = new HttpClient())
                                                     {
@@ -1447,6 +1434,26 @@ internal class Program
                         }
 
                         break;
+                    //case "GCP_WCM_MogoDB":
+                    //    try
+                    //    {
+                    //        ServiceMongo serviceMongo = new ServiceMongo();
+                    //        DataRawService dataRawService = new DataRawService(serviceMongo.SeviceData());
+                    //        SP_Data_WCM SP_Data_WCMss = new SP_Data_WCM();
+                    //        SP_Data_WCMss.ChgDate = DateTime.Now;
+                    //        SP_Data_WCMss.IsRead = true;
+                    //        SP_Data_WCMss.DataJson = "123";
+                    //        SP_Data_WCMss.MemberCardNo = "123";
+                    //        SP_Data_WCMss.VATAmount = 123;
+                    //        SP_Data_WCMss.LineAmountIncVAT = 132;
+                    //        SP_Data_WCMss.DiscountAmount = 123;
+                    //        dataRawService.InsertDataRaw(SP_Data_WCMss);
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        Console.WriteLine(ex);
+                    //    }
+                    //    break;
 
                     default:
                         _logger.Information("Invalid function name.");

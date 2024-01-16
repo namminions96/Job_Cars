@@ -58,7 +58,7 @@ namespace Job_By_SAP.PLH
 
         public static string TransPoinEntryQuery()
         {
-            return @"select OrderNo,Sum(EarnPoints) EarnPoints,MemberNumber,CardLevel,MemberCSN from CentralSales.dbo.TransPointLine (NOLOCK) where OrderNo IN @OrderNo
+            return @"select OrderNo,Sum(EarnPoints) EarnPoints,sum(RedeemPoints) RedeemPoints,MemberNumber,CardLevel,MemberCSN from CentralSales.dbo.TransPointLine (NOLOCK) where OrderNo IN @OrderNo
                     group by OrderNo,CardLevel,MemberCSN,MemberNumber";
         }
         public static string TransDiscountCouponEntryQuery()

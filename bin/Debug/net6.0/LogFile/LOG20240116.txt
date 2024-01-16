@@ -1,0 +1,4 @@
+2024-01-16 13:32:54.247 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-16 13:59:13.060 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-16 14:12:50.951 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-16 16:13:06.034 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).

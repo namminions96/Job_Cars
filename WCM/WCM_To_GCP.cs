@@ -4,6 +4,7 @@ using BluePosVoucher.Data;
 using CsvHelper.Delegates;
 using Dapper;
 using Job_By_SAP.Models;
+using Job_By_SAP.MongoDB;
 using Job_By_SAP.PLH;
 using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
@@ -116,7 +117,7 @@ namespace Job_By_SAP
 
         public List<WcmGCPModels> OrderWcmToGCPAsync_Json(string configWcm, List<SP_Data_WCM> reciept, string Namefuntion)
         {
-            ReadDataRawJson readDataRawJson = new ReadDataRawJson();
+            ReadDataRawJson readDataRawJson = new ReadDataRawJson(_logger);
             var timeout = 600;
             using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
             {
@@ -247,11 +248,16 @@ namespace Job_By_SAP
 
                     if (Namefuntion == "GCP_WCM_Retry")
                     {
+                        _logger.Information(Namefuntion);
                         readDataRawJson.UpdateStatusWCM_Retry(SP_Data_WCMs, configWcm);
                     }
                     else
                     {
+                        _logger.Information(Namefuntion);
                         readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
+                        ServiceMongo serviceMongo = new ServiceMongo();
+                        var dataService = new MongoService<SP_Data_WCM>(serviceMongo.SeviceData(),"Sale_GCP","Transactions");
+                        dataService.InsertData(SP_Data_WCMs);
                     }
 
                     return concurrentBag.ToList();
@@ -267,7 +273,7 @@ namespace Job_By_SAP
 
         public List<TransVoidGCP> OrderWcmToGCPVoidAsync_Json(string configWcm, List<SP_Data_WCM> reciept)
         {
-            ReadDataRawJson readDataRawJson = new ReadDataRawJson();
+            ReadDataRawJson readDataRawJson = new ReadDataRawJson(_logger);
             var timeout = 600;
             using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
             {
@@ -280,7 +286,6 @@ namespace Job_By_SAP
                     foreach (var result in reciept)
                     {
                         JObject jsonObject = JObject.Parse(result.DataJson);
-
                         //TransVoidLine//
                         JArray TransVoidLine = (JArray)jsonObject["Data"]["TransVoidLine"];
                         //List<TransVoidLine> TransVoidLineResult = readTranVoid_GCP.TransVoidLine(TransVoidLine);
@@ -313,7 +318,7 @@ namespace Job_By_SAP
                                 TransInputDatas.ArticleType = (string)TransInputDatass["ArticleType"];
                                 TransInputDatas.LastUpdated = DateTime.Now;
                                 TransInputDatasss.Add(TransInputDatas);
-
+                                //---------------------------------------------------------------------------//
                                 SP_Data_WCMss.ID = result.ID;
                                 SP_Data_WCMss.OrderNo = TransInputDatas.OrderNo;
                                 string OrderDate = TransInputDatas.ScanTime.ToString();
@@ -321,7 +326,6 @@ namespace Job_By_SAP
                                 SP_Data_WCMss.IsRead = true;
                                 SP_Data_WCMss.DataJson = result.DataJson;
                                 SP_Data_WCMs.Add(SP_Data_WCMss);
-
                             }
                             else
                             {
@@ -334,11 +338,9 @@ namespace Job_By_SAP
                                 SP_Data_WCMs.Add(SP_Data_WCMss);
                             }
                         }
-
                         //TransVoidHeader//
                         JArray TransVoidHeader = (JArray)jsonObject["Data"]["TransVoidHeader"];
                         List<TransVoidHeader> TransVoidHeaderResult = readTranVoid_GCP.TransVoidHeader(TransVoidHeader);
-
                         TransVoidGCP transVoidGCP = new TransVoidGCP();
                         transVoidGCP.TransVoidLine = TransInputDatasss;
                         transVoidGCP.TransVoidHeader = TransVoidHeaderResult;

@@ -1,6 +1,7 @@
 ﻿using BluePosVoucher.Data;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json.Linq;
+using Serilog;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -13,6 +14,11 @@ namespace Job_By_SAP.WCM
 {
     public class ReadDataRawJson
     {
+        private readonly ILogger _logger;
+        public ReadDataRawJson(ILogger logger)
+        {
+            _logger = logger;
+        }
         public List<TransInputDataGCP> TransInputDataGCP(JArray TransInputData)
         {
             List<TransInputDataGCP> TransInputDatasss = new List<TransInputDataGCP>();
@@ -190,6 +196,7 @@ namespace Job_By_SAP.WCM
             }
             catch (Exception ex)
             {
+                _logger.Information(ex.Message);
 
             }
         }

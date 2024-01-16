@@ -100,6 +100,7 @@ namespace Job_By_SAP.Models
     {
         public string OrderNo { get; set; }
         public double EarnPoints { get; set; }
+        public double RedeemPoints { get; set; }
         public string MemberNumber { get; set; }
         public string CardLevel { get; set; }
         public string MemberCSN { get; set; }
