@@ -53,6 +53,7 @@ Z:\Job_SAP\Snappier.dll
 Z:\Job_SAP\Renci.SshNet.dll
 Z:\Job_SAP\SshNet.Security.Cryptography.dll
 Z:\Job_SAP\System.Configuration.ConfigurationManager.dll
+Z:\Job_SAP\System.Diagnostics.DiagnosticSource.dll
 Z:\Job_SAP\System.Drawing.Common.dll
 Z:\Job_SAP\System.IdentityModel.Tokens.Jwt.dll
 Z:\Job_SAP\System.Memory.Data.dll

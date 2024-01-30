@@ -1,4 +1,6 @@
-﻿using System;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +8,30 @@ using System.Threading.Tasks;
 
 namespace Job_By_SAP.WCM
 {
+    public class WcmGCPModels_Json
+    {
+        public List<TransHeader> TransHeader { get; set; }
+        public List<TransLineGCP> TransLine { get; set; }
+        public List<TransPaymentEntryGCP> TransPaymentEntry { get; set; }
+        public List<TransDiscountGCP> TransDiscountEntry { get; set; }
+        public List<TransDiscountCouponEntryGCP> TransDiscountCouponEntry { get; set; }
+    }
+    public class TransHeader
+    {
+        public string CalendarDay { get; set; }
+        public string StoreCode { get; set; }
+        public string PosNo { get; set; }
+        public string ReceiptNo { get; set; }
+        public string TranTime { get; set; }
+        public string MemberCardNo { get; set; }
+        public string VinidCsn { get; set; }
+        public string Header_ref_01 { get; set; }
+        public string Header_ref_02 { get; set; }
+        public string Header_ref_03 { get; set; }
+        public string Header_ref_04 { get; set; }
+        public string Header_ref_05 { get; set; }
+    }
+
     public class WcmGCPModels
     {
         public string CalendarDay { get; set; }
@@ -111,6 +137,8 @@ namespace Job_By_SAP.WCM
     }
     public class SP_Data_WCM
     {
+        //[BsonId]
+        //public ObjectId Id { get; set; }
         public string OrderNo { get; set; }
         public DateTime OrderDate { get; set; }
         public string DataJson { get; set; }
@@ -122,4 +150,26 @@ namespace Job_By_SAP.WCM
         public decimal VATAmount { get; set; }
         public decimal LineAmountIncVAT { get; set; }
     }
+    public class SP_Data_WCM_Insert
+    {
+        //[BsonId]
+        //public ObjectId Id { get; set; }
+        public string StoreNo { get; set; }
+        public string PosNo { get; set; }
+        public string OrderNo { get; set; }
+        public DateTime OrderDate { get; set; }
+        public string Type { get; set; }
+        public string BatchFile { get; set; }
+        public string FileName { get; set; }
+        public string DataJson { get; set; }
+        public bool IsRead { get; set; }
+        public DateTime CrtDate { get; set; }
+        public DateTime ChgDate { get; set; }
+        public Guid ID { get; set; }
+        public string MemberCardNo { get; set; }
+        public decimal DiscountAmount { get; set; }
+        public decimal VATAmount { get; set; }
+        public decimal LineAmountIncVAT { get; set; }
+    }
+
 }

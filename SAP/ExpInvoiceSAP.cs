@@ -90,7 +90,7 @@ namespace Job_By_SAP.SAP
                                 string StartDateCancel = startDate.ToString("yyyy-MM-dd");
                                 string EndDateCancel = currentDatexml.ToString("yyyy-MM-dd");
                                 var resultxmlCancel = ExportXML.ConvertSQLtoXML(connections.ConnectString, "3", StartDateCancel, EndDateCancel, "0104918404", "", "");
-                                string outputFilePathCancel = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_POS_CANCEL_{currentDatepath}.xml";
+                                string outputFilePathCancel = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_SAP_CANCEL_{currentDatepath}.xml";
                                 if (resultxmlCancel != null)
                                 {
                                     using (StreamWriter writer = new StreamWriter(outputFilePathCancel))
@@ -100,7 +100,7 @@ namespace Job_By_SAP.SAP
                                     }
                                 }
                                 var resultxmlCancelSAP = ExportXML.ConvertSQLtoXML(connections.ConnectString, "4", StartDateCancel, EndDateCancel, "0104918404", "", "");
-                                string outputFilePathCancelSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_SAP_CANCEL_{currentDatepath}.xml";
+                                string outputFilePathCancelSAP = @$"{configXml.LocalFoderPath}\TAX_RECONCILE_POS_CANCEL_{currentDatepath}.xml";
                                 if (resultxmlCancel != null)
                                 {
                                     using (StreamWriter writer = new StreamWriter(outputFilePathCancelSAP))
@@ -158,7 +158,7 @@ namespace Job_By_SAP.SAP
                             sendEmailExample.SendMailError($"Chưa Khai Báo Time Run định Dạng  2;1;2;3;4  :: (2) là Getdate- so ngay, 1 : Tạo file Pos, 2 : Tạo File SAP, 3: Send file Cancel, 4 : Send file Retry ");
                         }
                         string[] filteredStringsxml = Directory.GetFiles(configXml.LocalFoderPath, "*.XML");
-                        if (filteredStringsxml.Length > 0)
+                        if (filteredStringsxml.Length > 0 && configXml.IsDownload == true)
                         {
                             if (Directory.Exists(configXml.MoveFolderPath))
                             {
@@ -180,12 +180,12 @@ namespace Job_By_SAP.SAP
                         }
                         else
                         {
-                            _logger_Einvoice.Information("Không có file Copy");
+                            _logger_Einvoice.Information("Không có file Copy && Status Upload Off");
                         }
                         if (filteredStringsxml.Length > 0)
                         {
                             if (configXml != null && configXml.pathRemoteDirectory != null && configXml.MoveFolderPath != null
-                                && configXml.IpSftp != null && configXml.username != null && configXml.password != null && configXml.LocalFoderPath != null)
+                                && configXml.IpSftp != null && configXml.username != null && configXml.password != null && configXml.LocalFoderPath != null&& configXml.IsDownload==true)
                             {
                                 SftpHelper sftpHelperupfile = new SftpHelper(configXml.IpSftp, 22, configXml.username, configXml.password, _logger_Einvoice);
                                 sftpHelperupfile.UploadSftpLinux2(configXml.LocalFoderPath, configXml.pathRemoteDirectory, configXml.MoveFolderPath, "*.XML");
@@ -198,7 +198,7 @@ namespace Job_By_SAP.SAP
                         }
                         else
                         {
-                            _logger_Einvoice.Information("Không Có data để UpLoad.");
+                            _logger_Einvoice.Information("Không Có data để UpLoad Or Status Upload Off.");
                         }
                     }
                     else

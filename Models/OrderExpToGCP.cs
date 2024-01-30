@@ -128,5 +128,14 @@ namespace Job_By_SAP.Models
         public string UpdateFlg { get; set; }
         public DateTime CrtDate { get; set; }
     }
+    public class SUMMARY_SALES_OUT
+    {
+        public string AppCode { get; set; }
+        public string CalendarDay { get; set; }
+        public int TotalReceiptCount { get; set; }
+        public decimal TotalReceiptAmount { get; set; }
+        public decimal TotalDiscountAmount { get; set; }
+        public string UpdateFlg { get; set; }
+    }
 
 }

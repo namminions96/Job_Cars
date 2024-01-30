@@ -91,3 +91,4 @@ D:\Read_SAP_\Read_xml\bin\Release\net6.0\ZstdSharp.dll
 D:\Read_SAP_\Read_xml\bin\Release\net6.0\runtimes\linux\native\libmongocrypt.so
 D:\Read_SAP_\Read_xml\bin\Release\net6.0\runtimes\osx\native\libmongocrypt.dylib
 D:\Read_SAP_\Read_xml\bin\Release\net6.0\runtimes\win\native\mongocrypt.dll
+D:\Read_SAP_\Read_xml\bin\Release\net6.0\System.Diagnostics.DiagnosticSource.dll

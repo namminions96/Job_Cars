@@ -93,18 +93,18 @@ namespace Job_By_SAP.PLH
 
         public static string GCP_CSV_PLH_Archive()
         {
-            return @"SELECT A.OrderNo,Sum(EarnPoints) EarnPoints ,A.MemberNumber,A.CardLevel,MemberCSN 
+            return @"SELECT A.OrderNo,Sum(EarnPoints) EarnPoints,sum(RedeemPoints) RedeemPoints ,A.MemberNumber,A.CardLevel,MemberCSN 
                      FROM CentralSalesArchive.[dbo].[TransPointLine]A
                      join CentralSalesArchive.[dbo].TransHeader B On A.OrderNo = B.OrderNo
-                     where OrderDate between '20231207' and'20231213'
+                     where OrderDate between '20240101' and'20240117'
                      group by A.OrderNo,A.CardLevel,A.MemberCSN,A.MemberNumber";
         }
         public static string GCP_CSV_PLH_Prd()
         {
-            return @"SELECT A.OrderNo,Sum(EarnPoints) EarnPoints,A.MemberNumber,A.CardLevel,MemberCSN 
+            return @"SELECT A.OrderNo,Sum(EarnPoints) EarnPoints,sum(RedeemPoints) RedeemPoints,A.MemberNumber,A.CardLevel,MemberCSN 
                         FROM CentralSales.[dbo].[TransPointLine]A
                         join CentralSales.[dbo].TransHeader B On A.OrderNo = B.OrderNo
-                        where OrderDate between '20231207' and'20231213'
+                        where OrderDate between '20240101' and'20240117'
                         group by A.OrderNo,A.CardLevel,A.MemberCSN,A.MemberNumber";
         }
 

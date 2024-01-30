@@ -22,83 +22,114 @@ namespace Job_By_SAP.WCM
         public List<TransInputDataGCP> TransInputDataGCP(JArray TransInputData)
         {
             List<TransInputDataGCP> TransInputDatasss = new List<TransInputDataGCP>();
-            foreach (JObject TransInputDatass in TransInputData)
+            if (TransInputData != null)
             {
-                TransInputDataGCP TransInputDatas = new TransInputDataGCP();
-                TransInputDatas.TransNo = (string)TransInputDatass["TransNo"];
-                TransInputDatas.LineNumber = (string)TransInputDatass["LineNumber"];
-                TransInputDatas.TableName = (string)TransInputDatass["TableName"];
-                TransInputDatas.DataType = (string)TransInputDatass["DataType"];
-                TransInputDatas.DataValue = (string)TransInputDatass["DataValue"];
-                TransInputDatasss.Add(TransInputDatas);
+                foreach (JObject TransInputDatass in TransInputData)
+                {
+                    TransInputDataGCP TransInputDatas = new TransInputDataGCP();
+                    TransInputDatas.TransNo = (string)TransInputDatass["TransNo"];
+                    TransInputDatas.LineNumber = (string)TransInputDatass["LineNumber"];
+                    TransInputDatas.TableName = (string)TransInputDatass["TableName"];
+                    TransInputDatas.DataType = (string)TransInputDatass["DataType"];
+                    TransInputDatas.DataValue = (string)TransInputDatass["DataValue"];
+                    TransInputDatasss.Add(TransInputDatas);
+                }
+                return TransInputDatasss;
             }
-            return TransInputDatasss;
+            else
+            {
+                return new List<TransInputDataGCP>();
+            }
+
+
         }
         public List<TransDiscountCouponEntryGCP> TransDiscountCouponEntryGCP(JArray Data)
         {
             List<TransDiscountCouponEntryGCP> CouponEntryss = new List<TransDiscountCouponEntryGCP>();
             //TransDiscountCouponEntry//
-            foreach (JObject CouponEntry in Data)
+            if (Data != null)
             {
-                TransDiscountCouponEntryGCP CouponEntrys = new TransDiscountCouponEntryGCP();
-                CouponEntrys.OrderNo = (string)CouponEntry["OrderNo"];
-                CouponEntrys.ParentLineId = (int)CouponEntry["OrderLineNo"];
-                CouponEntrys.LineId = (int)CouponEntry["LineNo"];
-                CouponEntrys.OfferNo = (string)CouponEntry["OfferNo"];
-                CouponEntrys.OfferType = (string)CouponEntry["OfferType"];
-                CouponEntrys.Barcode = (string)CouponEntry["Barcode "];
-                CouponEntrys.DiscountAmount = (decimal)CouponEntry["DiscountAmount"];
-                CouponEntryss.Add(CouponEntrys);
+
+                foreach (JObject CouponEntry in Data)
+                {
+                    TransDiscountCouponEntryGCP CouponEntrys = new TransDiscountCouponEntryGCP();
+                    CouponEntrys.OrderNo = (string)CouponEntry["OrderNo"];
+                    CouponEntrys.ParentLineId = (int)CouponEntry["OrderLineNo"];
+                    CouponEntrys.LineId = (int)CouponEntry["LineNo"];
+                    CouponEntrys.OfferNo = (string)CouponEntry["OfferNo"];
+                    CouponEntrys.OfferType = (string)CouponEntry["OfferType"];
+                    CouponEntrys.Barcode = (string)CouponEntry["Barcode "];
+                    CouponEntrys.DiscountAmount = (decimal)CouponEntry["DiscountAmount"];
+                    CouponEntryss.Add(CouponEntrys);
+                }
+                return CouponEntryss;
             }
-            return CouponEntryss;
+            else
+            {
+                return new List<TransDiscountCouponEntryGCP>();
+            }
         }
         public List<TransPaymentEntryGCP> TransPaymentEntryGCP(JArray Data)
         {
             List<TransPaymentEntryGCP> PaymentEntryss = new List<TransPaymentEntryGCP>();
-            foreach (JObject PaymentEntry in Data)
+            if (Data != null)
             {
-                TransPaymentEntryGCP PaymentEntrys = new TransPaymentEntryGCP();
-                PaymentEntrys.ReceiptNo = (string)PaymentEntry["OrderNo"];
-                PaymentEntrys.LineNo = (int)PaymentEntry["LineNo"];
-                PaymentEntrys.TenderType = (string)PaymentEntry["TenderType"];
-                PaymentEntrys.CurrencyCode = (string)PaymentEntry["OfferNo"];
-                PaymentEntrys.ExchangeRate = (decimal)PaymentEntry["ExchangeRate"];
-                PaymentEntrys.AmountTendered = (decimal)PaymentEntry["AmountTendered"];
-                PaymentEntrys.AmountInCurrency = (decimal)PaymentEntry["AmountInCurrency"];
-                PaymentEntrys.ApprovalCode = (string)PaymentEntry["ApprovalCode"];
-                PaymentEntrys.ReferenceNo = (string)PaymentEntry["ReferenceNo"];
-                PaymentEntrys.BankPOSCode = (string)PaymentEntry["BankPOSCode"];
-                PaymentEntrys.BankCardType = (string)PaymentEntry["BankCardType"];
-                if (PaymentEntry.TryGetValue("IsOnline", out var isOnlineValue) && isOnlineValue.Type != JTokenType.Null)
+                foreach (JObject PaymentEntry in Data)
                 {
-                    PaymentEntrys.IsOnline = (bool)isOnlineValue;
+                    TransPaymentEntryGCP PaymentEntrys = new TransPaymentEntryGCP();
+                    PaymentEntrys.ReceiptNo = (string)PaymentEntry["OrderNo"];
+                    PaymentEntrys.LineNo = (int)PaymentEntry["LineNo"];
+                    PaymentEntrys.TenderType = (string)PaymentEntry["TenderType"];
+                    PaymentEntrys.CurrencyCode = (string)PaymentEntry["OfferNo"];
+                    PaymentEntrys.ExchangeRate = (decimal)PaymentEntry["ExchangeRate"];
+                    PaymentEntrys.AmountTendered = (decimal)PaymentEntry["AmountTendered"];
+                    PaymentEntrys.AmountInCurrency = (decimal)PaymentEntry["AmountInCurrency"];
+                    PaymentEntrys.ApprovalCode = (string)PaymentEntry["ApprovalCode"];
+                    PaymentEntrys.ReferenceNo = (string)PaymentEntry["ReferenceNo"];
+                    PaymentEntrys.BankPOSCode = (string)PaymentEntry["BankPOSCode"];
+                    PaymentEntrys.BankCardType = (string)PaymentEntry["BankCardType"];
+                    if (PaymentEntry.TryGetValue("IsOnline", out var isOnlineValue) && isOnlineValue.Type != JTokenType.Null)
+                    {
+                        PaymentEntrys.IsOnline = (bool)isOnlineValue;
+                    }
+                    PaymentEntryss.Add(PaymentEntrys);
                 }
-                PaymentEntryss.Add(PaymentEntrys);
+                return PaymentEntryss;
             }
-            return PaymentEntryss;
+            else
+            {
+                return new List<TransPaymentEntryGCP>();
+            }
         }
 
         public List<TransDiscountGCP> TransDiscountGCP(JArray Data)
         {
             List<TransDiscountGCP> DiscountEntryss = new List<TransDiscountGCP>();
-            foreach (JObject DiscountEntry in Data)
+            if (Data != null)
             {
-                TransDiscountGCP DiscountEntrys = new TransDiscountGCP();
-                DiscountEntrys.ReceiptNo = (string)DiscountEntry["OrderNo"];
-                DiscountEntrys.LineNo = (int)DiscountEntry["LineNo"];
-                DiscountEntrys.TranNo = (int)DiscountEntry["OrderLineNo"];
-                DiscountEntrys.ItemNo = (string)DiscountEntry["ItemNo"];
-                DiscountEntrys.UOM = (string)DiscountEntry["UOM"];
-                DiscountEntrys.OfferType = (string)DiscountEntry["OfferType"];
-                DiscountEntrys.OfferNo = (string)DiscountEntry["OfferNo"];
-                DiscountEntrys.Quantity = (int)DiscountEntry["Quantity"];
-                if (DiscountEntry.TryGetValue("DiscountAmount", out var discountAmountValue) && discountAmountValue.Type != JTokenType.Null)
+                foreach (JObject DiscountEntry in Data)
                 {
-                    DiscountEntrys.DiscountAmount = (decimal)discountAmountValue;
+                    TransDiscountGCP DiscountEntrys = new TransDiscountGCP();
+                    DiscountEntrys.ReceiptNo = (string)DiscountEntry["OrderNo"];
+                    DiscountEntrys.LineNo = (int)DiscountEntry["LineNo"];
+                    DiscountEntrys.TranNo = (int)DiscountEntry["OrderLineNo"];
+                    DiscountEntrys.ItemNo = (string)DiscountEntry["ItemNo"];
+                    DiscountEntrys.UOM = (string)DiscountEntry["UOM"];
+                    DiscountEntrys.OfferType = (string)DiscountEntry["OfferType"];
+                    DiscountEntrys.OfferNo = (string)DiscountEntry["OfferNo"];
+                    DiscountEntrys.Quantity = (int)DiscountEntry["Quantity"];
+                    if (DiscountEntry.TryGetValue("DiscountAmount", out var discountAmountValue) && discountAmountValue.Type != JTokenType.Null)
+                    {
+                        DiscountEntrys.DiscountAmount = (decimal)discountAmountValue;
+                    }
+                    DiscountEntryss.Add(DiscountEntrys);
                 }
-                DiscountEntryss.Add(DiscountEntrys);
+                return DiscountEntryss;
             }
-            return DiscountEntryss;
+            else
+            {
+                return new List<TransDiscountGCP>();
+            }
         }
         public List<TransLineGCP> TransLineGCP(JArray Data, List<TransDiscountGCP> transDiscountGCPs)
         {
@@ -173,6 +204,143 @@ namespace Job_By_SAP.WCM
 
             }
         }
+        public void UpdateStatusWCM_Retry_Json(List<SP_Data_WCM> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                var timeout = 600;
+                foreach (SP_Data_WCM data_WCMs in SP_Data_WCM)
+                {
+                    using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                    {
+                        DbsetWcm.Open();
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.UpdateWCM_Retry_Json();
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            command.Parameters.AddWithValue("@Id", data_WCMs.ID);
+                            command.Parameters.AddWithValue("@IsRead", data_WCMs.IsRead);
+                            command.Parameters.AddWithValue("@ChgDate", data_WCMs.ChgDate);
+                            command.Parameters.AddWithValue("@MemberCardNo", data_WCMs.MemberCardNo);
+                            command.Parameters.AddWithValue("@DiscountAmount", data_WCMs.DiscountAmount);
+                            command.Parameters.AddWithValue("@VATAmount", data_WCMs.VATAmount);
+                            command.Parameters.AddWithValue("@LineAmountIncVAT", data_WCMs.LineAmountIncVAT);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                        DbsetWcm.Close();
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void UpdateStatusVoidWCM(List<SP_Data_WCM> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                var timeout = 600;
+                foreach (SP_Data_WCM data_WCMs in SP_Data_WCM)
+                {
+                    using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                    {
+                        DbsetWcm.Open();
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.UpdateWCMVoid();
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            command.Parameters.AddWithValue("@Id", data_WCMs.ID);
+                            command.Parameters.AddWithValue("@IsRead", 1);
+                            command.Parameters.AddWithValue("@ChgDate", data_WCMs.ChgDate);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void InsertStatusWCM(List<SP_Data_WCM_Insert> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                {
+                    DbsetWcm.Open();
+                    var timeout = 600;
+                    foreach (SP_Data_WCM_Insert data_WCMs in SP_Data_WCM)
+                    {
+
+
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.InsertWCM_BK();
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            command.Parameters.AddWithValue("@Id", data_WCMs.ID);
+                            command.Parameters.AddWithValue("@IsRead", data_WCMs.IsRead);
+                            command.Parameters.AddWithValue("@ChgDate", data_WCMs.ChgDate);
+                            command.Parameters.AddWithValue("@MemberCardNo", data_WCMs.MemberCardNo);
+                            command.Parameters.AddWithValue("@DiscountAmount", data_WCMs.DiscountAmount);
+                            command.Parameters.AddWithValue("@VATAmount", data_WCMs.VATAmount);
+                            command.Parameters.AddWithValue("@LineAmountIncVAT", data_WCMs.LineAmountIncVAT);
+                            //------------------------------------
+                            command.Parameters.AddWithValue("@StoreNo", data_WCMs.StoreNo);
+                            command.Parameters.AddWithValue("@PosNo", data_WCMs.PosNo);
+                            command.Parameters.AddWithValue("@Type", data_WCMs.Type);
+                            command.Parameters.AddWithValue("@BatchFile", data_WCMs.BatchFile);
+                            command.Parameters.AddWithValue("@FileName", data_WCMs.FileName);
+                            command.Parameters.AddWithValue("@CrtDate", data_WCMs.CrtDate);
+                            command.Parameters.AddWithValue("@OrderDate", data_WCMs.OrderDate);
+                            command.Parameters.AddWithValue("@DataJson", data_WCMs.DataJson);
+                            command.Parameters.AddWithValue("@Srv", "");
+                            command.Parameters.AddWithValue("@TransactionType", "");
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+                    DbsetWcm.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void UpdateStatusWCM_Retry_data(List<SP_Data_WCM_Insert> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                {
+                    DbsetWcm.Open();
+                    foreach (SP_Data_WCM_Insert data_WCMs in SP_Data_WCM)
+                    {
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.UpdateWCM_Retry();
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+                    DbsetWcm.Close();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                _logger.Information(ex.Message);
+
+            }
+        }
+
         public void UpdateStatusWCM_Retry(List<SP_Data_WCM> SP_Data_WCM, string configWcm)
         {
             try
@@ -181,7 +349,7 @@ namespace Job_By_SAP.WCM
                 {
                     DbsetWcm.Open();
                     foreach (SP_Data_WCM data_WCMs in SP_Data_WCM)
-                    { 
+                    {
                         using (SqlCommand command = new SqlCommand())
                         {
                             command.Connection = DbsetWcm;

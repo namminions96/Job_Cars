@@ -15,6 +15,7 @@ using Newtonsoft.Json.Linq;
 using Read_xml.Data;
 using Serilog;
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Data;
@@ -24,6 +25,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Transactions;
+using static Job_By_SAP.Models.SalesGCP_Retry;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Job_By_SAP
@@ -115,8 +117,105 @@ namespace Job_By_SAP
             }
         }
 
+
+        public void OrderWcmToGCPAsync_Json(string configWcm, List<string> reciept)
+        {
+            var timeout = 10000;
+            string delimitedString = string.Join(",", reciept);
+
+            using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+            {
+                try
+                {
+                    DbsetWcm.Open();
+
+                    if (reciept.Count > 0)
+                    {
+                        var parameters = new
+                        {
+                            OrderList = delimitedString
+                        };
+                        DbsetWcm.Query(WCM_Data.Insert_Data_RetryProc(), parameters, commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                        List<SP_Data_WCM_Insert> SP_Data_WCMs = new List<SP_Data_WCM_Insert>();
+                        foreach (var item in reciept)
+                        {
+                            SP_Data_WCM_Insert sP_Data_WCM = new SP_Data_WCM_Insert();
+                            var tempObject = new TempObject
+                            {
+                                TransDiscountEntry = DbsetWcm.Query<object>(WCM_Data.Transdiscount_Retry(), new { ReceiptNo = item }, commandTimeout: timeout).ToList(),
+                                TransPaymentEntry = DbsetWcm.Query<object>(WCM_Data.TransPayment_Retry(), new { ReceiptNo = item }, commandTimeout: timeout).ToList(),
+                                TransDiscountCouponEntry = DbsetWcm.Query<object>(WCM_Data.TransCp_Retry(), new { ReceiptNo = item }, commandTimeout: timeout).ToList(),
+                                TransInputData = DbsetWcm.Query<object>(WCM_Data.TransInput_Retry(), new { ReceiptNo = item }, commandTimeout: timeout).ToList(),
+                                TransHeader = DbsetWcm.Query<object>(WCM_Data.Transheader_Retry(), new { ReceiptNo = item }, commandTimeout: timeout).ToList(),
+                                TransLine = DbsetWcm.Query<object>(WCM_Data.TransLine_Retry(), new { ReceiptNo = item }, commandTimeout: timeout).ToList()
+                            };
+                            if (tempObject.TransHeader != null && tempObject.TransHeader.Count > 0)
+                            {
+
+                                var newDataObject = new
+                                {
+                                    Type = "SALE",
+                                    Data = new
+                                    {
+                                        tempObject.TransLine,
+                                        tempObject.TransHeader,
+                                        tempObject.TransInputData,
+                                        tempObject.TransDiscountCouponEntry,
+                                        tempObject.TransDiscountEntry,
+                                        tempObject.TransPaymentEntry,
+
+                                    }
+                                };
+                                SP_Data_WCM_Insert SP_Data_WCMss = new SP_Data_WCM_Insert();
+                                SP_Data_WCMss.ID = Guid.NewGuid();
+                                SP_Data_WCMss.OrderNo = item;
+                                SP_Data_WCMss.DataJson = JsonConvert.SerializeObject(newDataObject);
+                                SP_Data_WCMss.ChgDate = DateTime.Now;
+                                SP_Data_WCMss.OrderDate = DateTime.Now;
+                                SP_Data_WCMss.CrtDate = DateTime.Now;
+                                SP_Data_WCMss.StoreNo = item.Substring(0, 4);
+                                SP_Data_WCMss.PosNo = item.Substring(0, 6);
+                                SP_Data_WCMss.Type = "Tran";
+                                SP_Data_WCMss.BatchFile = $"Retry_{item}";
+                                SP_Data_WCMss.FileName = $"File_{item}";
+                                SP_Data_WCMss.IsRead = false;
+                                SP_Data_WCMss.MemberCardNo = "";
+                                SP_Data_WCMss.VATAmount = 0;
+                                SP_Data_WCMss.LineAmountIncVAT = 0;
+                                SP_Data_WCMss.DiscountAmount = 0;
+                                SP_Data_WCMs.Add(SP_Data_WCMss);
+                            }
+                        };
+                        ReadDataRawJson readDataRawJson = new ReadDataRawJson(_logger);
+                        if(SP_Data_WCMs.Count > 0) 
+                        {
+                            readDataRawJson.InsertStatusWCM(SP_Data_WCMs, configWcm);
+                        }
+                        else
+                        {
+                            _logger.Information("Không có Data Insert");
+                        }
+                      
+                       //readDataRawJson.UpdateStatusWCM_Retry_data(SP_Data_WCMs, configWcm);
+
+                    }
+                    else
+                    {
+                        _logger.Information("Không có Data");
+
+                    }
+                }
+                catch (Exception e)
+                {
+                    _logger.Information("Không có Data" + e.Message);
+
+                }
+                DbsetWcm.Close();
+            }
+        }
         public List<WcmGCPModels> OrderWcmToGCPAsync_Json(string configWcm, List<SP_Data_WCM> reciept, string Namefuntion)
         {
+
             ReadDataRawJson readDataRawJson = new ReadDataRawJson(_logger);
             var timeout = 600;
             using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
@@ -132,9 +231,11 @@ namespace Job_By_SAP
                         //TransInputDataGCP//
                         JArray TransInputData = (JArray)jsonObject["Data"]["TransInputData"];
                         List<TransInputDataGCP> TransInputDataResult = readDataRawJson.TransInputDataGCP(TransInputData);
+
                         //TransDiscountCouponEntry//
                         JArray TransDiscountCouponEntry = (JArray)jsonObject["Data"]["TransDiscountCouponEntry"];
                         List<TransDiscountCouponEntryGCP> CouponEntryResult = readDataRawJson.TransDiscountCouponEntryGCP(TransDiscountCouponEntry);
+
                         //payment//
                         JArray TransPaymentEntry = (JArray)jsonObject["Data"]["TransPaymentEntry"];
                         List<TransPaymentEntryGCP> PaymentEntryResult = readDataRawJson.TransPaymentEntryGCP(TransPaymentEntry);
@@ -153,8 +254,8 @@ namespace Job_By_SAP
                             if ((int)Item["LineType"] == 0)
                             {
                                 VATAmount += (decimal)Item["VATAmount"];
-                                LineAmountIncVAT +=(decimal)Item["LineAmountIncVAT"];
-                                DiscountAmount +=(decimal)Item["DiscountAmount"];
+                                LineAmountIncVAT += (decimal)Item["LineAmountIncVAT"];
+                                DiscountAmount += (decimal)Item["DiscountAmount"];
 
                                 TransLineGCP TransLines = new TransLineGCP();
                                 int Linetype = (int)Item["LineType"];
@@ -237,7 +338,7 @@ namespace Job_By_SAP
                             }
                             SP_Data_WCMss.ChgDate = DateTime.Now;
                             SP_Data_WCMss.IsRead = true;
-                            SP_Data_WCMss.DataJson = TransHeaders.ReceiptNo;
+                            SP_Data_WCMss.DataJson = result.DataJson;
                             SP_Data_WCMss.MemberCardNo = TransHeaders.MemberCardNo;
                             SP_Data_WCMss.VATAmount = VATAmount;
                             SP_Data_WCMss.LineAmountIncVAT = LineAmountIncVAT;
@@ -248,16 +349,16 @@ namespace Job_By_SAP
 
                     if (Namefuntion == "GCP_WCM_Retry")
                     {
-                        _logger.Information(Namefuntion);
-                        readDataRawJson.UpdateStatusWCM_Retry(SP_Data_WCMs, configWcm);
+                        //_logger.Information(Namefuntion);
+                       readDataRawJson.UpdateStatusWCM_Retry_Json(SP_Data_WCMs, configWcm);
                     }
                     else
                     {
-                        _logger.Information(Namefuntion);
+                        //_logger.Information(Namefuntion);
                         readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
-                        ServiceMongo serviceMongo = new ServiceMongo();
-                        var dataService = new MongoService<SP_Data_WCM>(serviceMongo.SeviceData(),"Sale_GCP","Transactions");
-                        dataService.InsertData(SP_Data_WCMs);
+                        //ServiceMongo serviceMongo = new ServiceMongo();
+                        //var dataService = new MongoService<SP_Data_WCM>(serviceMongo.SeviceData(), "Sale_GCP", "Transactions");
+                        //dataService.InsertData(SP_Data_WCMs);
                     }
 
                     return concurrentBag.ToList();
@@ -269,7 +370,6 @@ namespace Job_By_SAP
                 }
             }
         }
-
 
         public List<TransVoidGCP> OrderWcmToGCPVoidAsync_Json(string configWcm, List<SP_Data_WCM> reciept)
         {
@@ -346,7 +446,7 @@ namespace Job_By_SAP
                         transVoidGCP.TransVoidHeader = TransVoidHeaderResult;
                         concurrentBag.Add(transVoidGCP);
                     }
-                    readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
+                    readDataRawJson.UpdateStatusVoidWCM(SP_Data_WCMs, configWcm);
                     return concurrentBag.ToList();
                 }
                 catch (Exception e)

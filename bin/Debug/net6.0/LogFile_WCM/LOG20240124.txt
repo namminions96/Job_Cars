@@ -1,0 +1,14 @@
+2024-01-24 10:48:06.870 +07:00 [INF] Không có DataMust declare the scalar variable "@delimitedString".
+2024-01-24 10:48:06.944 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-24 10:48:53.953 +07:00 [INF] Không có DataMust declare the scalar variable "@delimitedString".
+2024-01-24 10:48:53.983 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-24 17:22:28.741 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-24 17:24:48.191 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-24 17:26:22.683 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-24 17:27:53.444 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-24 17:29:26.861 +07:00 [INF] ------------START WCM_GCP----------------
+2024-01-24 17:29:28.495 +07:00 [ERR] Lỗi:GCP_WCM Could not find stored procedure 'SP_Sale_GCP'.
+2024-01-24 17:29:49.165 +07:00 [INF] ------------START WCM_GCP----------------
+2024-01-24 17:31:22.176 +07:00 [ERR] Lỗi:GCP_WCM Could not find stored procedure 'SP_Sale_GCP'.
+2024-01-24 17:31:31.782 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-24 17:31:48.444 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.

@@ -1,25 +1,15 @@
-﻿using CsvHelper;
-using BluePosVoucher.Data;
-using BluePosVoucher.Models;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Formats.Asn1;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml;
-using Job_By_SAP.Data;
-using Microsoft.Data.SqlClient;
-using Job_By_SAP.Models;
+﻿using BluePosVoucher.Models;
+using CsvHelper;
 using CsvHelper.Configuration;
-using Job_By_SAP.PLH;
 using Dapper;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Job_By_SAP.Data;
+using Job_By_SAP.Models;
+using Job_By_SAP.PLH;
+using Microsoft.Data.SqlClient;
+using Serilog;
 using System.Data;
-using System.Reflection.PortableExecutable;
+using System.Globalization;
+using System.Text;
 
 namespace Read_xml
 {

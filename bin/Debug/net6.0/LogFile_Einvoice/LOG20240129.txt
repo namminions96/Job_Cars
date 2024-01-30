@@ -1,0 +1,25 @@
+2024-01-29 16:31:35.261 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-29 16:32:00.851 +07:00 [INF] Could not find a part of the path 'D:\Read_SAP_\Read_xml\bin\Debug\net6.0\FileTerminal\TAX_RECONCILE_POS_20240129163135.xml'.
+2024-01-29 16:32:16.047 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-29 16:32:34.119 +07:00 [INF] Could not find a part of the path 'D:\Read_SAP_\Read_xml\bin\Debug\net6.0\FileTerminal\TAX_RECONCILE_POS_20240129163216.xml'.
+2024-01-29 16:33:18.747 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-29 16:34:19.317 +07:00 [INF] Could not find stored procedure 'vcm_get_list_einvoice_report_exp_Retry'.
+2024-01-29 16:34:42.819 +07:00 [ERR] Error sending email: System.Net.Mail.SmtpException: Failure sending mail.
+ ---> System.Net.Internals.SocketExceptionFactory+ExtendedSocketException (10060): A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. [::ffff:10.235.64.54]:25
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Connect(EndPoint remoteEP)
+   at System.Net.Sockets.TcpClient.Connect(IPEndPoint remoteEP)
+   at System.Net.Sockets.TcpClient.Connect(String hostname, Int32 port)
+--- End of stack trace from previous location ---
+   at System.Net.Sockets.TcpClient.Connect(String hostname, Int32 port)
+   at System.Net.Mail.SmtpConnection.GetConnection(String host, Int32 port)
+   at System.Net.Mail.SmtpTransport.GetConnection(String host, Int32 port)
+   at System.Net.Mail.SmtpClient.GetConnection()
+   at System.Net.Mail.SmtpClient.Send(MailMessage message)
+   --- End of inner exception stack trace ---
+   at System.Net.Mail.SmtpClient.Send(MailMessage message)
+   at Job_By_SAP.SendEmailExample.SendEmail(String mailServer, Int32 port, Boolean enableSSL, String username, String password, String recipient, String body) in D:\Read_SAP_\Read_xml\SendEmailExample.cs:line 66
+2024-01-29 16:34:42.828 +07:00 [INF] -----------------------End ExpEinvoice-------------------------------
+2024-01-29 16:35:27.058 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-29 16:35:46.588 +07:00 [INF] Tạo file Retry Off 
+2024-01-29 16:36:19.700 +07:00 [INF] Chưa khai báo Upload file config ExpEinvoice

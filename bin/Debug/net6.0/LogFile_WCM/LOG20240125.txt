@@ -1,0 +1,13 @@
+2024-01-25 08:15:38.988 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-25 08:16:26.090 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-25 08:16:45.651 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-25 08:36:29.669 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-25 08:44:51.080 +07:00 [INF] Không có Send data GCP
+2024-01-25 08:44:51.090 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-25 08:51:44.540 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-25 08:55:31.955 +07:00 [ERR] Lỗi:GCP_WCM Could not find stored procedure 'SP_GET_SELLOUT_PBLUE_SET'.
+2024-01-25 08:56:33.203 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-25 09:13:57.118 +07:00 [INF] Không có Send data GCP
+2024-01-25 09:14:49.891 +07:00 [INF] ------------END GCP_WCM_Retry----------------
+2024-01-25 09:15:20.134 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-01-25 09:15:39.886 +07:00 [ERR] Lỗi:GCP_WCM An invalid request URI was provided. Either the request URI must be an absolute URI or BaseAddress must be set.

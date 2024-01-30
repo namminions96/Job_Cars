@@ -1,0 +1,27 @@
+2024-01-18 09:28:45.319 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 09:29:17.261 +07:00 [ERR] Error sending email: System.Net.Mail.SmtpException: Failure sending mail.
+ ---> System.Net.Internals.SocketExceptionFactory+ExtendedSocketException (10060): A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. [::ffff:10.235.64.54]:25
+   at System.Net.Sockets.Socket.DoConnect(EndPoint endPointSnapshot, SocketAddress socketAddress)
+   at System.Net.Sockets.Socket.Connect(EndPoint remoteEP)
+   at System.Net.Sockets.TcpClient.Connect(IPEndPoint remoteEP)
+   at System.Net.Sockets.TcpClient.Connect(String hostname, Int32 port)
+--- End of stack trace from previous location ---
+   at System.Net.Sockets.TcpClient.Connect(String hostname, Int32 port)
+   at System.Net.Mail.SmtpConnection.GetConnection(String host, Int32 port)
+   at System.Net.Mail.SmtpTransport.GetConnection(String host, Int32 port)
+   at System.Net.Mail.SmtpClient.GetConnection()
+   at System.Net.Mail.SmtpClient.Send(MailMessage message)
+   --- End of inner exception stack trace ---
+   at System.Net.Mail.SmtpClient.Send(MailMessage message)
+   at Job_By_SAP.SendEmailExample.SendEmail(String mailServer, Int32 port, Boolean enableSSL, String username, String password, String recipient, String body) in D:\Read_SAP_\Read_xml\SendEmailExample.cs:line 66
+2024-01-18 10:07:08.419 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:32:50.311 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:33:20.188 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:38:43.001 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:39:02.351 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:39:18.028 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:40:07.328 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:40:23.407 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:40:43.051 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:40:57.317 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-01-18 17:41:15.879 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
