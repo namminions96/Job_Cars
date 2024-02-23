@@ -53,6 +53,10 @@
               "target": "Package",
               "version": "[2.0.143, )"
             },
+            "Google.Cloud.BigQuery.V2": {
+              "target": "Package",
+              "version": "[3.6.0, )"
+            },
             "Microsoft.CSharp": {
               "target": "Package",
               "version": "[4.7.0, )"
@@ -100,6 +104,10 @@
             "Serilog.Sinks.File": {
               "target": "Package",
               "version": "[5.0.0, )"
+            },
+            "StackExchange.Redis": {
+              "target": "Package",
+              "version": "[2.7.17, )"
             }
           },
           "imports": [

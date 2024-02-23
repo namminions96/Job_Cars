@@ -2,6 +2,8 @@
 using BluePosVoucher.Data;
 using BluePosVoucher.Models;
 using Dapper;
+using Google.Apis.Auth.OAuth2;
+using Google.Cloud.BigQuery.V2;
 using Job_By_SAP;
 using Job_By_SAP.Models;
 using Job_By_SAP.MongoDB;
@@ -11,17 +13,16 @@ using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using Newtonsoft.Json;
 using Read_xml;
 using Read_xml.Data;
 using Serilog;
+using StackExchange.Redis;
 using System.Data;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using static Job_By_SAP.Models.SalesGCP_Retry;
 internal class Program
 {
@@ -36,6 +37,7 @@ internal class Program
     private static ILogger _logger_Einvoice;
     private static ILogger _logger_DeleteFile;
     private static ILogger _logger_WCM_Void;
+    private static ILogger _logger__WPH_Survey;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
@@ -48,6 +50,7 @@ internal class Program
         _logger_Einvoice = SerilogLogger.GetLogger_Einvoice();
         _logger_DeleteFile = SerilogLogger.GetLogger_DeleteFile();
         _logger_WCM_Void = SerilogLogger.GetLogger_WCM_Void();
+        _logger__WPH_Survey = SerilogLogger.GetLogger_WPH_Survey();
         SendEmailExample sendEmailExample = new SendEmailExample(_logger);
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger_VC);
         ReadFile readfilSAP = new ReadFile(_logger);
@@ -77,10 +80,11 @@ internal class Program
             string Name = args[1];
             //string Name = "WCM_GCP_NEW";
             //string Name = "WCM_GCP_NEW";
-            //string functionName = "GCP_WCM_Json";
+            //string functionName = "WPH_Zalo_Survey";
+            //string functionName = "GG_Cloud_Data";
             //string functionName = "GCP_WCM_Retry_Old";
             //string Name = "ExpEinvoice";
-            //string functionName = "PRD_ExportHD";
+            //string functionName = "PRD_ExportHD_Cancel";
             if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
@@ -1048,7 +1052,7 @@ internal class Program
                             _logger_DeleteFile.Information("Chưa khai báo thư mục cần xóa !");
                         }
                         break;
-                    case "GCP_WCM_NEW":
+                    case "GCP_WCM_NEW_WINPHAR":
                         stopwatch.Start();
                         var configWCM_new = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
                         if (configWCM_new.Count() > 0)
@@ -1063,7 +1067,10 @@ internal class Program
                                     {
                                         sqlConnection.Open();
                                         var timeout = 10000;
-                                        var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        _logger_WCM.Information($"SP_GET_SELLOUT_PBLUE_SET");
+                                        sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        _logger_WCM.Information($"Procedure_SaleOut");
+                                        var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.Procedure_SaleOut(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
 
                                         if (results.Count > 0)
                                         {
@@ -1076,7 +1083,7 @@ internal class Program
                                                 var filteredResults = results.Where(r => batch.Contains(r.ReceiptNo)).ToList();
 
                                                 var listOrder = WCM_To_GCPs.OrderWcmToGCPAsync_Fix(cfig.ConnectString, batch, filteredResults);//listOrder
-
+                                                _logger_WCM.Information($"{listOrder.Count}");
                                                 List<List<WcmGCPModels>> orderBatches = listOrder
                                                 .Select((order, index) => new { order, index })
                                                 .GroupBy(x => x.index / 1000)
@@ -1185,8 +1192,14 @@ internal class Program
                     case "PRD_ExportHD":
                         _logger_Einvoice.Information("-----------------------Start ExpEinvoice-----------------------------");
                         ExpInvoiceSAP expInvoiceSAP = new ExpInvoiceSAP(_logger_Einvoice);
-                        expInvoiceSAP.ExpInvoiceSAPXML(Name);
+                        expInvoiceSAP.ExpInvoiceSAPXML_Fix(Name, "1");
                         _logger_Einvoice.Information("-----------------------End ExpEinvoice-------------------------------");
+                        break;
+                    case "PRD_ExportHD_Cancel":
+                        _logger_Einvoice.Information("-----------------------Start ExpEinvoice_Cancel-----------------------------");
+                        ExpInvoiceSAP expInvoiceSAPS = new ExpInvoiceSAP(_logger_Einvoice);
+                        expInvoiceSAPS.ExpInvoiceSAPXML_Fix(Name, "2");
+                        _logger_Einvoice.Information("-----------------------End ExpEinvoice_Cancel-------------------------------");
                         break;
                     case "GCP_WCM_Json":
                         stopwatch.Start();
@@ -1227,8 +1240,8 @@ internal class Program
                                                 if (result.Count > 0)
                                                 {
                                                     string json = JsonConvert.SerializeObject(result);
-                                                    string filePathSave = $"LogSend\\DataWCM_{cfig.Name}_{dateTimeString}.text";
-                                                    File.WriteAllText(filePathSave, json);
+                                                    //string filePathSave = $"LogSend\\DataWCM_{cfig.Name}_{dateTimeString}.text";
+                                                    //File.WriteAllText(filePathSave, json);
                                                     string apiUrl = configuration["API_GCP_WCM"];
                                                     using (HttpClient httpClient = new HttpClient())
                                                     {
@@ -1414,6 +1427,9 @@ internal class Program
 
                         break;
                     case "Mongo":
+                        ConnectionMultiplexer redis = ConnectionMultiplexer.Connect("localhost");
+                        IDatabase redisDatabase = redis.GetDatabase();
+                        // string cachedProfile = redisDatabase.StringGet($"user:{userId}");
                         ServiceMongo serviceMongo = new ServiceMongo();
                         var clientmg = serviceMongo.SeviceData();
                         var database = clientmg.GetDatabase("Sale_GCP");
@@ -1449,7 +1465,6 @@ internal class Program
                                         if (resultsRetry.Count > 0)
                                         {
                                             var ReceiptRetry = resultsRetry.GroupBy(p => p.RECEIPT_NO).Select(group => group.Key).ToList();
-
                                             var batchSize = 1900;
                                             for (int i = 0; i < ReceiptRetry.Count; i += batchSize)
                                             {
@@ -1602,7 +1617,96 @@ internal class Program
                         }
 
                         break;
+                    case "WPH_Zalo_Survey":
+                        ReadDataRawJson readDataRawJson = new ReadDataRawJson(_logger__WPH_Survey);
+                        var configWph = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
+                        if (configWph.Count() > 0)
+                        {
+                            foreach (var cfig in configWph)
+                            {
+                                _logger__WPH_Survey.Information($"------------START {cfig.Name}----------------");
+                                using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                {
+                                    try
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 10000;
+                                        string apiUrl = configuration["API_survey_Wph"];
+                                        var results = sqlConnection.Query<Temp_Zalo_Survey>(WCM_Data.SP_Zalo_Survey_WPH(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        if (results.Count > 0)
+                                        {
+                                            foreach (var result in results)
+                                            {
+                                                string json = $@"{{
+                                                      ""RecievedNumber"": ""{result.PhoneNo}"",
+                                                      ""OrderCode"": ""{result.RECEIPT_NO}"",
+                                                      ""OrderDate"": ""{result.OrderDate}""
+                                                         }}";
+                                                using (HttpClient httpClient = new HttpClient())
+                                                {
+                                                    try
+                                                    {
+                                                        var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                        request.Content = content;
+                                                        HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                        if (response.IsSuccessStatusCode)
+                                                        {
+                                                            string responseContent = await response.Content.ReadAsStringAsync();
+                                                            readDataRawJson.Update_WPH_Zalo_Sv(result.RECEIPT_NO, cfig.ConnectString);
+                                                            _logger__WPH_Survey.Information($"Send Survey WPH: RecievedNumber: {result.PhoneNo}----- OrderCode: {result.RECEIPT_NO}---{responseContent}");
+                                                        }
+                                                        else
+                                                        {
+                                                            _logger__WPH_Survey.Information($"Send API Data Fail_{response.RequestMessage}");
+                                                            sendEmailExample.SendMailError($"Send API Data Fail_{response.RequestMessage}");
+                                                        }
+                                                    }
+                                                    catch (Exception ex)
+                                                    {
+                                                        _logger__WPH_Survey.Error("Lỗi Survey WPH " + ex.Message);
+                                                        sendEmailExample.SendMailError("Lỗi Survey WPH: " + cfig.Name + ":" + ex.Message);
+                                                    }
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger__WPH_Survey.Information("Không có data Survey WPH");
+                                        }
+                                        sqlConnection.Close();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger__WPH_Survey.Error("Lỗi Survey WPH " + ex.Message);
+                                        sendEmailExample.SendMailError("Lỗi Survey WPH: " + cfig.Name + ":" + ex.Message);
+                                    }
+                                }
+                                _logger__WPH_Survey.Information($"------------END {cfig.Name}----------------");
+                            }
 
+                        }
+                        else
+                        {
+                            _logger__WPH_Survey.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                        }
+
+                        break;
+                    case "GG_Cloud_Data":
+                        string credentialPath = "namnd-415201-bb60219dc9d7.json";
+                        GoogleCredential credential = GoogleCredential.FromFile(credentialPath);
+                        BigQueryClient clientss = BigQueryClient.Create("namnd-415201", credential);
+                        string query = $@"insert into `namnd-415201.Trans.Order` " +
+                                         "select '0123', 'Nam5456'";
+                        BigQueryResults QerryData = clientss.ExecuteQuery(query, parameters: null);
+                        foreach (BigQueryRow row in QerryData)
+                        {
+                            // Access individual columns by name.
+                            string columnValue = row["Name"].ToString();
+                            Console.WriteLine(columnValue);
+                        }
+                        break;
                     default:
                         _logger.Information("Invalid function name.");
                         sendEmailExample.SendMailError("Invalid function name.");

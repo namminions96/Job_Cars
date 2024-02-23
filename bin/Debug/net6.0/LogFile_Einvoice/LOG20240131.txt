@@ -1,0 +1,36 @@
+2024-01-31 10:33:05.153 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:37:31.586 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:39:39.632 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:43:07.486 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:43:14.062 +07:00 [INF] Không Có Data Type  : 2
+2024-01-31 10:44:22.981 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:44:28.006 +07:00 [INF] Không Có Data Type  : 2
+2024-01-31 10:54:24.099 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:54:37.821 +07:00 [INF] The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.
+2024-01-31 10:54:47.124 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:55:48.897 +07:00 [INF] The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.
+2024-01-31 10:56:05.924 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:56:20.794 +07:00 [INF] The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.
+2024-01-31 10:56:28.010 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:58:27.888 +07:00 [INF] The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.
+2024-01-31 10:59:18.148 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:59:24.759 +07:00 [INF] The conversion of a nvarchar data type to a datetime data type resulted in an out-of-range value.
+2024-01-31 10:59:50.960 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 10:59:55.793 +07:00 [INF] Không Có Data Type  : 2
+2024-01-31 11:06:49.491 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 11:07:14.340 +07:00 [INF] Invalid object name '#Inv_IsSend'.
+2024-01-31 11:07:47.719 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 11:07:53.936 +07:00 [INF] Invalid object name '#Inv_IsSend'.
+2024-01-31 11:08:34.705 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 11:08:43.715 +07:00 [INF] Không Có Data Type  : 2
+2024-01-31 11:09:17.872 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 11:11:38.747 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 11:13:51.817 +07:00 [INF] Không Có Data Type  : 2
+2024-01-31 13:21:56.668 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 13:22:44.110 +07:00 [INF] Không Có Data Type  : 2
+2024-01-31 13:22:52.479 +07:00 [INF] POS: Status OffLine
+2024-01-31 15:01:08.859 +07:00 [INF] -----------------------Start ExpEinvoice-----------------------------
+2024-01-31 15:01:51.814 +07:00 [INF] -----------------------Start ExpEinvoice_Cancel-----------------------------
+2024-01-31 15:02:05.818 +07:00 [INF] SAP: Status OffLine
+2024-01-31 15:02:10.862 +07:00 [INF] POS: Status OffLine
+2024-01-31 15:02:36.104 +07:00 [INF] SAP_CANCEL: Status OffLine

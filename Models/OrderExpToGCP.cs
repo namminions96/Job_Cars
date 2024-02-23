@@ -137,5 +137,14 @@ namespace Job_By_SAP.Models
         public decimal TotalDiscountAmount { get; set; }
         public string UpdateFlg { get; set; }
     }
+    public class Temp_Zalo_Survey
+    {
+        public string RECEIPT_NO { get; set; }
+        public string PhoneNo { get; set; }
+        public bool UpdateFlg { get; set; }
+        public string OrderDate { get; set; }
+        public DateTime CrtDate { get; set; }
+
+    }
 
 }

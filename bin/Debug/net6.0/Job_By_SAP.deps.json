@@ -10,6 +10,7 @@
         "dependencies": {
           "CsvHelper": "30.0.1",
           "Dapper": "2.0.143",
+          "Google.Cloud.BigQuery.V2": "3.6.0",
           "Microsoft.CSharp": "4.7.0",
           "Microsoft.Data.SqlClient": "5.1.5",
           "Microsoft.EntityFrameworkCore": "7.0.10",
@@ -21,7 +22,8 @@
           "Newtonsoft.Json": "13.0.3",
           "SSH.NET": "2020.0.2",
           "Serilog": "3.0.1",
-          "Serilog.Sinks.File": "5.0.0"
+          "Serilog.Sinks.File": "5.0.0",
+          "StackExchange.Redis": "2.7.17"
         },
         "runtime": {
           "Job_By_SAP.dll": {}
@@ -48,7 +50,7 @@
       },
       "Azure.Core/1.35.0": {
         "dependencies": {
-          "Microsoft.Bcl.AsyncInterfaces": "1.1.1",
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
           "System.Diagnostics.DiagnosticSource": "6.0.1",
           "System.Memory.Data": "1.0.2",
           "System.Numerics.Vectors": "4.5.0",
@@ -107,11 +109,95 @@
           }
         }
       },
-      "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
+      "Google.Api.Gax/4.5.0": {
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "6.0.0",
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Google.Api.Gax.dll": {
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "4.5.0.0"
+          }
+        }
+      },
+      "Google.Api.Gax.Rest/4.5.0": {
+        "dependencies": {
+          "Google.Api.Gax": "4.5.0",
+          "Google.Apis.Auth": "1.66.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "7.0.0"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Google.Api.Gax.Rest.dll": {
+            "assemblyVersion": "4.5.0.0",
+            "fileVersion": "4.5.0.0"
+          }
+        }
+      },
+      "Google.Apis/1.66.0": {
+        "dependencies": {
+          "Google.Apis.Core": "1.66.0"
+        },
+        "runtime": {
+          "lib/net6.0/Google.Apis.dll": {
+            "assemblyVersion": "1.66.0.0",
+            "fileVersion": "1.66.0.0"
+          }
+        }
+      },
+      "Google.Apis.Auth/1.66.0": {
+        "dependencies": {
+          "Google.Apis": "1.66.0",
+          "Google.Apis.Core": "1.66.0",
+          "System.Management": "7.0.2"
+        },
+        "runtime": {
+          "lib/net6.0/Google.Apis.Auth.dll": {
+            "assemblyVersion": "1.66.0.0",
+            "fileVersion": "1.66.0.0"
+          }
+        }
+      },
+      "Google.Apis.Bigquery.v2/1.66.0.3320": {
+        "dependencies": {
+          "Google.Apis": "1.66.0",
+          "Google.Apis.Auth": "1.66.0"
+        },
+        "runtime": {
+          "lib/net6.0/Google.Apis.Bigquery.v2.dll": {
+            "assemblyVersion": "1.66.0.3320",
+            "fileVersion": "1.66.0.3320"
+          }
+        }
+      },
+      "Google.Apis.Core/1.66.0": {
+        "dependencies": {
+          "Newtonsoft.Json": "13.0.3"
+        },
+        "runtime": {
+          "lib/net6.0/Google.Apis.Core.dll": {
+            "assemblyVersion": "1.66.0.0",
+            "fileVersion": "1.66.0.0"
+          }
+        }
+      },
+      "Google.Cloud.BigQuery.V2/3.6.0": {
+        "dependencies": {
+          "Google.Api.Gax.Rest": "4.5.0",
+          "Google.Apis.Bigquery.v2": "1.66.0.3320"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Google.Cloud.BigQuery.V2.dll": {
+            "assemblyVersion": "3.6.0.0",
+            "fileVersion": "3.6.0.0"
+          }
+        }
+      },
+      "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
         "runtime": {
           "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
-            "assemblyVersion": "1.0.0.0",
-            "fileVersion": "4.700.20.21406"
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.0.21.52210"
           }
         }
       },
@@ -604,6 +690,17 @@
           }
         }
       },
+      "Pipelines.Sockets.Unofficial/2.2.8": {
+        "dependencies": {
+          "System.IO.Pipelines": "5.0.1"
+        },
+        "runtime": {
+          "lib/net5.0/Pipelines.Sockets.Unofficial.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "2.2.8.1080"
+          }
+        }
+      },
       "Serilog/3.0.1": {
         "runtime": {
           "lib/net6.0/Serilog.dll": {
@@ -658,7 +755,27 @@
           }
         }
       },
+      "StackExchange.Redis/2.7.17": {
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "7.0.0",
+          "Pipelines.Sockets.Unofficial": "2.2.8"
+        },
+        "runtime": {
+          "lib/net6.0/StackExchange.Redis.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.7.17.27058"
+          }
+        }
+      },
       "System.Buffers/4.5.1": {},
+      "System.CodeDom/7.0.0": {
+        "runtime": {
+          "lib/net6.0/System.CodeDom.dll": {
+            "assemblyVersion": "7.0.0.0",
+            "fileVersion": "7.0.22.51805"
+          }
+        }
+      },
       "System.Configuration.ConfigurationManager/6.0.1": {
         "dependencies": {
           "System.Security.Cryptography.ProtectedData": "6.0.0",
@@ -724,6 +841,33 @@
         "dependencies": {
           "System.Security.AccessControl": "6.0.0",
           "System.Security.Principal.Windows": "5.0.0"
+        }
+      },
+      "System.IO.Pipelines/5.0.1": {
+        "runtime": {
+          "lib/netcoreapp3.0/System.IO.Pipelines.dll": {
+            "assemblyVersion": "5.0.0.1",
+            "fileVersion": "5.0.120.57516"
+          }
+        }
+      },
+      "System.Management/7.0.2": {
+        "dependencies": {
+          "System.CodeDom": "7.0.0"
+        },
+        "runtime": {
+          "lib/net6.0/System.Management.dll": {
+            "assemblyVersion": "7.0.0.2",
+            "fileVersion": "7.0.723.27404"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net6.0/System.Management.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "7.0.0.2",
+            "fileVersion": "7.0.723.27404"
+          }
         }
       },
       "System.Memory/4.5.5": {},
@@ -929,12 +1073,61 @@
       "path": "dnsclient/1.6.1",
       "hashPath": "dnsclient.1.6.1.nupkg.sha512"
     },
-    "Microsoft.Bcl.AsyncInterfaces/1.1.1": {
+    "Google.Api.Gax/4.5.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-yuvf07qFWFqtK3P/MRkEKLhn5r2UbSpVueRziSqj0yJQIKFwG1pq9mOayK3zE5qZCTs0CbrwL9M6R8VwqyGy2w==",
-      "path": "microsoft.bcl.asyncinterfaces/1.1.1",
-      "hashPath": "microsoft.bcl.asyncinterfaces.1.1.1.nupkg.sha512"
+      "sha512": "sha512-nOOuLzK6u0JwSWMPGAU9CdeOjD2rrmNFvREKQyat5hiBUHndTyFH4G4op8wy9Vv6bzauomQsP5YVap9eCNHVFg==",
+      "path": "google.api.gax/4.5.0",
+      "hashPath": "google.api.gax.4.5.0.nupkg.sha512"
+    },
+    "Google.Api.Gax.Rest/4.5.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-4zEhzwp0AnUDoUGlgQScs6ah+IL/5U0ejK+OsFLZbU99kqguewyMJ8nfoJ8E1hfdy9hAw4SGfY1eh3YMnZtzRQ==",
+      "path": "google.api.gax.rest/4.5.0",
+      "hashPath": "google.api.gax.rest.4.5.0.nupkg.sha512"
+    },
+    "Google.Apis/1.66.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ZNvwU3MaqRW6/FIpWK8S0KutaEQ20mdpUuV8TEGO4pZoxQPnakbwqTo103x+LEPW8BMTtXXHpSSCCojDIVF4Yg==",
+      "path": "google.apis/1.66.0",
+      "hashPath": "google.apis.1.66.0.nupkg.sha512"
+    },
+    "Google.Apis.Auth/1.66.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-q3ipLhn13U6f4RoAU/C7QJP8v9NTe0yZumy8hEmdR23LVZX70XwU8BDEbkexzc92uY7F1lbzp7mn/L15IAk52Q==",
+      "path": "google.apis.auth/1.66.0",
+      "hashPath": "google.apis.auth.1.66.0.nupkg.sha512"
+    },
+    "Google.Apis.Bigquery.v2/1.66.0.3320": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zVk9KhHQ3LtkfKxZ34k/5QvnRtNKBHby+z7SF4/HTnkB3AYv6aReqNGuq/mOh4CqjGo08IEfhcxpe+agYCanaQ==",
+      "path": "google.apis.bigquery.v2/1.66.0.3320",
+      "hashPath": "google.apis.bigquery.v2.1.66.0.3320.nupkg.sha512"
+    },
+    "Google.Apis.Core/1.66.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QBUHjWbizj30donU51SsrDSFoL8rEmut+5El4GVPoMPDQwejJalaEWswrThc9EwZ6BcCGfxPbGE1iFR1FXiWWA==",
+      "path": "google.apis.core/1.66.0",
+      "hashPath": "google.apis.core.1.66.0.nupkg.sha512"
+    },
+    "Google.Cloud.BigQuery.V2/3.6.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-5ClTced4U88WVWR6WHE0UmriZPMBv5/DFgF09vdUp/aHOLKUQAxHgrrBKAkW9XajhJjVuot/2yTIWZC7DWktUw==",
+      "path": "google.cloud.bigquery.v2/3.6.0",
+      "hashPath": "google.cloud.bigquery.v2.3.6.0.nupkg.sha512"
+    },
+    "Microsoft.Bcl.AsyncInterfaces/6.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-UcSjPsst+DfAdJGVDsu346FX0ci0ah+lw3WRtn18NUwEqRt70HaOQ7lI72vy3+1LxtqI3T5GWwV39rQSrCzAeg==",
+      "path": "microsoft.bcl.asyncinterfaces/6.0.0",
+      "hashPath": "microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512"
     },
     "Microsoft.CSharp/4.7.0": {
       "type": "package",
@@ -1223,6 +1416,13 @@
       "path": "newtonsoft.json/13.0.3",
       "hashPath": "newtonsoft.json.13.0.3.nupkg.sha512"
     },
+    "Pipelines.Sockets.Unofficial/2.2.8": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ==",
+      "path": "pipelines.sockets.unofficial/2.2.8",
+      "hashPath": "pipelines.sockets.unofficial.2.2.8.nupkg.sha512"
+    },
     "Serilog/3.0.1": {
       "type": "package",
       "serviceable": true,
@@ -1265,12 +1465,26 @@
       "path": "sshnet.security.cryptography/1.3.0",
       "hashPath": "sshnet.security.cryptography.1.3.0.nupkg.sha512"
     },
+    "StackExchange.Redis/2.7.17": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-PduekHww3CrCBr1ebIPX4k4zdah9wjJ4AQZXfp+JfGJQfwf8s1SHSY7kthDi9MP0ULcYrNw4xnbRXFMbCryIig==",
+      "path": "stackexchange.redis/2.7.17",
+      "hashPath": "stackexchange.redis.2.7.17.nupkg.sha512"
+    },
     "System.Buffers/4.5.1": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-Rw7ijyl1qqRS0YQD/WycNst8hUUMgrMH4FCn1nNm27M4VxchZ1js3fVjQaANHO5f3sN4isvP4a+Met9Y4YomAg==",
       "path": "system.buffers/4.5.1",
       "hashPath": "system.buffers.4.5.1.nupkg.sha512"
+    },
+    "System.CodeDom/7.0.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-GLltyqEsE5/3IE+zYRP5sNa1l44qKl9v+bfdMcwg+M9qnQf47wK3H0SUR/T+3N4JEQXF3vV4CSuuo0rsg+nq2A==",
+      "path": "system.codedom/7.0.0",
+      "hashPath": "system.codedom.7.0.0.nupkg.sha512"
     },
     "System.Configuration.ConfigurationManager/6.0.1": {
       "type": "package",
@@ -1313,6 +1527,20 @@
       "sha512": "sha512-SxHB3nuNrpptVk+vZ/F+7OHEpoHUIKKMl02bUmYHQr1r+glbZQxs7pRtsf4ENO29TVm2TH3AEeep2fJcy92oYw==",
       "path": "system.io.filesystem.accesscontrol/5.0.0",
       "hashPath": "system.io.filesystem.accesscontrol.5.0.0.nupkg.sha512"
+    },
+    "System.IO.Pipelines/5.0.1": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-qEePWsaq9LoEEIqhbGe6D5J8c9IqQOUuTzzV6wn1POlfdLkJliZY3OlB0j0f17uMWlqZYjH7txj+2YbyrIA8Yg==",
+      "path": "system.io.pipelines/5.0.1",
+      "hashPath": "system.io.pipelines.5.0.1.nupkg.sha512"
+    },
+    "System.Management/7.0.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/qEUN91mP/MUQmJnM5y5BdT7ZoPuVrtxnFlbJ8a3kBJGhe2wCzBfnPFtK2wTtEEcf3DMGR9J00GZZfg6HRI6yA==",
+      "path": "system.management/7.0.2",
+      "hashPath": "system.management.7.0.2.nupkg.sha512"
     },
     "System.Memory/4.5.5": {
       "type": "package",

@@ -92,3 +92,16 @@ D:\Read_SAP_\Read_xml\bin\Debug\net6.0\runtimes\linux\native\libmongocrypt.so
 D:\Read_SAP_\Read_xml\bin\Debug\net6.0\runtimes\osx\native\libmongocrypt.dylib
 D:\Read_SAP_\Read_xml\bin\Debug\net6.0\runtimes\win\native\mongocrypt.dll
 D:\Read_SAP_\Read_xml\bin\Debug\net6.0\System.Diagnostics.DiagnosticSource.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Pipelines.Sockets.Unofficial.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\StackExchange.Redis.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\System.IO.Pipelines.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Api.Gax.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Api.Gax.Rest.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Apis.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Apis.Auth.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Apis.Bigquery.v2.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Apis.Core.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\Google.Cloud.BigQuery.V2.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\System.CodeDom.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\System.Management.dll
+D:\Read_SAP_\Read_xml\bin\Debug\net6.0\runtimes\win\lib\net6.0\System.Management.dll

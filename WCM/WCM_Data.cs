@@ -27,6 +27,10 @@ namespace Job_By_SAP
         {
             return @"SP_SUMMARY_SALES_OUT";
         }
+        public static string SP_Zalo_Survey_WPH()
+        {
+            return @"SP_Zalo_Survey_WPH";
+        }
         public static string SP_Sale_GCP()
         {
             return @"SP_Sale_GCP";
@@ -68,7 +72,20 @@ namespace Job_By_SAP
                       ,[LineAmountIncVAT] = @LineAmountIncVAT
                        WHERE[Id] = @Id";
         }
-
+        public static string Insert_Zalo_WPH()
+        {
+            return @" INSERT INTO [dbo].[Temp_Zalo_Survey]
+           ([RECEIPT_NO]
+           ,[PhoneNo]
+           ,[OrderDate]
+           ,[UpdateFlg]
+           ,[CrtDate])
+            VALUES(@RECEIPT_NO,@PhoneNo,@OrderDate,@UpdateFlg,@CrtDate)";
+        }
+        public static string Update_Zalo_WPH()
+        {
+            return @"Update Temp_Zalo_Survey set [UpdateFlg] = 1 where [RECEIPT_NO] = @RECEIPT_NO";
+        }
         public static string UpdateWCM_Retry_Json()
         {
             return @" UPDATE[dbo].[DataRawJson_Retry]
@@ -175,6 +192,13 @@ namespace Job_By_SAP
             return @"SELECT TransNo, LineNumber, TableName, DataType, DataValue, Counter, ID, CreatedDate FROM TransInputData NOLOCK 
             where [TransNo] = @ReceiptNo";
         }
-
+        public static string TimeRunEinvoice ()
+        {
+            return @"SELECT [FileName]
+                              ,[Type]
+                              ,[TimeRun]
+                              ,[Status]
+                    FROM [TimeRunEinvoice] where Type in ('SAP','POS','SAP_CANCEL','POS_CANCEL')";
+        }
     }
 }

@@ -1,0 +1,4 @@
+2024-02-21 13:54:46.123 +07:00 [INF] Send Survey WPH: RecievedNumber: 0933106100----- OrderCode: 153585240200015---{"StatusCode":1,"Data":"ef3ada68-7248-4ac5-82a1-11a2eabe4355","StatusName":"Thành công","MessageTechnical":null,"ErrorMessage":"Thành công"}
+2024-02-21 13:54:53.240 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-02-21 14:40:08.836 +07:00 [INF] Send Survey WPH: RecievedNumber: 0933106100----- OrderCode: 153585240200015---{"StatusCode":1,"Data":"318039e6-3e3c-4ef7-b857-f04d87df44f8","StatusName":"Thành công","MessageTechnical":null,"ErrorMessage":"Thành công"}
+2024-02-21 14:40:10.610 +07:00 [INF] ------------END WCM_GCP_NEW----------------

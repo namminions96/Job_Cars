@@ -1,4 +1,5 @@
 ﻿using BluePosVoucher.Data;
+using Job_By_SAP.Models;
 using Microsoft.Data.SqlClient;
 using Newtonsoft.Json.Linq;
 using Serilog;
@@ -101,7 +102,6 @@ namespace Job_By_SAP.WCM
                 return new List<TransPaymentEntryGCP>();
             }
         }
-
         public List<TransDiscountGCP> TransDiscountGCP(JArray Data)
         {
             List<TransDiscountGCP> DiscountEntryss = new List<TransDiscountGCP>();
@@ -340,7 +340,6 @@ namespace Job_By_SAP.WCM
 
             }
         }
-
         public void UpdateStatusWCM_Retry(List<SP_Data_WCM> SP_Data_WCM, string configWcm)
         {
             try
@@ -368,7 +367,57 @@ namespace Job_By_SAP.WCM
 
             }
         }
+        public void Insert_WPH_Zalo_Sv(List<Temp_Zalo_Survey> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                var timeout = 600;
+                foreach (Temp_Zalo_Survey data_WCMs in SP_Data_WCM)
+                {
+                    using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                    {
+                        DbsetWcm.Open();
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.Insert_Zalo_WPH();
+                            command.Parameters.AddWithValue("@RECEIPT_NO", data_WCMs.RECEIPT_NO);
+                            command.Parameters.AddWithValue("@PhoneNo", data_WCMs.PhoneNo);
+                            command.Parameters.AddWithValue("@OrderDate", data_WCMs.OrderDate);
+                            command.Parameters.AddWithValue("@UpdateFlg", data_WCMs.UpdateFlg);
+                            command.Parameters.AddWithValue("@CrtDate", data_WCMs.CrtDate);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
 
+            }
+        }
+        public void Update_WPH_Zalo_Sv(string RECEIPT_NO, string configWcm)
+        {
+            try
+            {
+                var timeout = 600;
+                using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+                {
+                    DbsetWcm.Open();
+                    using (SqlCommand command = new SqlCommand())
+                    {
+                        command.Connection = DbsetWcm;
+                        command.CommandText = WCM_Data.Update_Zalo_WPH();
+                        command.Parameters.AddWithValue("@RECEIPT_NO", RECEIPT_NO);
+                        int rowsAffected = command.ExecuteNonQuery();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
 
     }
 
