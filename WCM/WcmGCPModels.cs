@@ -46,10 +46,17 @@ namespace Job_By_SAP.WCM
         public string Header_ref_03 { get; set; }
         public string Header_ref_04 { get; set; }
         public string Header_ref_05 { get; set; }
+        public List<OrderInfo> OrderInfo { get; set; }
         public Boolean IsRetry { get; set; }
         public List<TransLineGCP> TransLine { get; set; }
         public List<TransPaymentEntryGCP> TransPaymentEntry { get; set; }
         public List<TransDiscountCouponEntryGCP> TransDiscountCouponEntry { get; set; }
+    }
+
+    public class OrderInfo
+    {
+        public string key { get; set; }
+        public string value { get; set; }
     }
     public class TransTempGCP_WCM
     {
@@ -74,6 +81,7 @@ namespace Job_By_SAP.WCM
         public string Header_ref_03 { get; set; }
         public string Header_ref_04 { get; set; }
         public string Header_ref_05 { get; set; }
+        public string Source { get; set; }
         public Boolean IsRetry { get; set; }
 
     }

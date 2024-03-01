@@ -83,8 +83,8 @@ internal class Program
             //string functionName = "WPH_Zalo_Survey";
             //string functionName = "GG_Cloud_Data";
             //string functionName = "GCP_WCM_Retry_Old";
-            //string Name = "ExpEinvoice";
-            //string functionName = "PRD_ExportHD_Cancel";
+            //string Name = "WCM_GCP";
+            //string functionName = "GCP_WCM_NEW_WINPHAR";
             if (args.Length > 0)
             {
                 // _logger_WCM.Information(Name);
@@ -1067,9 +1067,7 @@ internal class Program
                                     {
                                         sqlConnection.Open();
                                         var timeout = 10000;
-                                        _logger_WCM.Information($"SP_GET_SELLOUT_PBLUE_SET");
                                         sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
-                                        _logger_WCM.Information($"Procedure_SaleOut");
                                         var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.Procedure_SaleOut(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
 
                                         if (results.Count > 0)
@@ -1707,6 +1705,23 @@ internal class Program
                             Console.WriteLine(columnValue);
                         }
                         break;
+                    case "PRD_ExportTranspoin":
+                        var configPLH_ = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
+                        string querrys = @"  SELECT  A.[OrderNo]
+                                              ,SUm([EarnPoints])[EarnPoints]
+                                              ,[MemberNumber]
+                                              ,A.[CardLevel]
+                                              ,[MemberCSN]
+	                                          ,Sum(COALESCE([RedeemPoints], 0)) [RedeemPoints]
+                                          FROM [CentralSales].[dbo].[TransPointLine] A with (Nolock)
+                                          Join [CentralSales].dbo.TransHeader B with (Nolock) on A.OrderNo = B.OrderNo 
+                                          where B.OrderDate between '20230101' and '20240229'
+                                          Group by A.[OrderNo],A.[MemberNumber],A.[CardLevel],[MemberCSN]";
+                        foreach (var cfig in configPLH_)
+                        {
+                            readfilSAP.ConvertSQLtoXML_CSV_PLH(cfig.ConnectString, querrys);
+                        }
+                            break;
                     default:
                         _logger.Information("Invalid function name.");
                         sendEmailExample.SendMailError("Invalid function name.");

@@ -57,6 +57,7 @@ namespace Job_By_SAP
                                 transLine.DiscountEntry = TransDiscountGCP.Where(p => p.ReceiptNo == order.ReceiptNo && p.ItemNo == order.Article).ToList();
                                 Transline.Add(transLine);
                                 WcmGCPModels orderExp = new WcmGCPModels();
+
                                 orderExp.CalendarDay = order.CalendarDay;
                                 orderExp.StoreCode = order.StoreCode;
                                 orderExp.PosNo = order.PosNo;
@@ -69,6 +70,14 @@ namespace Job_By_SAP
                                 orderExp.Header_ref_03 = order.Header_ref_03;
                                 orderExp.Header_ref_04 = order.Header_ref_04;
                                 orderExp.Header_ref_05 = order.Header_ref_05;
+                               //-------------------------------------------//
+                                List<OrderInfo> orderInfos = new List<OrderInfo>();
+                                OrderInfo orderInfo = new OrderInfo();
+                                orderInfo.key = "DrWinSource";
+                                orderInfo.value = order.Source;
+                                orderInfos.Add(orderInfo);
+                                //------------------------------------------//
+                                orderExp.OrderInfo = orderInfos;
                                 orderExp.IsRetry = order.IsRetry;
                                 orderExp.TransLine = Transline;
                                 orderExp.TransPaymentEntry = TransPaymentEntryGCP.Where(p => p.ReceiptNo == order.ReceiptNo).ToList();
@@ -293,11 +302,11 @@ namespace Job_By_SAP
                                 TransHeaders.MemberCardNo = (string)headerItem["MemberCardNo"];
                                 TransHeaders.VinidCsn = (string)headerItem["VinidCsn"];
                                 TransHeaders.Header_ref_01 = (string)headerItem["ReturnedOrderNo"];// mã đơn trả hàng
-                                TransHeaders.Header_ref_02 = SOURCEBILL?.DataValue; /// Souce Bill
-                                TransHeaders.Header_ref_03 = (string)headerItem["RefKey1"];//Đơn Hàng đối tác
-                                TransHeaders.Header_ref_04 = CUSTYPE?.DataValue; /// mã KKH
+                                TransHeaders.Header_ref_02 = SOURCEBILL?.DataValue;               /// Souce Bill
+                                TransHeaders.Header_ref_03 = (string)headerItem["RefKey1"];      //Đơn Hàng đối tác
+                                TransHeaders.Header_ref_04 = CUSTYPE?.DataValue;                /// mã KKH
                                 string zoneNo = (string)headerItem["ZoneNo"];
-                                if (zoneNo == "TCBTOPUP" || zoneNo == "TCBWITHDRAW")//Nocap//
+                                if (zoneNo == "TCBTOPUP" || zoneNo == "TCBWITHDRAW")            //Nocap//
                                 {
                                     TransHeaders.Header_ref_05 = "NO_CAP";
                                 }
