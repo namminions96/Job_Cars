@@ -95,6 +95,7 @@ namespace Job_By_SAP.WCM
         public decimal POSQuantity { get; set; }
         public decimal Price { get; set; }
         public decimal Amount { get; set; }
+        public decimal VATAmount { get; set; }
         public string Brand { get; set; }
         public List<TransDiscountGCP> DiscountEntry { get; set; }
     }

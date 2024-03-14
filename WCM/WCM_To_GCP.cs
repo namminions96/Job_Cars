@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
+using StackExchange.Redis;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Globalization;
@@ -74,14 +75,21 @@ namespace Job_By_SAP
                                 List<OrderInfo> orderInfos = new List<OrderInfo>();
                                 OrderInfo orderInfo = new OrderInfo();
                                 orderInfo.key = "DrWinSource";
-                                orderInfo.value = order.Source;
+                                if (order.Source != "" && order.Source != null)
+                                {
+                                    orderInfo.value = order.Source;
+                                }else
+                                {
+                                    orderInfo.value = "Retail";
+                                }    
+                             
                                 orderInfos.Add(orderInfo);
                                 //------------------------------------------//
                                 orderExp.OrderInfo = orderInfos;
                                 orderExp.IsRetry = order.IsRetry;
                                 orderExp.TransLine = Transline;
                                 orderExp.TransPaymentEntry = TransPaymentEntryGCP.Where(p => p.ReceiptNo == order.ReceiptNo).ToList();
-                                //orderExp.TransDiscountCouponEntry = TransDiscountCouponEntryGCP.Where(p => p.OrderNo == order.ReceiptNo && p.ParentLineId.ToString() == order.TranNo).ToList();
+                                orderExp.TransDiscountCouponEntry = new List<TransDiscountCouponEntryGCP>();
                                 concurrentBag.Add(orderExp);
                             });
                         }
@@ -267,6 +275,10 @@ namespace Job_By_SAP
                                     {
                                         TransLines.Amount = (decimal)lineAmountValue;
                                     }
+                                    if (Item.TryGetValue("VATAmount", out var VatAmountValue) && VatAmountValue.Type != JTokenType.Null)
+                                    {
+                                        TransLines.VATAmount = (decimal)VatAmountValue;
+                                    }
                                     TransLines.Brand = (string)Item["DivisionCode"];
                                     TransLines.DiscountEntry = DiscountEntryResult.Where(p => p.ItemNo == TransLines.Article && p.TranNo == TransLines.TranNo).ToList();
 
@@ -304,7 +316,7 @@ namespace Job_By_SAP
                                 TransHeaders.Header_ref_01 = (string)headerItem["ReturnedOrderNo"];// mã đơn trả hàng
                                 TransHeaders.Header_ref_02 = SOURCEBILL?.DataValue;               /// Souce Bill
                                 TransHeaders.Header_ref_03 = (string)headerItem["RefKey1"];      //Đơn Hàng đối tác
-                                TransHeaders.Header_ref_04 = CUSTYPE?.DataValue;                /// mã KKH
+                                TransHeaders.Header_ref_04 = CUSTYPE?.DataValue;                /// mã KH
                                 string zoneNo = (string)headerItem["ZoneNo"];
                                 if (zoneNo == "TCBTOPUP" || zoneNo == "TCBWITHDRAW")            //Nocap//
                                 {
@@ -322,6 +334,12 @@ namespace Job_By_SAP
                                 {
                                     TransHeaders.IsRetry = false;
                                 }
+                                //List<OrderInfo> orderInfos = new List<OrderInfo>();
+                                //OrderInfo orderInfo = new OrderInfo();
+                                //orderInfo.key = "NoteDHCX";
+                                //orderInfo.value = (string)headerItem["RefKey1"];
+                                //orderInfos.Add(orderInfo);
+                                TransHeaders.OrderInfo = new List<OrderInfo>();
                                 TransHeaders.TransLine = TransLineResult.ToList();
                                 TransHeaders.TransPaymentEntry = PaymentEntryResult.ToList();
                                 TransHeaders.TransDiscountCouponEntry = CouponEntryResult.Where

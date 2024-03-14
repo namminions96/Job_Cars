@@ -1,0 +1,11 @@
+2024-03-06 08:41:43.325 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 09:40:28.540 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:00:07.740 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:00:32.630 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:02:35.608 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:08:44.422 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:10:53.820 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:11:51.045 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:30:45.160 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 11:32:45.916 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-06 13:31:25.073 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).

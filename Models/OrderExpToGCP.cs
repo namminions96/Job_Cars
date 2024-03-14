@@ -80,6 +80,7 @@ namespace Job_By_SAP.Models
     {
         public string OrderNo { get; set; }
         public int ParentLineId { get; set; }
+        public int ParentLineNo { get; set; }
         public int LineId { get; set; }
         public string OfferNo { get; set; }
         public string OfferType { get; set; }

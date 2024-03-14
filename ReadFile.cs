@@ -358,7 +358,8 @@ namespace Read_xml
                         {
                             var currentDatepathxml = DateTime.Now;
                             string currentDatepath = currentDatepathxml.ToString("yyyyMMddHHmmss");
-                            string outputFilePathPos = @$"TransPoint_Reconcile\TransPoint_Reconcile_{currentDatepath}.csv";
+                           // string outputFilePathPos = @$"TransPoint_Reconcile\TransPoint_Reconcile_{currentDatepath}.csv";
+                            string outputFilePathPos = @$"TransDiscount_Reconcile\TransPoint_Reconcile_{currentDatepath}.csv";
                             using (var writer = new StreamWriter(outputFilePathPos, false, Encoding.UTF8))
                             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                             {

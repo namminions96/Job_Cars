@@ -48,12 +48,28 @@ namespace Job_By_SAP.PLH
      
         public static string TransDiscountEntryQuery()
         {
-            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
-                     FROM CentralSales.dbo.[TransDiscountEntry] NOLOCK WHERE OrderNo IN @orderNo
-                     UNION
-                     SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
-                     FROM CentralSales.dbo.TransDiscountCouponEntry NOLOCK 
-                     WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')";
+            return @"SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
+                     FROM CentralSales.dbo.[TransDiscountEntry] NOLOCK WHERE OrderNo IN @orderNo";
+                     //UNION
+                     //SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
+                     //FROM CentralSales.dbo.TransDiscountCouponEntry NOLOCK 
+                     //WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')
+        }
+          public static string TransDiscountEntryQuery_BS()
+        {
+            return @"select top 10 A.[OrderNo], A.LineId LineId,A.ParentLineId ,A.[OfferNo],B.Description,A.[OfferType],COALESCE(D.[OfferName], '') [OfferType_Des]
+                                ,A.[Quantity], A.DiscountAmount,A.Note ,B.[SalesType],COALESCE(C.[Description], '')  SalesType_Des,B.[StartingDate],B.[EndingDate]
+                                from
+                             (SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
+                             FROM CentralSales.dbo.[TransDiscountEntry] NOLOCK WHERE OrderNo IN @orderNo
+                             UNION
+                             SELECT [OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
+                             FROM CentralSales.dbo.TransDiscountCouponEntry NOLOCK 
+                             WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')
+					         )A
+					         join [10.235.55.124\PLH].[CentralMD].[dbo].[OfferHeader] B ON A.OfferNo = B.No
+							 left join [10.235.55.124\PLH].[CentralMD].[dbo].[SalesOrderType] C ON B.[SalesType] = C.[Code]
+							 left join [10.235.55.124\PLH].[CentralMD].[dbo].[OfferType] D ON A.[OfferType] = D.[OfferType]";
         }
 
         public static string TransPoinEntryQuery()

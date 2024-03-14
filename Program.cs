@@ -78,12 +78,12 @@ internal class Program
             //---------------------------------------------------------------------------------
             string functionName = args[0];
             string Name = args[1];
+            //string Name = "PLH_INBOUND";
+            ////string Name = "WCM_GCP_NEW";
+            ////string functionName = "WPH_Zalo_Survey";
+            //string functionName = "GCP_WCM_Json";
+            ////string functionName = "GCP_WCM_Retry_Old";
             //string Name = "WCM_GCP_NEW";
-            //string Name = "WCM_GCP_NEW";
-            //string functionName = "WPH_Zalo_Survey";
-            //string functionName = "GG_Cloud_Data";
-            //string functionName = "GCP_WCM_Retry_Old";
-            //string Name = "WCM_GCP";
             //string functionName = "GCP_WCM_NEW_WINPHAR";
             if (args.Length > 0)
             {
@@ -1067,8 +1067,8 @@ internal class Program
                                     {
                                         sqlConnection.Open();
                                         var timeout = 10000;
-                                        sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
-                                        var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.Procedure_SaleOut(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                       sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                       var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.Procedure_SaleOut(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
 
                                         if (results.Count > 0)
                                         {
@@ -1707,16 +1707,31 @@ internal class Program
                         break;
                     case "PRD_ExportTranspoin":
                         var configPLH_ = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
-                        string querrys = @"  SELECT  A.[OrderNo]
-                                              ,SUm([EarnPoints])[EarnPoints]
-                                              ,[MemberNumber]
-                                              ,A.[CardLevel]
-                                              ,[MemberCSN]
-	                                          ,Sum(COALESCE([RedeemPoints], 0)) [RedeemPoints]
-                                          FROM [CentralSales].[dbo].[TransPointLine] A with (Nolock)
-                                          Join [CentralSales].dbo.TransHeader B with (Nolock) on A.OrderNo = B.OrderNo 
-                                          where B.OrderDate between '20230101' and '20240229'
-                                          Group by A.[OrderNo],A.[MemberNumber],A.[CardLevel],[MemberCSN]";
+                        //string querrys = @"  SELECT  A.[OrderNo]
+                        //                      ,SUm([EarnPoints])[EarnPoints]
+                        //                      ,[MemberNumber]
+                        //                      ,A.[CardLevel]
+                        //                      ,[MemberCSN]
+	                       //                   ,Sum(COALESCE([RedeemPoints], 0)) [RedeemPoints]
+                        //                  FROM [CentralSales].[dbo].[TransPointLine] A with (Nolock)
+                        //                  Join [CentralSales].dbo.TransHeader B with (Nolock) on A.OrderNo = B.OrderNo 
+                        //                  where B.OrderDate between '20230101' and '20240229'
+                        //                  Group by A.[OrderNo],A.[MemberNumber],A.[CardLevel],[MemberCSN]";
+                        //string querrys = @"Select A.* from(
+                        //                                 SELECT[OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
+                        //                                 FROM CentralSalesArchive.dbo.[TransDiscountEntry] NOLOCK 
+                        //                                 UNION
+                        //                                 SELECT[OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
+                        //                                 FROM CentralSalesArchive.dbo.TransDiscountCouponEntry NOLOCK
+                        //                                 WHERE OfferType IN('FamilyDay'))A
+					                   //                  Join [CentralSalesArchive].dbo.TransHeader B with (Nolock) on A.OrderNo = B.OrderNo 
+					                   //                  where B.OrderDate between '20230101' and '20240311'";
+
+                         string querrys = @"  SELECT A.[OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], A.DiscountAmount,[LineGroup] Note
+                                                         FROM CentralSales.dbo.[TransDiscountEntry] A
+					                                     Join [CentralSales].dbo.TransHeader B on A.OrderNo = B.OrderNo 
+					                                     where B.OrderDate between '20230101' and '20240312'";
+
                         foreach (var cfig in configPLH_)
                         {
                             readfilSAP.ConvertSQLtoXML_CSV_PLH(cfig.ConnectString, querrys);

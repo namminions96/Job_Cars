@@ -1,0 +1,5 @@
+2024-03-13 08:49:16.413 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-13 08:51:08.605 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-13 08:51:08.665 +07:00 [INF] Invalid function name.
+2024-03-13 08:51:34.040 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-03-13 08:54:12.374 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).

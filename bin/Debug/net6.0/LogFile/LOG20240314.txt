@@ -1,0 +1,1 @@
+2024-03-14 16:22:25.638 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
