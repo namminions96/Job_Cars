@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Job_By_SAP.Models;
+using Job_By_SAP.PLH;
 using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -505,6 +506,190 @@ namespace Job_By_SAP
         {
             string filePathSave = FilePath;
             File.WriteAllText(filePathSave, json);
+        }
+        public List<OrderExpToGCP> OrderPLHToGCPAsync_Json(string configWcm, List<SP_Data_WCM> reciept, string Namefuntion)
+        {
+
+            DataJson_PLH DataJson_PLHs = new DataJson_PLH(_logger);
+            var timeout = 600;
+            using (SqlConnection DbsetWcm = new SqlConnection(configWcm))
+            {
+                try
+                {
+                    DbsetWcm.Open();
+                    List<SP_Data_WCM> SP_Data_WCMs = new List<SP_Data_WCM>();
+                    var concurrentBag = new ConcurrentBag<OrderExpToGCP>();
+                    foreach (var result in reciept)
+                    {
+                        try
+                        {
+                            JObject jsonObject = JObject.Parse(result.DataJson);
+                            //TransInputDataGCP//
+                            JArray TransPointEntry_PLH_BLUEPOSs = (JArray)jsonObject["Data"]["TransPointLine"];
+                            List<TransPointEntry_PLH_BLUEPOS> TranspointDataResult = DataJson_PLHs.TransPoinGCP(TransPointEntry_PLH_BLUEPOSs);
+
+                            //TransDiscountCouponEntry//
+                            JArray TransDiscountCouponEntry = (JArray)jsonObject["Data"]["TransDiscountCouponEntry"];
+                            List<TransDiscountCouponEntry_PLH_BLUEPOS> CouponEntryResult = DataJson_PLHs.TransDiscountCouponEntryGCP(TransDiscountCouponEntry);
+
+                            //payment//
+                            JArray TransPaymentEntry = (JArray)jsonObject["Data"]["TransPaymentEntry"];
+                            List<TransPaymentEntry_PLH_BLUEPOS> PaymentEntryResult = DataJson_PLHs.TransPaymentEntryGCP(TransPaymentEntry);
+                            //TransDiscountEntry//
+                            JArray TransDiscountEntry = (JArray)jsonObject["Data"]["TransDiscountEntry"];
+                            List<TransDiscountEntry_PLH_BLUEPOS> DiscountEntryResult = DataJson_PLHs.TransDiscountGCP(TransDiscountEntry);
+                            //TransLine///
+                            JArray TransLine = (JArray)jsonObject["Data"]["TransLine"];
+                            List<TransLine_PLH_BLUEPOS> TransLineResult = new List<TransLine_PLH_BLUEPOS>();
+                            DateTime ScanTime = new DateTime();
+                            decimal VATAmount = 0;
+                            decimal LineAmountIncVAT = 0;
+                            decimal DiscountAmount = 0;
+                            foreach (JObject Item in TransLine)
+                            {
+                                if ((int)Item["LineType"] == 0)
+                                {
+                                    VATAmount += (decimal)Item["VATAmount"];
+                                    LineAmountIncVAT += (decimal)Item["LineAmountIncVAT"];
+                                    DiscountAmount += (decimal)Item["DiscountAmount"];
+
+                                    TransLine_PLH_BLUEPOS TransLines = new TransLine_PLH_BLUEPOS();
+                                    TransLines.OrderNo = (string)Item["DocumentNo"];
+                                    TransLines.LineId = (int)Item["LineNo"];
+                                    TransLines.ParentLineId = (int)Item["LineType"];
+                                    TransLines.ItemNo = (string)Item["UnitOfMeasure"];
+                                    TransLines.ItemName = (string)Item["Description"];
+                                    TransLines.Uom = (string)Item["UnitOfMeasure"];
+                                    if (Item.TryGetValue("UnitPrice", out var unitPriceValue) && unitPriceValue.Type != JTokenType.Null)
+                                    {
+                                        TransLines.OldPrice = (decimal)unitPriceValue;
+                                    }
+                                    if (Item.TryGetValue("UnitPrice", out var unitPriceValuefix) && unitPriceValuefix.Type != JTokenType.Null)
+                                    {
+                                        TransLines.UnitPrice = (decimal)unitPriceValuefix;
+                                    }
+                                    TransLines.Qty = (decimal)Item["Quantity"];
+
+                                    if (Item.TryGetValue("DiscountAmount", out var lineAmountValue) && lineAmountValue.Type != JTokenType.Null)
+                                    {
+                                        TransLines.DiscountAmount = (decimal)lineAmountValue;
+                                    }
+                                    if (Item.TryGetValue("LineAmountIncVAT", out var VatAmountValue) && VatAmountValue.Type != JTokenType.Null)
+                                    {
+                                        TransLines.LineAmount = (decimal)VatAmountValue;
+                                    }
+                                    TransLines.VatGroup = (string)Item["VATCode"];
+                                    TransLines.VatPercent = (int)Item["VATPercent"]; 
+                                    TransLines.Note = (string)Item["Note"];
+                                    TransLines.CupType = "";
+                                    TransLines.Size = "";
+
+                                    if (Item.TryGetValue("IsTopping", out var IsToppingss) && IsToppingss.Type != JTokenType.Null)
+                                    {
+                                        TransLines.IsTopping = (bool)IsToppingss;
+                                    }
+                                    if (Item.TryGetValue("IsCombo", out var IsComboss) && IsComboss.Type != JTokenType.Null)
+                                    {
+                                        TransLines.IsCombo = (bool)IsComboss;
+                                    }
+                                    TransLines.ComboId = 0;
+                                    TransLines.ArticleType = (string)Item["ArticleType"];
+                                    TransLines.Barcode = (string)Item["Barcode"];
+                                    TransLines.IsLoyalty = (bool)Item["BlockedMemberPoint"];
+                                    if (Item.TryGetValue("ScanTime", out var scanTimeValue) && scanTimeValue.Type != JTokenType.Null)
+                                    {
+                                        if (DateTime.TryParse(scanTimeValue.ToString(), out DateTime scanTime))
+                                        {
+                                            ScanTime = scanTime;
+                                        }
+                                    }
+                                    TransLineResult.Add(TransLines);
+                                }
+                            }
+                            //TransHeader//
+
+                            List<OrderExpToGCP> TransHeaderss = new List<OrderExpToGCP>();
+                            JArray TransHeader = (JArray)jsonObject["Data"]["TransHeader"];
+                            foreach (JObject headerItem in TransHeader)
+                            {
+                                OrderExpToGCP TransHeaders = new OrderExpToGCP();
+                                TransHeaders.OrderNo = (string)headerItem["OrderNo"];
+                                TransHeaders.OrderDate = (DateTime)headerItem["OrderDate"];
+                                TransHeaders.StoreNo = (string)headerItem["StoreNo"];
+                                string posNo = (string)headerItem["POSTerminalNo"];
+                                TransHeaders.PosNo = posNo.Substring(posNo.Length - 2, 2);
+                                TransHeaders.CustName = (string)headerItem["CustName"];
+                                TransHeaders.Note = (string)headerItem["Note"];
+                                TransHeaders.TransactionType = (int)headerItem["TransactionType"];
+                                TransHeaders.SalesType = (string)headerItem["SalesType"];
+                                TransHeaders.OrderTime = (DateTime)headerItem["OrderTime"];// mã đơn trả hàng              /// Souce Bill
+                                if (Namefuntion == "GCP_WCM_Retry")
+                                {
+                                    TransHeaders.IsRetry = true;
+                                }
+                                else
+                                {
+                                    TransHeaders.IsRetry = false;
+                                }
+                                TransHeaders.Items = TransLineResult.Where(p=> p.OrderNo == TransHeaders.OrderNo).ToList();
+
+                                TransHeaders.Payments = PaymentEntryResult.Where(p => p.OrderNo == TransHeaders.OrderNo).ToList();
+                                TransHeaders.DiscountEntry = DiscountEntryResult.Where(p => p.OrderNo == TransHeaders.OrderNo).ToList();
+                                TransHeaders.CouponEntry = CouponEntryResult.Where(p => p.OrderNo == TransHeaders.OrderNo).ToList();
+                                TransHeaders.TransPointEntry = TranspointDataResult.Where(p => p.OrderNo == TransHeaders.OrderNo).ToList();
+                                concurrentBag.Add(TransHeaders);
+
+                                SP_Data_WCM SP_Data_WCMss = new SP_Data_WCM();
+                                SP_Data_WCMss.ID = result.ID;
+                                SP_Data_WCMss.OrderNo = TransHeaders.OrderNo;
+                                SP_Data_WCMss.OrderDate = TransHeaders.OrderDate;
+                                SP_Data_WCMss.ChgDate = DateTime.Now;
+                                SP_Data_WCMss.IsRead = true;
+                                SP_Data_WCMss.DataJson = result.DataJson;
+                                SP_Data_WCMss.MemberCardNo = (string)headerItem["MemberCardNo"];
+                                SP_Data_WCMss.VATAmount = VATAmount;
+                                SP_Data_WCMss.LineAmountIncVAT = LineAmountIncVAT;
+                                SP_Data_WCMss.DiscountAmount = DiscountAmount;
+                                SP_Data_WCMs.Add(SP_Data_WCMss);
+                            }
+                        }
+                        catch (JsonReaderException e)
+                        {
+                            SP_Data_WCM SP_Data_WCMss = new SP_Data_WCM();
+                            SP_Data_WCMss.ID = result.ID;
+                            SP_Data_WCMss.ChgDate = DateTime.Now;
+                            SP_Data_WCMss.IsRead = true;
+                            SP_Data_WCMss.DataJson = result.DataJson;
+                            SP_Data_WCMss.OrderNo = "Error_JsonFomat";
+                            SP_Data_WCMss.MemberCardNo = "";
+                            SP_Data_WCMss.VATAmount = 0;
+                            SP_Data_WCMss.LineAmountIncVAT = 0;
+                            SP_Data_WCMss.DiscountAmount = 0;
+                            SP_Data_WCMs.Add(SP_Data_WCMss);
+                            _logger.Information($"Lỗi:  {e.Message}");
+                        }
+                    }
+
+                    if (Namefuntion == "GCP_WCM_Retry")
+                    {
+                        //_logger.Information(Namefuntion);
+                        DataJson_PLHs.UpdateStatusWCM_Retry_Json(SP_Data_WCMs, configWcm);
+                    }
+                    else
+                    {
+                        //_logger.Information(Namefuntion);
+                        DataJson_PLHs.UpdateStatusWCM(SP_Data_WCMs, configWcm);
+
+                    }
+
+                    return concurrentBag.ToList();
+                }
+                catch (Exception e)
+                {
+                    _logger.Information("Không có Data" + e.Message);
+                    return new List<OrderExpToGCP>();
+                }
+            }
         }
     }
 

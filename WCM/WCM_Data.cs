@@ -35,10 +35,18 @@ namespace Job_By_SAP
         {
             return @"SP_Sale_GCP";
         }
+        public static string SP_Sale_GCP_PLH()
+        {
+            return @"SP_Sale_GCP_PLH";
+        }
 
         public static string SP_Sale_GCP_Retry()
         {
             return @"SP_Sale_GCP_Retry";
+        }
+        public static string SP_Sale_GCP_Retry_PLH()
+        {
+            return @"SP_Sale_GCP_Retry_PLH";
         }
         public static string SP_Sale_Void_GCP()
         {
