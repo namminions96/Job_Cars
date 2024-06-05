@@ -1,6 +1,10 @@
 ﻿using BluePosVoucher.Data;
+using Confluent.Kafka;
+using Dapper;
 using Job_By_SAP.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
@@ -20,6 +24,10 @@ namespace Job_By_SAP.WCM
         {
             _logger = logger;
         }
+        IConfiguration configuration = new ConfigurationBuilder()
+        .SetBasePath(AppContext.BaseDirectory)
+        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+        .Build();
         public List<TransInputDataGCP> TransInputDataGCP(JArray TransInputData)
         {
             List<TransInputDataGCP> TransInputDatasss = new List<TransInputDataGCP>();
@@ -57,10 +65,10 @@ namespace Job_By_SAP.WCM
                     CouponEntrys.OrderNo = (string)CouponEntry["OrderNo"];
                     CouponEntrys.ParentLineId = (int)CouponEntry["OrderLineNo"];
                     CouponEntrys.LineId = (int)CouponEntry["LineNo"];
-                    CouponEntrys.OfferNo = (string)CouponEntry["OfferNo"];
+                    CouponEntrys.OfferNo = (string)CouponEntry["ItemNo"];
                     CouponEntrys.OfferType = (string)CouponEntry["OfferType"];
-                    CouponEntrys.Barcode = (string)CouponEntry["Barcode "];
-                    CouponEntrys.DiscountAmount = (decimal)CouponEntry["DiscountAmount"];
+                    CouponEntrys.Barcode = (string)CouponEntry["Barcode"];
+                    CouponEntrys.DiscountAmount = (decimal)CouponEntry["DiscountAmount"];//DiscountAmount
                     CouponEntryss.Add(CouponEntrys);
                 }
                 return CouponEntryss;
@@ -69,6 +77,7 @@ namespace Job_By_SAP.WCM
             {
                 return new List<TransDiscountCouponEntryGCP>();
             }
+
         }
         public List<TransPaymentEntryGCP> TransPaymentEntryGCP(JArray Data)
         {
@@ -105,6 +114,8 @@ namespace Job_By_SAP.WCM
         public List<TransDiscountGCP> TransDiscountGCP(JArray Data)
         {
             List<TransDiscountGCP> DiscountEntryss = new List<TransDiscountGCP>();
+            List<additionalStringsDiscount> additionalStringsDiscount = new List<additionalStringsDiscount>();
+            List<string> strings = new List<string>();
             if (Data != null)
             {
                 foreach (JObject DiscountEntry in Data)
@@ -124,11 +135,11 @@ namespace Job_By_SAP.WCM
                     }
                     DiscountEntryss.Add(DiscountEntrys);
                 }
-                return DiscountEntryss;
+                return (DiscountEntryss);
             }
             else
             {
-                return new List<TransDiscountGCP>();
+                return (new List<TransDiscountGCP>());
             }
         }
         public List<TransLineGCP> TransLineGCP(JArray Data, List<TransDiscountGCP> transDiscountGCPs)
@@ -419,6 +430,112 @@ namespace Job_By_SAP.WCM
             }
         }
 
+        public void Insert_RP_Detail(List<ReportSaleDetail> SP_Data_WCM, string configWcm)
+        {
+            string configReport = configuration["DB_112_Report"];
+            try
+            {
+                var timeout = 600;
+                foreach (ReportSaleDetail data_WCMs in SP_Data_WCM)
+                {
+                    using (SqlConnection DbsetWcm = new SqlConnection(configReport))
+                    {
+                        DbsetWcm.Open();
+                        using (SqlCommand command = new SqlCommand())
+                        {
+                            command.Connection = DbsetWcm;
+                            command.CommandText = WCM_Data.Insert_RP_Detail();
+                            command.Parameters.AddWithValue("@PromotionID", data_WCMs.PromotionID != null ? data_WCMs.PromotionID : DBNull.Value);
+                            command.Parameters.AddWithValue("@CouponCode", data_WCMs.CouponCode != null ? data_WCMs.CouponCode : DBNull.Value);
+                            command.Parameters.AddWithValue("@LineNo", data_WCMs.LineNo);
+                            command.Parameters.AddWithValue("@OrderNo", data_WCMs.OrderNo);
+                            command.Parameters.AddWithValue("@OrderTime", data_WCMs.OrderTime);
+                            command.Parameters.AddWithValue("@OrderDate", data_WCMs.OrderDate);
+                            command.Parameters.AddWithValue("@StoreNo", data_WCMs.StoreNo);
+                            command.Parameters.AddWithValue("@POSTerminalNo", data_WCMs.POSTerminalNo);
+                            command.Parameters.AddWithValue("@CashierID", data_WCMs.CashierID);
+                            command.Parameters.AddWithValue("@ReturnedOrderNo", data_WCMs.ReturnedOrderNo);
+                            command.Parameters.AddWithValue("@SalesIsReturn", data_WCMs.SalesIsReturn);
+                            command.Parameters.AddWithValue("@Barcode", data_WCMs.Barcode);
+                            command.Parameters.AddWithValue("@ItemNo", data_WCMs.ItemNo);
+                            command.Parameters.AddWithValue("@Description", data_WCMs.Description);
+                            command.Parameters.AddWithValue("@UnitOfMeasure", data_WCMs.UnitOfMeasure);
+                            command.Parameters.AddWithValue("@Quantity", data_WCMs.Quantity);
+                            command.Parameters.AddWithValue("@UnitPrice", data_WCMs.UnitPrice);
+                            command.Parameters.AddWithValue("@DiscountAmount", data_WCMs.DiscountAmount);
+                            command.Parameters.AddWithValue("@VATCode", data_WCMs.VATCode);
+                            command.Parameters.AddWithValue("@LineAmountIncVAT", data_WCMs.LineAmountIncVAT);
+                            command.Parameters.AddWithValue("@VATAmount", data_WCMs.VATAmount);
+                            command.Parameters.AddWithValue("@HouseNo", data_WCMs.HouseNo);
+                            command.Parameters.AddWithValue("@CityNo", data_WCMs.CityNo);
+                            command.Parameters.AddWithValue("@MemberCardNo", data_WCMs.MemberCardNo);
+                            command.Parameters.AddWithValue("@MemberPointsEarn", data_WCMs.MemberPointsEarn);
+                            command.Parameters.AddWithValue("@MemberPointsRedeem", data_WCMs.MemberPointsRedeem);
+                            command.Parameters.AddWithValue("@BlockedMemberPoint", data_WCMs.BlockedMemberPoint);
+                            command.Parameters.AddWithValue("@AmountCalPoint", data_WCMs.AmountCalPoint);
+                            command.Parameters.AddWithValue("@RefKey1", data_WCMs.RefKey1 != null ? data_WCMs.RefKey1 : "");
+                            command.Parameters.AddWithValue("@VoucherDiscountNo", data_WCMs.VoucherDiscountNo != null ? data_WCMs.VoucherDiscountNo : "");
+                            command.Parameters.AddWithValue("@DeliveringMethod", data_WCMs.DeliveringMethod != null ? data_WCMs.DeliveringMethod :"");
+                            command.Parameters.AddWithValue("@DivisionCode", data_WCMs.DivisionCode != null ? data_WCMs.DivisionCode : DBNull.Value);
+                            command.Parameters.AddWithValue("@UserID", data_WCMs.UserID != null ? data_WCMs.UserID : DBNull.Value);
+                            command.Parameters.AddWithValue("@SerialNo", data_WCMs.SerialNo != null ? data_WCMs.SerialNo : DBNull.Value);
+                            command.Parameters.AddWithValue("@DeliveryComment", data_WCMs.DeliveryComment != null ? data_WCMs.DeliveryComment :"");
+                            command.Parameters.AddWithValue("@TanencyNo", data_WCMs.TanencyNo != null ? data_WCMs.TanencyNo : "");
+                            command.Parameters.AddWithValue("@BusinessAreaNo", data_WCMs.BusinessAreaNo != null ? data_WCMs.BusinessAreaNo : DBNull.Value);
+                            command.Parameters.AddWithValue("@StyleProfile", data_WCMs.StyleProfile != null ? data_WCMs.StyleProfile : DBNull.Value);
+                            command.Parameters.AddWithValue("@CustomerName", data_WCMs.CustomerName != null ? data_WCMs.CustomerName :"");
+                            command.Parameters.AddWithValue("@AmountDiscountAtPOS", data_WCMs.AmountDiscountAtPOS != null ? data_WCMs.AmountDiscountAtPOS : DBNull.Value);
+                            command.Parameters.AddWithValue("@VATPercent", data_WCMs.VATPercent != null ? data_WCMs.VATPercent : DBNull.Value);
+                            command.Parameters.AddWithValue("@IsTenancy", data_WCMs.IsTenancy != null ? data_WCMs.IsTenancy : "");
+                            command.Parameters.AddWithValue("@SalesType", data_WCMs.SalesType != null ? data_WCMs.SalesType : DBNull.Value);
+                            command.Parameters.AddWithValue("@SOURCEBILL", data_WCMs.SOURCEBILL != null ? data_WCMs.SOURCEBILL : "");
+                            command.Parameters.AddWithValue("@HANDLINGSTAFF", data_WCMs.HANDLINGSTAFF != null ? data_WCMs.HANDLINGSTAFF : "");
+                            command.Parameters.AddWithValue("@ReturnVoucherNo", data_WCMs.ReturnVoucherNo != null ? data_WCMs.ReturnVoucherNo : DBNull.Value);
+                            command.Parameters.AddWithValue("@ReturnVoucherExpire", data_WCMs.ReturnVoucherExpire != null ? data_WCMs.ReturnVoucherExpire : DBNull.Value);
+                            int rowsAffected = command.ExecuteNonQuery();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+
+            }
+        }
+        public void Insert_RP_Kafka(List<ReportSaleDetail> SP_Data_WCM, string configWcm)
+        {
+            try
+            {
+                string configKafka = configuration["ConfigKafka"];
+                var config = new ProducerConfig { BootstrapServers = configKafka };
+
+                using (var producer = new ProducerBuilder<Null, string>(config).Build())
+                {
+                    foreach (ReportSaleDetail data_WCMs in SP_Data_WCM)
+                    {
+                        try
+                        {
+                            string json = JsonConvert.SerializeObject(data_WCMs);
+                            var deliveryReport =  producer.ProduceAsync("ReportSaleDetail", new Message<Null, string> { Value = json });
+                        }
+                        catch (ProduceException<Null, string> e)
+                        {
+                            _logger.Information($"Delivery failed: {e.Error.Reason}");
+                        }
+                    }
+
+                    producer.Flush(TimeSpan.FromSeconds(10));
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.Error(ex.Message);
+            }
+        }
+
+
     }
 
 }
+
+          

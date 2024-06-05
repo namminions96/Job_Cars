@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Job_By_SAP")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+dcbf3a3d110ce4b0c28454ceee369ce554b19168")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+51a04440b97fe88c48da940df9d52b60c8ae2c7e")]
 [assembly: System.Reflection.AssemblyProductAttribute("Job_By_SAP")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Job_By_SAP")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

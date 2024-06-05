@@ -73,6 +73,7 @@ namespace Job_By_SAP.WCM
         public decimal POSQuantity { get; set; }
         public decimal Price { get; set; }
         public decimal Amount { get; set; }
+        public decimal VATAmount { get; set; }
         public string Brand { get; set; }
         public string MemberCardNo { get; set; }
         public string VinidCsn { get; set; }
@@ -143,6 +144,12 @@ namespace Job_By_SAP.WCM
         public string TableName { get; set; }
         public string DataType { get; set; }
         public string DataValue { get; set; }
+    }
+
+    public class CpnVchBOMHeader
+    {
+        public string ItemNo { get; set; }
+        public string ItemName { get; set; }
     }
     public class SP_Data_WCM
     {

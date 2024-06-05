@@ -10,6 +10,7 @@ using Serilog;
 using System.Data;
 using System.Globalization;
 using System.Text;
+using static MongoDB.Bson.Serialization.Serializers.SerializerHelper;
 
 namespace Read_xml
 {
@@ -29,7 +30,7 @@ namespace Read_xml
                 using (var dbContext = new DbStaging_Inventory())
                 {
                     using (var reader = new StreamReader(csvFile))
-                    using (var csv = new CsvReader(reader, new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture)
+                    using (var csv = new CsvReader(reader, new CsvConfiguration(CultureInfo.InvariantCulture)
                     {
                         Delimiter = "|",
                         HasHeaderRecord = true,
@@ -390,7 +391,39 @@ namespace Read_xml
             }
 
         }
-
+        public float RemoveQuantity(float number)
+        {
+            string numberStr = number.ToString(CultureInfo.InvariantCulture);
+            int decimalIndex = numberStr.IndexOf('.');
+            if (decimalIndex != -1)
+            {
+                string integerPart = numberStr.Substring(0, decimalIndex);
+                string decimalPart = numberStr.Substring(decimalIndex + 1);
+                if (decimalPart.Length > 3)
+                {
+                    decimalPart = decimalPart.Substring(0, 3);
+                }
+                else
+                {
+                    decimalPart = decimalPart.PadRight(3, '0');
+                }
+                string resultStr = integerPart + "." + decimalPart;
+                float result;
+                if(float.TryParse(resultStr, out result))
+                {
+                    return result;
+                }
+                else
+                {
+                    return number;
+                }
+               
+            }
+            else
+            {
+                return number;
+            }
+        }
     }
 }
 

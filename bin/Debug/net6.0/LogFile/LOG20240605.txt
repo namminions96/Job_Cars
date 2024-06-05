@@ -1,0 +1,8 @@
+2024-06-05 09:53:59.973 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-06-05 10:10:27.722 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-06-05 10:10:28.735 +07:00 [INF] Please provide a function name as an argument.
+2024-06-05 10:10:43.368 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-06-05 10:11:45.870 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-06-05 10:12:27.014 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-06-05 10:20:39.050 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
+2024-06-05 10:45:52.207 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).

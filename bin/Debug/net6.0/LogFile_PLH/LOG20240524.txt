@@ -1,0 +1,11 @@
+2024-05-24 08:11:38.022 +07:00 [INF] ------------START PLH_GCP_Json----------------
+2024-05-24 08:17:00.432 +07:00 [INF] ------------START PLH_GCP_Json----------------
+2024-05-24 13:28:45.914 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 13:31:35.320 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 13:54:49.974 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 13:56:54.279 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 13:58:57.465 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 14:08:21.454 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 14:08:30.900 +07:00 [INF] Send Data To API: 1 Row
+2024-05-24 14:09:22.031 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-24 14:09:34.406 +07:00 [INF] Send Data To API: 1 Row

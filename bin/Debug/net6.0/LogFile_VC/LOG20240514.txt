@@ -1,0 +1,9 @@
+2024-05-14 14:32:55.059 +07:00 [INF] --------------------------VoucherSAP----------------------------
+2024-05-14 14:33:06.979 +07:00 [INF] Connect DB : SET1
+2024-05-14 14:48:52.180 +07:00 [INF] --------------------------VoucherSAP----------------------------
+2024-05-14 14:48:52.942 +07:00 [INF] Connect DB : SET1
+2024-05-14 14:48:53.044 +07:00 [INF] SET1 : Không có Data 
+2024-05-14 14:48:53.044 +07:00 [INF] Connect DB : SET2
+2024-05-14 14:48:54.517 +07:00 [INF] SeriaNo: 201801225000000159BP {"Status":200,"Message":"Success","Data":[{"Status":"Created","Return":"0","ActicleNo":null,"ActicleType":null,"VoucherNumber":"201801225000000159BP","Value":"20000.0","Voucher_Currency":null,"Validity_From_Date":null,"Expiry_Date":null,"CompanyCode":null,"Partner":null,"IsEmployee":null}]}
+2024-05-14 14:48:54.721 +07:00 [INF] Insert INB_VoucherToSAP:   201801225000000159BP
+2024-05-14 14:48:54.737 +07:00 [INF] Update Status:  201801225000000159BP,- 1 Rows 

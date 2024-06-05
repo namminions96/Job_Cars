@@ -24,5 +24,14 @@ namespace Job_By_SAP.Models
             public List<object> TransLine { get; set; }
             public List<object> TransPaymentEntry { get; set; }
         }
+        public class TempObject_PLH
+        {
+            public List<object> TransDiscountCouponEntry { get; set; }
+            public List<object> TransDiscountEntry { get; set; }
+            public List<object> TransHeader { get; set; }
+            public List<object> TransPointLine { get; set; }
+            public List<object> TransLine { get; set; }
+            public List<object> TransPaymentEntry { get; set; }
+        }
     }
 }

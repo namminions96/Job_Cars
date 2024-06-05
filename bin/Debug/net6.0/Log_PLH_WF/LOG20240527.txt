@@ -1,0 +1,16 @@
+2024-05-27 14:34:24.709 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-05-27 14:34:47.841 +07:00 [INF] Send Data To API: 1 Row
+2024-05-27 14:35:06.928 +07:00 [INF] Update 1 row Thành công 
+2024-05-27 14:35:08.054 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.
+2024-05-27 14:35:12.591 +07:00 [INF] End Send Data PLH GCP
+2024-05-27 15:20:36.651 +07:00 [INF] Start Send Data PLH GCP
+2024-05-27 15:21:57.999 +07:00 [INF] Start Send Data PLH GCP
+2024-05-27 15:25:15.442 +07:00 [ERR] Lỗi:PLH GCP Incorrect syntax near ','.
+2024-05-27 15:28:18.667 +07:00 [INF] Start Send Data PLH GCP
+2024-05-27 15:29:06.851 +07:00 [INF] Start Send Data PLH GCP
+2024-05-27 15:29:51.498 +07:00 [INF] Start Send Data PLH GCP
+2024-05-27 15:30:59.990 +07:00 [INF] Start Send Data PLH GCP
+2024-05-27 15:32:01.381 +07:00 [INF] Send Data To API: 10 Row
+2024-05-27 15:32:16.774 +07:00 [INF] Update 10 row Thành công 
+2024-05-27 15:32:17.159 +07:00 [INF] Dữ liệu đã được gửi thành công đến API.
+2024-05-27 15:32:21.660 +07:00 [INF] End Send Data PLH GCP

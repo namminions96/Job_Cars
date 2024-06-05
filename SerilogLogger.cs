@@ -85,5 +85,12 @@ namespace BluePosVoucher
                 .WriteTo.File("Log_WPH_Survey/LOG.txt", rollingInterval: RollingInterval.Day, shared: true, retainedFileCountLimit: 30)
                 .CreateLogger();
         }
+        public static ILogger GetLogger_PLH_WF()
+        {
+            return new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File("Log_PLH_WF/LOG.txt", rollingInterval: RollingInterval.Day, shared: true, retainedFileCountLimit: 30)
+                .CreateLogger();
+        }
     }
 }

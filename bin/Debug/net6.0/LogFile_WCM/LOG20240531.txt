@@ -1,0 +1,179 @@
+2024-05-31 09:10:01.792 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 09:55:42.791 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:22:26.051 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:23:04.340 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:27:28.765 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:28:37.156 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:30:13.179 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:33:19.125 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:39:55.719 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 10:41:39.359 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:02:47.688 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:05:40.255 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:05:41.289 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-05-31 11:05:41.289 +07:00 [INF] Không có data Send GCP
+2024-05-31 11:05:41.289 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 11:05:50.644 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:05:51.867 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-05-31 11:05:51.868 +07:00 [INF] Không có data Send GCP
+2024-05-31 11:05:51.868 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 11:06:07.651 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:06:15.075 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-05-31 11:06:49.293 +07:00 [INF] Không có data Send GCP
+2024-05-31 11:06:49.300 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 11:06:54.978 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:09:36.077 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:10:29.924 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:19:42.144 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:22:37.159 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:23:55.786 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:26:57.211 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:28:28.029 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:28:29.681 +07:00 [INF] Không có DataObject reference not set to an instance of an object.
+2024-05-31 11:28:29.681 +07:00 [INF] Không có data Send GCP
+2024-05-31 11:28:29.681 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 11:28:50.045 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:29:19.243 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:29:58.206 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:31:33.811 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:31:55.014 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:33:01.231 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:36:21.273 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:39:50.861 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:41:11.355 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:43:13.146 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:44:37.497 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 11:45:11.689 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:26:54.082 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:29:40.396 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:33:12.442 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:36:23.575 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:44:24.297 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:46:13.276 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 13:58:15.913 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:12:06.740 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:21:26.201 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:24:18.989 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:24:20.388 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:24:20.388 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:24:20.388 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:24:28.739 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:24:30.405 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:24:30.405 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:24:30.405 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:25:05.281 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:25:13.620 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:25:30.606 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:25:30.614 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:25:36.058 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:28:27.699 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:28:27.700 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:28:27.700 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:28:35.121 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:29:20.902 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:29:20.903 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:29:20.903 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:29:27.159 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:32:32.905 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:32:32.905 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:32:32.905 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:32:41.707 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:33:06.257 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:33:06.258 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:33:06.258 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:33:13.394 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:36:14.968 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:36:14.969 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:36:14.969 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:36:20.534 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:37:54.977 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:38:25.873 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:38:25.874 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:38:34.732 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:38:36.030 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:38:36.030 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:38:44.780 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:38:45.980 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:38:46.317 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:38:57.576 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:38:58.864 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:38:58.864 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:39:06.494 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:39:17.638 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:39:17.638 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:39:25.499 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:39:26.126 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:39:26.127 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:39:51.944 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:39:53.527 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:39:53.527 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:39:59.195 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:40:10.859 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:40:10.859 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:40:22.364 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:41:11.822 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:42:49.715 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:42:49.715 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:42:49.715 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:42:56.537 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:45:10.673 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:45:50.698 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:46:12.519 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:47:33.380 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:47:33.381 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:47:33.381 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:48:52.135 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:49:19.360 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:50:53.686 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:50:53.686 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:50:53.686 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:51:40.528 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:52:04.675 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:52:21.248 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:52:43.890 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:52:56.772 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:52:56.773 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:52:56.773 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:53:04.148 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:53:05.904 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:53:05.905 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:53:05.905 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:53:12.725 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:54:32.824 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:54:56.586 +07:00 [INF] Không có DataSequence contains more than one matching element
+2024-05-31 14:54:56.596 +07:00 [INF] Không có data Send GCP
+2024-05-31 14:54:56.596 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-05-31 14:55:01.658 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:55:22.653 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 14:56:10.670 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:00:05.446 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:02:37.417 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:03:43.656 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:10:08.082 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:10:11.717 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].VATRegistrationNo', line 1, position 43679.
+2024-05-31 15:10:11.864 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].BillToName', line 1, position 43679.
+2024-05-31 15:10:11.936 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].Barcode', line 1, position 43679.
+2024-05-31 15:10:11.988 +07:00 [INF] Lỗi:  Unexpected end of content while loading JObject. Path 'Data.TransHeader[0].ShipToHouseNo', line 1, position 43679.
+2024-05-31 15:10:12.082 +07:00 [INF] Lỗi:  Error reading JObject from JsonReader. Path '', line 0, position 0.
+2024-05-31 15:10:12.222 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].StaffID', line 1, position 43679.
+2024-05-31 15:16:01.600 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:16:04.051 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].VATRegistrationNo', line 1, position 43679.
+2024-05-31 15:16:04.208 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].BillToName', line 1, position 43679.
+2024-05-31 15:16:04.304 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].Barcode', line 1, position 43679.
+2024-05-31 15:16:04.359 +07:00 [INF] Lỗi:  Unexpected end of content while loading JObject. Path 'Data.TransHeader[0].ShipToHouseNo', line 1, position 43679.
+2024-05-31 15:16:04.450 +07:00 [INF] Lỗi:  Error reading JObject from JsonReader. Path '', line 0, position 0.
+2024-05-31 15:16:04.574 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].StaffID', line 1, position 43679.
+2024-05-31 15:18:10.570 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:18:12.900 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].VATRegistrationNo', line 1, position 43679.
+2024-05-31 15:18:12.982 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].BillToName', line 1, position 43679.
+2024-05-31 15:18:13.023 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].Barcode', line 1, position 43679.
+2024-05-31 15:18:13.050 +07:00 [INF] Lỗi:  Unexpected end of content while loading JObject. Path 'Data.TransHeader[0].ShipToHouseNo', line 1, position 43679.
+2024-05-31 15:18:13.091 +07:00 [INF] Lỗi:  Error reading JObject from JsonReader. Path '', line 0, position 0.
+2024-05-31 15:18:13.163 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].StaffID', line 1, position 43679.
+2024-05-31 15:18:41.982 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-05-31 15:18:43.668 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].VATRegistrationNo', line 1, position 43679.
+2024-05-31 15:18:43.751 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransHeader[0].BillToName', line 1, position 43679.
+2024-05-31 15:18:43.793 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].Barcode', line 1, position 43679.
+2024-05-31 15:18:43.823 +07:00 [INF] Lỗi:  Unexpected end of content while loading JObject. Path 'Data.TransHeader[0].ShipToHouseNo', line 1, position 43679.
+2024-05-31 15:18:43.861 +07:00 [INF] Lỗi:  Error reading JObject from JsonReader. Path '', line 0, position 0.
+2024-05-31 15:18:43.928 +07:00 [INF] Lỗi:  Unterminated string. Expected delimiter: ". Path 'Data.TransLine[32].StaffID', line 1, position 43679.

@@ -1,0 +1,53 @@
+2024-03-21 10:24:41.358 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:26:52.268 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:28:53.948 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:35:18.731 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:37:05.063 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:45:27.102 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:47:47.918 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:48:28.072 +07:00 [INF] Không có DataCannot find the object "TransInputData" because it does not exist or you do not have permissions.
+2024-03-21 10:48:28.074 +07:00 [INF] End Insert GCP_Json_Retry
+2024-03-21 10:48:34.692 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:49:33.152 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:51:12.262 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 10:52:45.183 +07:00 [INF] End Insert GCP_Json_Retry
+2024-03-21 11:06:02.513 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 11:06:37.236 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 11:07:52.201 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 11:09:10.145 +07:00 [INF] Không có DataValue cannot be null. (Parameter 'value')
+2024-03-21 11:09:21.127 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 11:09:22.793 +07:00 [INF] Không có data Send GCP
+2024-03-21 11:09:25.542 +07:00 [INF] ------------END PLH_GCP_Retry_New----------------
+2024-03-21 11:09:34.024 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 11:13:49.249 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 11:14:26.226 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 11:16:34.447 +07:00 [INF] End Insert GCP_Json_Retry
+2024-03-21 11:17:23.386 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 11:23:24.766 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 11:24:15.054 +07:00 [INF] End Insert GCP_Json_Retry
+2024-03-21 11:39:02.089 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 11:40:17.590 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 13:17:15.398 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 13:19:31.876 +07:00 [INF] Không có Send data GCP
+2024-03-21 13:19:31.917 +07:00 [INF] End Insert GCP_Json_Retry
+2024-03-21 13:19:38.307 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 13:20:14.783 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 13:27:09.530 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 13:49:25.941 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 13:51:00.441 +07:00 [INF] Start Insert GCP_Json_Retry
+2024-03-21 13:53:22.033 +07:00 [INF] End Insert GCP_Json_Retry
+2024-03-21 13:54:12.896 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:00:12.828 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:04:07.206 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:04:17.024 +07:00 [INF] Không có data Send GCP
+2024-03-21 14:04:17.026 +07:00 [INF] ------------END PLH_GCP_Retry_New----------------
+2024-03-21 14:05:15.054 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:12:05.803 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:12:08.298 +07:00 [INF] Không có data Send GCP
+2024-03-21 14:12:08.299 +07:00 [INF] ------------END PLH_GCP_Retry_New----------------
+2024-03-21 14:12:15.720 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:13:27.334 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:13:52.153 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------
+2024-03-21 14:22:43.325 +07:00 [INF] ------------START PLH_GCP_Json----------------
+2024-03-21 14:31:51.218 +07:00 [INF] ------------START PLH_GCP_Json----------------
+2024-03-21 14:40:16.899 +07:00 [INF] ------------START PLH_GCP_Retry_New----------------

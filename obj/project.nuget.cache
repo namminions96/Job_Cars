@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "j0J46bHwRuXZErbem4qbRgAhn4mV1fp/CscWGIIqIDWjtviZSJ4A5XT/gIg4yfugQQ/cUdeahoBihxWmPLnctw==",
+  "dgSpecHash": "KIi/X3xQigI1QJzoAZErgk1l3AeHXskjKbhTnpPO02tEullps/gI+DrgjrNS+DmMG/prfujMVpUersSCc5iACw==",
   "success": true,
   "projectFilePath": "D:\\Read_SAP_\\Read_xml\\Job_By_SAP.csproj",
   "expectedPackageFiles": [
@@ -8,6 +8,7 @@
     "C:\\Users\\namnd4\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\azure.core\\1.35.0\\azure.core.1.35.0.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\azure.identity\\1.10.3\\azure.identity.1.10.3.nupkg.sha512",
+    "C:\\Users\\namnd4\\.nuget\\packages\\confluent.kafka\\2.4.0\\confluent.kafka.2.4.0.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\csvhelper\\30.0.1\\csvhelper.30.0.1.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\dapper\\2.0.143\\dapper.2.0.143.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\dnsclient\\1.6.1\\dnsclient.1.6.1.nupkg.sha512",
@@ -18,6 +19,7 @@
     "C:\\Users\\namnd4\\.nuget\\packages\\google.apis.bigquery.v2\\1.66.0.3320\\google.apis.bigquery.v2.1.66.0.3320.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\google.apis.core\\1.66.0\\google.apis.core.1.66.0.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\google.cloud.bigquery.v2\\3.6.0\\google.cloud.bigquery.v2.3.6.0.nupkg.sha512",
+    "C:\\Users\\namnd4\\.nuget\\packages\\librdkafka.redist\\2.4.0\\librdkafka.redist.2.4.0.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\microsoft.bcl.asyncinterfaces\\6.0.0\\microsoft.bcl.asyncinterfaces.6.0.0.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\microsoft.csharp\\4.7.0\\microsoft.csharp.4.7.0.nupkg.sha512",
     "C:\\Users\\namnd4\\.nuget\\packages\\microsoft.data.sqlclient\\5.1.5\\microsoft.data.sqlclient.5.1.5.nupkg.sha512",

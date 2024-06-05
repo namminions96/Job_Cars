@@ -23,6 +23,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using static Job_By_SAP.Models.SalesGCP_Retry;
 internal class Program
 {
@@ -38,6 +39,7 @@ internal class Program
     private static ILogger _logger_DeleteFile;
     private static ILogger _logger_WCM_Void;
     private static ILogger _logger__WPH_Survey;
+    private static ILogger _logger_PLH_WF;
     private static async Task Main(string[] args)
     {
         _logger = SerilogLogger.GetLogger();
@@ -51,6 +53,7 @@ internal class Program
         _logger_DeleteFile = SerilogLogger.GetLogger_DeleteFile();
         _logger_WCM_Void = SerilogLogger.GetLogger_WCM_Void();
         _logger__WPH_Survey = SerilogLogger.GetLogger_WPH_Survey();
+        _logger_PLH_WF = SerilogLogger.GetLogger_PLH_WF();
         SendEmailExample sendEmailExample = new SendEmailExample(_logger);
         InbVoucherSap inbVoucherSap1 = new InbVoucherSap(_logger_VC);
         ReadFile readfilSAP = new ReadFile(_logger);
@@ -76,16 +79,17 @@ internal class Program
             string authInfo = $"{usernameapi}:{passwordapi}";
             authInfo = Convert.ToBase64String(Encoding.Default.GetBytes(authInfo));
             //---------------------------------------------------------------------------------
-            //string functionName = args[0];
-            //string Name = args[1];
-            //string Name = "PLH_INBOUND";
-            string Name = "PLH_GCP_Json";
-            string functionName = "GCP_PLH_Json";
+            string functionName = args[0];
+            string Name = args[1];
+            //string Name = "WCM_GCP_NEW";
+            //////// string Name = "PLH_GCP_Retry_New";
+            ////string Name = "PLH_INBOUND";
+            ////string functionName = "PLH_WCM_Sale";
             //string functionName = "GCP_WCM_Json";
             ////string functionName = "GCP_WCM_Retry_Old";
             //string Name = "WCM_GCP_NEW";
             //string functionName = "GCP_WCM_NEW_WINPHAR";
-            if (args.Length == 0)
+            if (args.Length > 0)
             {
                 switch (functionName)
                 {
@@ -1066,8 +1070,8 @@ internal class Program
                                     {
                                         sqlConnection.Open();
                                         var timeout = 10000;
-                                       sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
-                                       var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.Procedure_SaleOut(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        sqlConnection.Query(WCM_Data.SP_GET_SELLOUT_PBLUE_SET(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        var results = sqlConnection.Query<TransTempGCP_WCM>(WCM_Data.Procedure_SaleOut(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
 
                                         if (results.Count > 0)
                                         {
@@ -1255,8 +1259,8 @@ internal class Program
                                                             else
                                                             {
                                                                 _logger_WCM.Information($"Response API: {response.StatusCode}");
-                                                                string filePathError = $"data{dateTimeString}.text";
-                                                                File.WriteAllText(filePathError, json);
+                                                                //string filePathError = $"data{dateTimeString}.text";
+                                                                //File.WriteAllText(filePathError, json);
                                                                 _logger_WCM.Information($"Send API Data Fail_{response.RequestMessage}");
                                                                 sendEmailExample.SendMailError($"Send API Data Fail_{response.RequestMessage}");
                                                             }
@@ -1705,46 +1709,29 @@ internal class Program
                         }
                         break;
                     case "PRD_ExportTranspoin":
-                        var configPLH_ = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
-                        //string querrys = @"  SELECT  A.[OrderNo]
-                        //                      ,SUm([EarnPoints])[EarnPoints]
-                        //                      ,[MemberNumber]
-                        //                      ,A.[CardLevel]
-                        //                      ,[MemberCSN]
-	                       //                   ,Sum(COALESCE([RedeemPoints], 0)) [RedeemPoints]
-                        //                  FROM [CentralSales].[dbo].[TransPointLine] A with (Nolock)
-                        //                  Join [CentralSales].dbo.TransHeader B with (Nolock) on A.OrderNo = B.OrderNo 
-                        //                  where B.OrderDate between '20230101' and '20240229'
-                        //                  Group by A.[OrderNo],A.[MemberNumber],A.[CardLevel],[MemberCSN]";
-                        //string querrys = @"Select A.* from(
-                        //                                 SELECT[OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
-                        //                                 FROM CentralSalesArchive.dbo.[TransDiscountEntry] NOLOCK 
-                        //                                 UNION
-                        //                                 SELECT[OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], DiscountAmount,[LineGroup] Note
-                        //                                 FROM CentralSalesArchive.dbo.TransDiscountCouponEntry NOLOCK
-                        //                                 WHERE OfferType IN('FamilyDay'))A
-					                   //                  Join [CentralSalesArchive].dbo.TransHeader B with (Nolock) on A.OrderNo = B.OrderNo 
-					                   //                  where B.OrderDate between '20230101' and '20240311'";
-
-                         string querrys = @"  SELECT A.[OrderNo], [LineNo] LineId,[OrderLineNo] ParentLineId,ParentLineNo,[OfferNo],[OfferType],[Quantity], A.DiscountAmount,[LineGroup] Note
-                                                         FROM CentralSales.dbo.[TransDiscountEntry] A
-					                                     Join [CentralSales].dbo.TransHeader B on A.OrderNo = B.OrderNo 
-					                                     where B.OrderDate between '20230101' and '20240312'";
+                        var configPLH_ = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_CentralSales" && p.Status == true);
+                        string querrys = @"select * from
+                                            (select StoreNo,FORMAT(OrderDate, 'yyyyMMdd') AS OrderDate,OrderNo from CentralSales..TransHeader nolock 
+                                            where OrderDate between '20240101'and '20240530'
+                                            union 
+                                            select StoreNo,FORMAT(OrderDate, 'yyyyMMdd') AS OrderDate,OrderNo from CentralSalesArchive..TransHeader nolock 
+                                            where OrderDate between '20240101'and '20240530'
+                                            )A ";
 
                         foreach (var cfig in configPLH_)
                         {
                             readfilSAP.ConvertSQLtoXML_CSV_PLH(cfig.ConnectString, querrys);
                         }
-                            break;
+                        break;
                     case "GCP_PLH_Json":
                         stopwatch.Start();
                         var configPLH_Cf = db.ConfigConnections.ToList().Where(p => p.Type == Name && p.Status == true);//config DB
                         if (configPLH_Cf.Count() > 0)
                         {
-                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_WCM);
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_PLH);
                             foreach (var cfig in configPLH_Cf)
                             {
-                                _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                _logger_PLH.Information($"------------START {cfig.Name}----------------");
                                 using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
                                 {
                                     try
@@ -1752,7 +1739,7 @@ internal class Program
                                         sqlConnection.Open();
                                         var timeout = 10000;
                                         var results = new List<SP_Data_WCM>();
-                                        if (Name == "GCP_PLH_Retry")
+                                        if (Name == "PLH_GCP_Retry_New")
                                         {
                                             results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP_Retry_PLH(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
                                         }
@@ -1788,43 +1775,43 @@ internal class Program
                                                             HttpResponseMessage response = await httpClient.SendAsync(request);
                                                             if (response.IsSuccessStatusCode)
                                                             {
-                                                                _logger_WCM.Information($"Send Data To API: {result.Count} Row Done DB: {cfig.Name}");
+                                                                _logger_PLH.Information($"Send Data To API: {result.Count} Row Done DB: {cfig.Name}");
                                                             }
                                                             else
                                                             {
-                                                                _logger_WCM.Information($"Response API: {response.StatusCode}");
-                                                                string filePathError = $"data{dateTimeString}.text";
-                                                                File.WriteAllText(filePathError, json);
+                                                                _logger_PLH.Information($"Response API: {response.StatusCode}");
+                                                                //string filePathError = $"data{dateTimeString}.text";
+                                                                //File.WriteAllText(filePathError, json);
                                                                 _logger_WCM.Information($"Send API Data Fail_{response.RequestMessage}");
                                                                 sendEmailExample.SendMailError($"Send API Data Fail_{response.RequestMessage}");
                                                             }
                                                         }
                                                         catch (Exception ex)
                                                         {
-                                                            _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                                            _logger_PLH.Error("Lỗi:GCP_WCM " + ex.Message);
                                                             sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
                                                         }
                                                     }
                                                 }
                                                 else
                                                 {
-                                                    _logger_WCM.Information("Không có data Send GCP");
+                                                    _logger_PLH.Information("Không có data Send GCP");
                                                 }
                                                 sqlConnection.Close();
                                             }
                                         }
                                         else
                                         {
-                                            _logger_WCM.Information("Không có data Send GCP");
+                                            _logger_PLH.Information("Không có data Send GCP");
                                         }
                                     }
                                     catch (Exception ex)
                                     {
-                                        _logger_WCM.Error("Lỗi:GCP_WCM " + ex.Message);
+                                        _logger_PLH.Error("Lỗi:GCP_WCM " + ex.Message);
                                         sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
                                     }
                                 }
-                                _logger_WCM.Information($"------------END {cfig.Name}----------------");
+                                _logger_PLH.Information($"------------END {cfig.Name}----------------");
                             }
                             stopwatch.Stop();
                             if (apiUrllog != "Kibana")
@@ -1832,7 +1819,7 @@ internal class Program
                                 string jsonDatawcm = $@"{{
                                                       ""HttpContext"": ""{functionName}"",
                                                       ""PosNo"": ""{Name}"",
-                                                      ""WebApi"": ""GCP_WCM"",
+                                                      ""WebApi"": ""GCP_PLH"",
                                                       ""DeveloperMessage"": ""Done"",
                                                       ""ResponseTime"": {stopwatch.ElapsedMilliseconds}
                                                          }}";
@@ -1848,14 +1835,128 @@ internal class Program
                         }
                         else
                         {
-                            _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            _logger_PLH.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                             sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
                         }
 
                         break;
+                    case "PLH_Insert_Retry":
+                        _logger_PLH.Information($"Start Insert GCP_Json_Retry");
+                        var configPLH_Retry = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
+                        if (configPLH_Retry.Count() > 0)
+                        {
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_PLH);
+                            foreach (var cfig in configPLH_Retry)
+                            {
+                                // _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                {
+                                    try
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 10000;
+                                        var resultsRetry = sqlConnection.Query<Temp_SalesGCP_Retry>(WCM_Data.Insert_Data_Retry_PLH(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
+                                        if (resultsRetry.Count > 0)
+                                        {
+                                            var ReceiptRetry = resultsRetry.GroupBy(p => p.RECEIPT_NO).Select(group => group.Key).ToList();
+                                            var batchSize = 1900;
+                                            for (int i = 0; i < ReceiptRetry.Count; i += batchSize)
+                                            {
+                                                List<string> batch = ReceiptRetry.Skip(i).Take(batchSize).ToList();
+                                                var filteredResults = resultsRetry.Where(r => batch.Contains(r.RECEIPT_NO)).ToList();
+                                                WCM_To_GCPs.OrderPLHToGCPAsync_Json(cfig.ConnectString, batch);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger_PLH.Information($"Không có Send data GCP");
+
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger_PLH.Error("Lỗi:GCP_WCM " + ex.Message);
+                                        sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                    }
+                                    sqlConnection.Close();
+                                }
+
+                                _logger_PLH.Information($"End Insert GCP_Json_Retry");
+                            }
+                        }
+                        else
+                        {
+                            _logger_WCM.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                        }
+                        break;
+                    case "PLH_WCM_Sale":
+                        _logger_PLH_WF.Information($"Start Send Data PLH GCP");
+                        PLH_To_GCP PLH_WCM_GCP = new PLH_To_GCP(_logger_PLH_WF);
+                        var configPLH_Sale = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
+                        if (configPLH_Sale.Count() > 0)
+                        {
+                            WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_PLH_WF);
+                            foreach (var cfig in configPLH_Sale)
+                            {
+                                // _logger_WCM.Information($"------------START {cfig.Name}----------------");
+                                using (SqlConnection sqlConnection = new SqlConnection(cfig.ConnectString))
+                                {
+                                    try
+                                    {
+                                        sqlConnection.Open();
+                                        var timeout = 10000;
+                                        var resultsRetry = sqlConnection.Query<TransHeader_Temp>(WCM_Data.TransHeader_PLH(), commandTimeout: timeout,commandType:CommandType.StoredProcedure).ToList();
+                                        if (resultsRetry.Count > 0)
+                                        {
+                                            var ListOrder = PLH_WCM_GCP.OrderToGCPAsync_PLHWCM(cfig.ConnectString, resultsRetry);
+                                            _logger_PLH_WF.Information($"Send Data To API: {ListOrder.Count} Row");
+                                            string apiUrl = configuration["API_PLH_GCP_WLF"];
+                                            using (HttpClient httpClient = new HttpClient())
+                                            {
+                                                try
+                                                {
+                                                    string json = JsonConvert.SerializeObject(ListOrder);;
+                                                    var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
+                                                    StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+                                                    request.Content = content;
+                                                    HttpResponseMessage response = await httpClient.SendAsync(request);
+                                                    _logger_PLH_WF.Information($"Response API: {response.StatusCode}");
+                                                    if (response.IsSuccessStatusCode)
+                                                    {;
+                                                        PLH_WCM_GCP.UpdateStausPLH_WCM(resultsRetry, "True", cfig.ConnectString);
+                                                    }
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    _logger_PLH_WF.Error("Lỗi: " + ex.Message);
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            _logger_PLH_WF.Information($"Không có data Send GCP");
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        _logger_PLH_WF.Error("Lỗi:PLH GCP " + ex.Message);
+                                        sendEmailExample.SendMailError("Loi: " + cfig.Name + ":" + ex.Message);
+                                    }
+                                    sqlConnection.Close();
+                                }
+                                _logger_PLH_WF.Information($"End Send Data PLH GCP");
+                            }
+                        }
+                        else
+                        {
+                            _logger_PLH_WF.Information("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                            sendEmailExample.SendMailError("Staus đang Off or chưa khai báo Connections type = API_GCP_WCM");
+                        }
+                        break;
                     default:
                         _logger.Information("Invalid function name.");
-                        sendEmailExample.SendMailError("Invalid function name.");
+                        sendEmailExample.SendMailError($@"Invalid function name{functionName}_+___+_{Name}.");
                         break;
                 }
             }

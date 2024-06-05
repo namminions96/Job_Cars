@@ -94,6 +94,7 @@ namespace Job_By_SAP.Models
         public int ParentLineId { get; set; }
         public int LineId { get; set; }
         public string OfferNo { get; set; }
+        public string Description { get; set; }
         public string OfferType { get; set; }
         public string Barcode { get; set; }
     }

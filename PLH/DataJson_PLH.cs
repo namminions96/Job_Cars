@@ -1,7 +1,9 @@
 ﻿
+using Dapper;
 using Job_By_SAP.Models;
 using Job_By_SAP.WCM;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json.Linq;
 using Serilog;
 using System;
@@ -19,13 +21,17 @@ namespace Job_By_SAP.PLH
         {
             _logger = logger;
         }
-        public List<TransDiscountCouponEntry_PLH_BLUEPOS> TransDiscountCouponEntryGCP(JArray Data)
+        IConfiguration configuration = new ConfigurationBuilder()
+     .SetBasePath(AppContext.BaseDirectory)
+     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+     .Build();
+        public List<TransDiscountCouponEntry_PLH_BLUEPOS> TransDiscountCouponEntryGCP(JArray Data, List<CpnVchBOMHeader> cpnVchBOMHeaders)
         {
+
             List<TransDiscountCouponEntry_PLH_BLUEPOS> CouponEntryss = new List<TransDiscountCouponEntry_PLH_BLUEPOS>();
             //TransDiscountCouponEntry//
             if (Data != null)
             {
-
                 foreach (JObject CouponEntry in Data)
                 {
                     TransDiscountCouponEntry_PLH_BLUEPOS CouponEntrys = new TransDiscountCouponEntry_PLH_BLUEPOS();
@@ -33,8 +39,17 @@ namespace Job_By_SAP.PLH
                     CouponEntrys.ParentLineId = (int)CouponEntry["OrderLineNo"];
                     CouponEntrys.LineId = (int)CouponEntry["LineNo"];
                     CouponEntrys.OfferNo = (string)CouponEntry["ItemNo"];
+                    CpnVchBOMHeader couponDescriptions = cpnVchBOMHeaders.SingleOrDefault(x => x.ItemNo == CouponEntrys.OfferNo);
+                    if (couponDescriptions.ItemNo != null)
+                    {
+                        CouponEntrys.Description = couponDescriptions.ItemName;
+                    }
+                    else
+                    {
+                        CouponEntrys.Description = "";
+                    }
                     CouponEntrys.OfferType = (string)CouponEntry["OfferType"];
-                    CouponEntrys.Barcode = (string)CouponEntry["Barcode "];
+                    CouponEntrys.Barcode = (string)CouponEntry["Barcode"];
                     CouponEntryss.Add(CouponEntrys);
                 }
                 return CouponEntryss;
@@ -43,6 +58,7 @@ namespace Job_By_SAP.PLH
             {
                 return new List<TransDiscountCouponEntry_PLH_BLUEPOS>();
             }
+
         }
         public List<TransPaymentEntry_PLH_BLUEPOS> TransPaymentEntryGCP(JArray Data)
         {
@@ -120,7 +136,31 @@ namespace Job_By_SAP.PLH
                     Transpoins.MemberCSN = (string)Item["MemberCSN"];
                     Transpoin.Add(Transpoins);
                 }
-                return Transpoin;
+                var groupedData = Transpoin
+                  .GroupBy(p => new { p.MemberNumber, p.CardLevel, p.MemberCSN, p.OrderNo, }) // Group by multiple fields
+                  .Select(group => new
+                  {
+                      MemberNumber = group.Key.MemberNumber,
+                      CardLevel = group.Key.CardLevel,
+                      MemberCSN = group.Key.MemberCSN,
+                      OrderNo = group.Key.OrderNo,
+                      RedeemPoints = group.Sum(p => p.RedeemPoints),
+                      EarnPoints = group.Sum(p => p.EarnPoints)
+                  })
+                  .ToList();
+                List<TransPointEntry_PLH_BLUEPOS> Transpoinresult = new List<TransPointEntry_PLH_BLUEPOS>();
+                foreach (var item in groupedData)
+                {
+                    TransPointEntry_PLH_BLUEPOS Transpoinss = new TransPointEntry_PLH_BLUEPOS();
+                    Transpoinss.MemberCSN = item.MemberCSN;
+                    Transpoinss.MemberNumber = item.MemberNumber;
+                    Transpoinss.CardLevel = item.CardLevel;
+                    Transpoinss.OrderNo = item.OrderNo;
+                    Transpoinss.RedeemPoints = item.RedeemPoints;
+                    Transpoinss.EarnPoints = item.EarnPoints;
+                    Transpoinresult.Add(Transpoinss);
+                }
+                return Transpoinresult;
 
             }
             catch (Exception e)

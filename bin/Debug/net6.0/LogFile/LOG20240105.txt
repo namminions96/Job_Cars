@@ -1,4 +1,0 @@
-2024-01-05 11:29:36.417 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
-2024-01-05 11:30:43.609 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
-2024-01-05 11:30:58.104 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).
-2024-01-05 11:39:50.333 +07:00 [INF] Config Send Kibana Chưa Khai báo or đang off (91).

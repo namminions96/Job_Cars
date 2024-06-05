@@ -55,7 +55,7 @@ namespace Job_By_SAP.PLH
                      //FROM CentralSales.dbo.TransDiscountCouponEntry NOLOCK 
                      //WHERE OrderNo IN @orderNo AND OfferType IN ('FamilyDay')
         }
-          public static string TransDiscountEntryQuery_BS()
+        public static string TransDiscountEntryQuery_BS()
         {
             return @"select top 10 A.[OrderNo], A.LineId LineId,A.ParentLineId ,A.[OfferNo],B.Description,A.[OfferType],COALESCE(D.[OfferName], '') [OfferType_Des]
                                 ,A.[Quantity], A.DiscountAmount,A.Note ,B.[SalesType],COALESCE(C.[Description], '')  SalesType_Des,B.[StartingDate],B.[EndingDate]
@@ -92,6 +92,19 @@ namespace Job_By_SAP.PLH
             return @"INSERT INTO Temp_SalesGCP ([SalesType], [OrderNo], [OrderDate], [CrtDate], [Batch])
                                         VALUES
                                         (@SalesType, @OrderNo, @OrderDate, @CrtDate, @Batch)";
+        }
+
+        public static string InsertOCC_Temp()
+        {
+            return @"INSERT INTO [dbo].[Temp_WCM_PLH_GCP]
+            ([SubSet]
+           ,[MainCode]
+           ,[CrtDate])
+            VALUES (@SubSet,@MainCode,@CrtDate)";
+        }
+        public static string UpdateOCC_TransHeader()
+        {
+            return @"UPDATE OCC_TransHeader SET UpdateFlg = 'W' where OrderNo IN @OrderNo";
         }
         public static string InsertTemp_SalesGCP_Retry()
         {
