@@ -257,6 +257,10 @@ namespace Job_By_SAP
         {
             return @"Get_Hearder_OCC_GCP_PLH";
         }
+        public static string PLH_WCM_Retry()
+        {
+            return @"Get_OCC_GCP_PLH_Retry";
+        }
         public static string TransLine_PLH()
         {
             return @" SELECT  OrderNo,[LineNo],ParentLineNo,ItemNo,ItemName,Uom,Quantity,UnitPrice,DiscountAmount,VATPercent

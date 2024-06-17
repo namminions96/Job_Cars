@@ -96,11 +96,10 @@ namespace Job_By_SAP.PLH
 
         public static string InsertOCC_Temp()
         {
-            return @"INSERT INTO [dbo].[Temp_WCM_PLH_GCP]
-            ([SubSet]
-           ,[MainCode]
-           ,[CrtDate])
-            VALUES (@SubSet,@MainCode,@CrtDate)";
+            return @"INSERT INTO [dbo].[Temp_SalesGCP]
+           ([SalesType],[OrderNo],[OrderDate],[CrtDate],[Batch])
+     VALUES
+           (@SalesType,@OrderNo,@OrderDate,@CrtDate,@Batch)";
         }
         public static string UpdateOCC_TransHeader()
         {

@@ -9,3 +9,16 @@
 2024-06-05 10:20:40.277 +07:00 [INF] ------------START WCM_GCP_NEW----------------
 2024-06-05 10:20:51.189 +07:00 [INF] {"PromotionID":"","CouponCode":"","LineNo":1000,"OrderNo":"153206240104982","OrderTime":"2024-01-26T17:32:56.263","OrderDate":"2024-01-26T00:00:00","StoreNo":"1532","POSTerminalNo":"153206","CashierID":"09040748","ReturnedOrderNo":"","SalesIsReturn":false,"Barcode":"8938501660084","ItemNo":"10014706","Description":"New Choice Thạch T. cây tổng hợp 1kg","UnitOfMeasure":"HOP","Quantity":1.0,"UnitPrice":89500.0,"DiscountAmount":0.0,"VATCode":"6","LineAmountIncVAT":89500.0,"VATAmount":6630.0,"HouseNo":"CAP","CityNo":"WINCARE","MemberCardNo":"0915386988","MemberPointsEarn":0.0,"MemberPointsRedeem":0.0,"BlockedMemberPoint":0,"AmountCalPoint":89500.0,"RefKey1":null,"VoucherDiscountNo":null,"DeliveringMethod":"0","DivisionCode":"WCM","UserID":"MASAN\\VCM.VM1532","SerialNo":"","DeliveryComment":"HomeDelivery-0748","TanencyNo":"","BusinessAreaNo":"","StyleProfile":"VM","CustomerName":"nguyễn Anh Tuấn","AmountDiscountAtPOS":"0","VATPercent":8.0,"IsTenancy":0,"SalesType":"2","SOURCEBILL":"Zalo","HANDLINGSTAFF":null,"ReturnVoucherNo":null,"ReturnVoucherExpire":null}
 2024-06-05 10:45:55.860 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:25:52.883 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:25:54.639 +07:00 [INF] Không có data Send GCP
+2024-06-05 16:25:54.639 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-06-05 16:27:04.935 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:28:11.696 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:28:12.264 +07:00 [INF] Không có data Send GCP
+2024-06-05 16:28:12.264 +07:00 [INF] ------------END WCM_GCP_NEW----------------
+2024-06-05 16:28:41.864 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:33:18.123 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:33:43.556 +07:00 [ERR] Lỗi:GCP_WCM A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. (10.235.19.71:50001)
+2024-06-05 16:50:49.880 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:52:06.443 +07:00 [INF] ------------START WCM_GCP_NEW----------------
+2024-06-05 16:53:34.576 +07:00 [INF] ------------START WCM_GCP_NEW----------------

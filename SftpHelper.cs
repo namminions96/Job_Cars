@@ -100,7 +100,6 @@ namespace BluePosVoucher
                 _logger.Error(ex, "DownloadAuthen" + source);
             }
         }
-
         public void DownloadNoAuthen(string source, string destination, bool isMove)
         {
             var count = 0;

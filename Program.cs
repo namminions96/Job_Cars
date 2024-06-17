@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Read_xml;
 using Read_xml.Data;
 using Serilog;
@@ -23,7 +24,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
 using static Job_By_SAP.Models.SalesGCP_Retry;
 internal class Program
 {
@@ -83,8 +83,8 @@ internal class Program
             string Name = args[1];
             //string Name = "WCM_GCP_NEW";
             //////// string Name = "PLH_GCP_Retry_New";
-            ////string Name = "PLH_INBOUND";
-            ////string functionName = "PLH_WCM_Sale";
+            //string Name = "PLH_INBOUND";
+            //string functionName = "PLH_WCM_Sale";
             //string functionName = "GCP_WCM_Json";
             ////string functionName = "GCP_WCM_Retry_Old";
             //string Name = "WCM_GCP_NEW";
@@ -1225,7 +1225,6 @@ internal class Program
                                         else
                                         {
                                             results = sqlConnection.Query<SP_Data_WCM>(WCM_Data.SP_Sale_GCP(), commandType: CommandType.StoredProcedure, commandTimeout: timeout).ToList();
-
                                         }
                                         if (results.Count > 0)
                                         {
@@ -1709,18 +1708,15 @@ internal class Program
                         }
                         break;
                     case "PRD_ExportTranspoin":
-                        var configPLH_ = db.ConfigConnections.ToList().Where(p => p.Type == "PLH_CentralSales" && p.Status == true);
-                        string querrys = @"select * from
-                                            (select StoreNo,FORMAT(OrderDate, 'yyyyMMdd') AS OrderDate,OrderNo from CentralSales..TransHeader nolock 
-                                            where OrderDate between '20240101'and '20240530'
-                                            union 
-                                            select StoreNo,FORMAT(OrderDate, 'yyyyMMdd') AS OrderDate,OrderNo from CentralSalesArchive..TransHeader nolock 
-                                            where OrderDate between '20240101'and '20240530'
-                                            )A ";
-
+                        var configPLH_ = db.ConfigConnections.ToList().Where(p => p.Type == "VC_Retry" && p.Status == true);
+                        string querrys = @"select A.DocumentNo,A.[LineNo],A.ItemNo,A.Barcode,A.SerialNo from CentralSales.[dbo].TransLine A with (Nolock) 
+                                        Join CentralSales.[dbo].TransHeader B With(Nolock)  on A.DocumentNo = B.OrderNo
+                                        where len(A.SerialNo)>0 
+                                        and  B.OrderDate between '20240501'and '20240617'";
                         foreach (var cfig in configPLH_)
                         {
-                            readfilSAP.ConvertSQLtoXML_CSV_PLH(cfig.ConnectString, querrys);
+                            _logger.Information(cfig.Name);
+                            readfilSAP.ConvertSQLtoXML_CSV_PLH(cfig.ConnectString, querrys, cfig.Name);
                         }
                         break;
                     case "GCP_PLH_Json":
@@ -1893,7 +1889,11 @@ internal class Program
                     case "PLH_WCM_Sale":
                         _logger_PLH_WF.Information($"Start Send Data PLH GCP");
                         PLH_To_GCP PLH_WCM_GCP = new PLH_To_GCP(_logger_PLH_WF);
+                        //DateTime currentDateTimes = DateTime.Now;
+                        //string dateTimeStrings = currentDateTimes.ToString("yyyyMMdd");
+                        //------------------------------------------------------------------------------------/
                         var configPLH_Sale = db.ConfigConnections.ToList().Where(p => p.Name == Name && p.Status == true);//config DB
+
                         if (configPLH_Sale.Count() > 0)
                         {
                             WCM_To_GCP WCM_To_GCPs = new WCM_To_GCP(_logger_PLH_WF);
@@ -1916,7 +1916,9 @@ internal class Program
                                             {
                                                 try
                                                 {
-                                                    string json = JsonConvert.SerializeObject(ListOrder);;
+                                                    string json = JsonConvert.SerializeObject(ListOrder);
+                                                    //string filePathSave = $"LogSend\\DataWCM_{cfig.Name}_{dateTimeStrings}.text";
+                                                    //File.WriteAllText(filePathSave, json);
                                                     var request = new HttpRequestMessage(HttpMethod.Post, apiUrl);
                                                     StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
                                                     request.Content = content;

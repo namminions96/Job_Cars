@@ -5,7 +5,6 @@ namespace BluePosVoucher
 {
     public class SerilogLogger
     {
-
         public static ILogger GetLogger()
         {
             return new LoggerConfiguration() 
@@ -13,7 +12,6 @@ namespace BluePosVoucher
                 .WriteTo.File("LogFile/LOG.txt", rollingInterval: RollingInterval.Day, shared: true, retainedFileCountLimit: 30)
                 .CreateLogger();
         }
-
         public static ILogger GetLogger_WCM()
         {
             return new LoggerConfiguration()
@@ -70,7 +68,6 @@ namespace BluePosVoucher
                 .WriteTo.File("Log_DeleteFile/LOG.txt", rollingInterval: RollingInterval.Day, shared: true, retainedFileCountLimit: 30)
                 .CreateLogger();
         }
-
         public static ILogger GetLogger_WCM_Void()
         {
             return new LoggerConfiguration()

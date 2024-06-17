@@ -1,19 +1,10 @@
-﻿using BluePosVoucher.Data;
-using Confluent.Kafka;
-using Dapper;
+﻿using Confluent.Kafka;
 using Job_By_SAP.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Serilog;
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Job_By_SAP.WCM
 {
@@ -429,7 +420,6 @@ namespace Job_By_SAP.WCM
 
             }
         }
-
         public void Insert_RP_Detail(List<ReportSaleDetail> SP_Data_WCM, string configWcm)
         {
             string configReport = configuration["DB_112_Report"];
@@ -532,8 +522,6 @@ namespace Job_By_SAP.WCM
                 _logger.Error(ex.Message);
             }
         }
-
-
     }
 
 }

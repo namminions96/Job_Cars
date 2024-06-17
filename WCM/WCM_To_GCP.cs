@@ -9,14 +9,11 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Read_xml;
 using Serilog;
-using StackExchange.Redis;
 using System.Collections.Concurrent;
 using System.Data;
 using System.Globalization;
-using System.Linq;
 using System.Text.RegularExpressions;
 using static Job_By_SAP.Models.SalesGCP_Retry;
-using static MongoDB.Bson.Serialization.Serializers.SerializerHelper;
 
 namespace Job_By_SAP
 {
@@ -227,7 +224,7 @@ namespace Job_By_SAP
                 ReadDataRawJson readDataRawJson = new ReadDataRawJson(_logger);
                 var timeout = 600;
                 var MD_Connect = configuration["DbStaging_WCM"];
-                var ConfigSend = configuration["DbStaging_WCM"];
+                var ConfigSend = configuration["ConfigSend"];
                 using (SqlConnection DbsetWcm_MD = new SqlConnection(MD_Connect))
                 {
                     try
@@ -301,6 +298,7 @@ namespace Job_By_SAP
                                         {
                                             TransLines.VATAmount = (decimal)VatAmountValue;
                                         }
+                                        TransLines.SerialNo = (string)Item["SerialNo"];
                                         TransLines.Brand = (string)Item["DivisionCode"];
                                         TransLines.DiscountEntry = DiscountEntryResult.Where(p => p.ItemNo == TransLines.Article && p.TranNo == TransLines.TranNo).ToList();
 
@@ -580,13 +578,25 @@ namespace Job_By_SAP
                         if (Namefuntion == "GCP_WCM_Retry")
                         {
                             //_logger.Information(Namefuntion);
+
+                            if (ConfigSend == "0")
+                            {
+                                readDataRawJson.Insert_RP_Detail(reportSaleDetailsSave, configWcm);
+                            }
+                            else if (ConfigSend == "1")
+                            {
+                                readDataRawJson.Insert_RP_Kafka(reportSaleDetailsSave, configWcm);
+                            }
+                            else
+                            {
+                                _logger.Information("Chưa khai báo ConfigSend Lưu data");
+                            }
                             readDataRawJson.UpdateStatusWCM_Retry_Json(SP_Data_WCMs, configWcm);
                             //readDataRawJson.Insert_WPH_Zalo_Sv(temp_Zalo_Survey, configWcm);
                         }
                         else
                         {
                             //_logger.Information(Namefuntion);
-                            readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
                             if (ConfigSend == "0")
                             {
                                 readDataRawJson.Insert_RP_Detail(reportSaleDetailsSave, configWcm);
@@ -599,6 +609,7 @@ namespace Job_By_SAP
                             {
                                 _logger.Information("Chưa khai báo ConfigSend Lưu data");
                             }
+                            readDataRawJson.UpdateStatusWCM(SP_Data_WCMs, configWcm);
                             //ServiceMongo serviceMongo = new ServiceMongo();
                             //var dataService = new MongoService<SP_Data_WCM>(serviceMongo.SeviceData(), "Sale_GCP", "Transactions");
                             //dataService.InsertData(SP_Data_WCMs);

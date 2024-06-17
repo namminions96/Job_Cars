@@ -343,7 +343,7 @@ namespace Read_xml
             return xml.ToString();
         }
 
-        public void ConvertSQLtoXML_CSV_PLH(string connectionString,string query)
+        public void ConvertSQLtoXML_CSV_PLH(string connectionString,string query,string set)
         {
             StringBuilder xml = new StringBuilder();
             using (SqlConnection connection = new SqlConnection(connectionString))
@@ -360,7 +360,7 @@ namespace Read_xml
                             var currentDatepathxml = DateTime.Now;
                             string currentDatepath = currentDatepathxml.ToString("yyyyMMddHHmmss");
                            // string outputFilePathPos = @$"TransPoint_Reconcile\TransPoint_Reconcile_{currentDatepath}.csv";
-                            string outputFilePathPos = @$"TransDiscount_Reconcile\TransPoint_Reconcile_{currentDatepath}.csv";
+                            string outputFilePathPos = @$"TransDiscount_Reconcile\TransLine_{set}_{currentDatepath}.csv";
                             using (var writer = new StreamWriter(outputFilePathPos, false, Encoding.UTF8))
                             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                             {

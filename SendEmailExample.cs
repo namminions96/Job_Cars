@@ -54,7 +54,6 @@ namespace Job_By_SAP
                     client.EnableSsl = enableSSL;
                     client.UseDefaultCredentials = false;
                     client.Credentials = new NetworkCredential(username, password);
-
                     using (MailMessage mail = new MailMessage())
                     {
                         mail.From = new MailAddress(username+"@winmart.masangroup.com");
@@ -65,7 +64,6 @@ namespace Job_By_SAP
                             
                         client.Send(mail);
                     }
-
                     _logger.Information("Email sent successfully.");
                 }
             }

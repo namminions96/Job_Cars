@@ -146,9 +146,11 @@ namespace Job_By_SAP.PLH
                             {
                                 command.Connection = DBINBOUND;
                                 command.CommandText = PLH_Data.InsertOCC_Temp();
-                                command.Parameters.AddWithValue("@SubSet", temp.StoreNo);
-                                command.Parameters.AddWithValue("@MainCode", temp.OrderNo);
+                                command.Parameters.AddWithValue("@SalesType", "OCC");
+                                command.Parameters.AddWithValue("@OrderNo", temp.OrderNo);
+                                command.Parameters.AddWithValue("@OrderDate", temp.OrderDate);
                                 command.Parameters.AddWithValue("@CrtDate", DateTime.Now);
+                                command.Parameters.AddWithValue("@Batch", DateTime.Now.ToString("yyyyMMddHHmmss"));
                                 int rowAfect = command.ExecuteNonQuery();
                                 rowsAffected++;
                             }
@@ -159,9 +161,9 @@ namespace Job_By_SAP.PLH
 
                 }
             }
-            catch (Exception e)
+            catch (SqlException e)
             {
-                _logger.Error("Fail: .", e.Message);
+                _logger.Error("Fail: ", e.Message);
             }
         }
         public List<TransHeader_PLH_WCM> OrderToGCPAsync_PLHWCM(string configPLH, List<TransHeader_Temp> transHeader_Temps)
